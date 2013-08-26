@@ -16,7 +16,10 @@
     "test": "mocha-phantomjs test/index.html"
   },
   "devDependencies": {
+    "leaflet-hash": "git://github.com/mlevans/leaflet-hash.git#b039a3aa4e2492a5c7448075172ac26769e601d6",
+    "leaflet-fullscreen": "0.0.0",
     "uglify-js": "~2.2.5",
+    "mocha-phantomjs": "~1.1.1",
     "browserify": "~2.18.1"
   },
   "optionalDependencies": {},

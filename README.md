@@ -14,4 +14,4 @@ This project uses [browserify](https://github.com/substack/node-browserify) to c
 
 ## Credits
 
-Heavily, cough, inspired by [MapBox.js](https://github.com/mapbox/mapbox.js). And, of course, built on the great [Leaflet](https://github.com/Leaflet/Leaflet) library. Standing on the shoulders of giants.
+Heavily, cough cough, inspired by [MapBox.js](https://github.com/mapbox/mapbox.js). And, of course, built on the great [Leaflet](https://github.com/Leaflet/Leaflet) library. Standing on the shoulders of giants.
