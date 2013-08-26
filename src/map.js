@@ -1,10 +1,17 @@
 'use strict';
 
+console.log('hello');
+
 var Map = L.Map.extend({
-  options: {
+  includes: [],
+  options: {},
+  _initialize: function() {
+    console.log(this);
 
+    if (!this._loaded) {
+      this.setView(L.latLng(39, -96), 4);
+    }
   },
-
   initialize: function(element, _, options) {
     L.Map.prototype.initialize.call(this, element, options);
 
