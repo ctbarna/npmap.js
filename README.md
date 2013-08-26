@@ -1,4 +1,4 @@
-# npmap.js
+# NPMap.js
 
 [![Build Status](https://travis-ci.org/npmap/npmap.js.png?branch=v1)](https://travis-ci.org/npmap/npmap.js)
 
@@ -14,7 +14,7 @@ This project uses [browserify](https://github.com/substack/node-browserify) to c
 
 ## Credits
 
-Heavily inspired by (read: **taken from**) [mapbox.js](https://github.com/mapbox/mapbox.js). And, of course, built on the great [Leaflet](https://github.com/Leaflet/Leaflet) library. Standing on the shoulders of giants.
+Heavily, cough, inspired by [MapBox.js](https://github.com/mapbox/mapbox.js). And, of course, built on the great [Leaflet](https://github.com/Leaflet/Leaflet) library. Standing on the shoulders of giants.
 
 ## License
 
