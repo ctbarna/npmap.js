@@ -1,6 +1,6 @@
 # NPMap.js
 
-[![Build Status](https://travis-ci.org/npmap/npmap.js.png?branch=v1)](https://travis-ci.org/npmap/npmap.js)
+[![Build Status](https://travis-ci.org/nationalparkservice/npmap.js.png)](https://travis-ci.org/nationalparkservice/npmap.js)
 
 A JavaScript mapping library for the National Park Service, built as a Leaflet plugin. Currently working on v1 here. This will eventually take the place of the [NPMap JavaScript library](https://github.com/nationalparkservice/npmap).
 
