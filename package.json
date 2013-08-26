@@ -19,7 +19,11 @@
     "leaflet-hash": "git://github.com/mlevans/leaflet-hash.git#b039a3aa4e2492a5c7448075172ac26769e601d6",
     "leaflet-fullscreen": "0.0.0",
     "uglify-js": "~2.2.5",
+    "mocha": "~1.9",
+    "expect.js": "~0.2.0",
+    "sinon": "~1.7.3",
     "mocha-phantomjs": "~1.1.1",
+    "happen": "~0.1.2",
     "browserify": "~2.18.1"
   },
   "optionalDependencies": {},
