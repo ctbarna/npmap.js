@@ -1,0 +1,26 @@
+{
+  "author": "National Park Service",
+  "name": "npmap.js",
+  "description": "NPMap JavaScript API",
+  "version": "0.0.0",
+  "homepage": "http://www.nps.gov/npmap",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nationalparkserviec/npmap.js.git"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "leaflet": "git://github.com/Leaflet/Leaflet.git#016f635616fa1df18744baa036cc0e67f94f6248"
+  },
+  "scripts": {
+    "test": "mocha-phantomjs test/index.html"
+  },
+  "devDependencies": {
+    "uglify-js": "~2.2.5",
+    "browserify": "~2.18.1"
+  },
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
