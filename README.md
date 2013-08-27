@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="http://www.nps.gov/npmap/img/nps-arrowhead-medium.png" alt="NPS Arrowhead">
+</p>
+
 # NPMap.js
 
 A JavaScript mapping library for the National Park Service, built as a Leaflet plugin. Includes functionality and a look-and-feel that fits into the strong graphic tradition of the National Park Service.
@@ -27,6 +31,6 @@ Take a look in the `examples` directory. Again, not much there at the moment, bu
 Each example that is there has two versions: An "api" version and a "bootstrap" version. This reflects the different ways NPMap.js can be used:
 
 1. If you have control of the web page you are embedding the map into and want to build your map with a traditional API, you should manually include `npmap.js`, along with the required CSS files, in your HTML and then build the map using the API.
-2. If you want a simplified way of building your map and/or don't have control over the web page you are embedding your map into, you should create a config object and then load `npmap-bootstrap.js` into your web page dynamically. The bootstrap script will take care of loading all the JavaScript and CSS dependencies for you.
+2. If you want a simplified way of building your map and/or don't have control over the web page you are embedding your map into, you should create a config object and then load `npmap-bootstrap.js` into your web page dynamically. The bootstrap script will then take care of loading all the JavaScript and CSS dependencies for you.
 
 [![Build Status](https://travis-ci.org/nationalparkservice/npmap.js.png)](https://travis-ci.org/nationalparkservice/npmap.js)
