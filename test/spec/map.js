@@ -6,8 +6,8 @@ describe('L.mapbox.map', function() {
     server.restore();
   });
   beforeEach(function() {
-    server = sinon.fakeServer.create();
     element = document.createElement('div');
+    server = sinon.fakeServer.create();
   });
 
   it('passes options to constructor when called without new', function() {
