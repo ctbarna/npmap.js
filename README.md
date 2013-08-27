@@ -14,7 +14,7 @@ This project uses [browserify](https://github.com/substack/node-browserify) to c
 
 ## Credits
 
-Heavily inspired (cough, cough) by [MapBox.js](https://github.com/mapbox/mapbox.js), and, of course, built on the great [Leaflet](https://github.com/Leaflet/Leaflet) library. Standing on the shoulders of giants.
+Heavily inspired (cough cough) by [MapBox.js](https://github.com/mapbox/mapbox.js), and, of course, built on the great [Leaflet](https://github.com/Leaflet/Leaflet) library. Standing on the shoulders of giants.
 
 ## Docs
 
@@ -24,9 +24,9 @@ None available yet, but will eventually live in `API.md`.
 
 Take a look in the `examples` directory. Again, not much there at the moment, but lots of examples coming soon.
 
-Each example has two versions, an "api" version and a "bootstrap" version. This is because there are two different ways to use NPMap.js:
+Each example that is there has two versions: An "api" version and a "bootstrap" version. This reflects the different ways NPMap.js can be used:
 
-- If you have control of the web page you are embedding the map into and you are want a more traditional way of building your map, you should include npmap.js, along with the required CSS files, in your web page and then build the map using the API.
-- If, however, you want a simplified way of building a web map and/or don't have control over the web page you are embedding your map into, you should create a config object and then load "npmap-bootstrap.js" into your web page dynamically.
+1) If you have control of the web page you are embedding the map into and want to build your map with a traditional API, you should manually include `npmap.js`, along with the required CSS files, in your HTML and then build the map using the API.
+2) If you want a simplified way of building your map and/or don't have control over the web page you are embedding your map into, you should create a config object and then load `npmap-bootstrap.js` into your web page dynamically. The bootstrap script will take care of loading all the JavaScript and CSS dependencies for you.
 
 [![Build Status](https://travis-ci.org/nationalparkservice/npmap.js.png)](https://travis-ci.org/nationalparkservice/npmap.js)
