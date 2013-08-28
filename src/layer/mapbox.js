@@ -2,17 +2,21 @@
 
 'use strict';
 
-var request = require('../request'),
-    url = require('../url'),
+var //m = require('mapbox.js').tileLayer,
     util = require('../util');
 
-var MapBoxLayer = L.TileLayer.extend({
+//console.log(m);
+
+var MapBoxLayerTest = L.TileLayer.extend({
   options: {
+    //errorTileUrl: '',
     format: 'png',
-    opacity: 0.99,
-    retinaVersion: null,
-    tileJson: null,
-    visible: true
+    subdomains: [
+      'a',
+      'b',
+      'c',
+      'd'
+    ]
   },
   formats: [
     'jpg70',
@@ -24,36 +28,35 @@ var MapBoxLayer = L.TileLayer.extend({
     'png128',
     'png256'
   ],
-  initialize: function(config, options) {
-    L.TileLayer.prototype.initialize.call(this, undefined, options);
+  initialize: function(config) {
+    var _;
 
-    this._tilejson = {};
+    // Overwrites this.options with options passed in via config.
+    L.TileLayer.prototype.initialize.call(this, undefined, config);
 
-    if (options && options.format) {
-      util.mapbox.strictOneOf(options.format, this.formats);
+    if (config.format) {
+      util.strictOneOf(config.format, this.formats);
     }
 
-    if (options && options.tileJson) {
-      this._loadTileJson(options.tileJson);
-    } else {
-      var id;
-
-      if (L.Browser.retina && options && options.retinaVersion) {
-        id = options.tileJson.retinaVersion;
-      } else {
-        id = config.id;
+    if (L.Browser.retina && config.retinaVersion) {
+      if (typeof config.detectRetina === 'undefined' || config.detectRetina === true) {
+        config.detectRetina = true;
+        _ = config.retinaVersion;
       }
-
-      this._loadTileJson(id);
+    } else {
+      config.detectRetina = false;
+      _ = config.tileJson || config.id;
     }
+
+    this._loadTileJson(_);
   },
   _loadTileJson: function(_) {
     if (typeof _ === 'string') {
       if (_.indexOf('/') === -1) {
-        _ = url.mapbox.base() + _ + '.json';
+        _ = util.mapbox.url.base() + _ + '.json';
       }
 
-      request(url.mapbox.secureFlag(_), L.bind(function(error, json) {
+      util.request(util.mapbox.url.secureFlag(_), L.bind(function(error, json) {
         if (error) {
           util.log('could not load TileJSON at ' + _);
           this.fire('error', {
@@ -69,18 +72,29 @@ var MapBoxLayer = L.TileLayer.extend({
     }
   },
   _setTileJson: function(json) {
-    util.mapbox.strict(json, 'object');
+    util.strict(json, 'object');
 
-    L.extend(this.options, {
-      attribution: json.attribution,
-      bounds: json.bounds && util.mapbox.lBounds(json.bounds),
-      maxZoom: json.maxzoom,
-      minZoom: json.minzoom,
+    var extend = {
+      bounds: json.bounds && util.mapbox.toLeafletBounds(json.bounds),
       tiles: json.tiles,
       tms: json.scheme === 'tms'
-    });
+    };
 
-    this._tilejson = json;
+    if (typeof this.options.attribution === 'undefined') {
+      extend.attribution = json.attribution;
+    }
+
+    if (typeof this.options.maxZoom === 'undefined') {
+      extend.maxZoom = json.maxzoom;
+    }
+
+    if (typeof this.options.minZoom === 'undefined') {
+      extend.minZoom = json.minzoom;
+    }
+
+    L.extend(this.options, extend);
+
+    this.tileJson = json;
     this.redraw();
     return this;
   },
@@ -88,9 +102,6 @@ var MapBoxLayer = L.TileLayer.extend({
     if (this.options.tiles) {
       L.TileLayer.prototype._update.call(this);
     }
-  },
-  getTileJson: function() {
-    return this._tilejson;
   },
   getTileUrl: function(tilePoint) {
     var tiles = this.options.tiles,
@@ -103,7 +114,7 @@ var MapBoxLayer = L.TileLayer.extend({
     }
   },
   setFormat: function(_) {
-    util.mapbox.strict(_, 'string');
+    util.strict(_, 'string');
     this.options.format = _;
     this.redraw();
     return this;
@@ -111,6 +122,6 @@ var MapBoxLayer = L.TileLayer.extend({
   setUrl: null
 });
 
-module.exports = function(_, options) {
-  return new MapBoxLayer(_, options);
+module.exports = function(config) {
+  return new MapBoxLayerTest(config);
 };

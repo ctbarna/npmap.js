@@ -1,11 +1,4 @@
-/**
-  Iterate through baseLayers, layers, modules, and tools and load all of the modules via require calls.
-    
-    - Dynamically load the CSS files, and load ie.css if lt IE7.
-    - Do you need require.js to do this dynamically?
-    - You need to support an array for NPMap.config, in case multiple maps are embedded into a single page.
-    - You need to write a build script that takes the path to a NPMap.config object/array and builds a custom build of NPMap.js, loading only the modules that are needed, then minifies and combines it into a single "app.js" file. This build script should take the place of this bootstrap.js file.
- */
+/* global L */
 
 var NPMap = NPMap || {};
 
@@ -18,73 +11,141 @@ if (typeof NPMap.config !== 'array' && typeof NPMap.config !== 'object') {
 }
 
 (function() {
+  var scripts = document.getElementsByTagName('script');
+
   // TODO: Show loading indicator.
+
+  for (var i = 0; i < scripts.length; i++) {
+    var src = scripts[i].src;
+
+    if (typeof src === 'string' && src.indexOf('bootstrap.js') !== -1) {
+      NPMap.path = src.replace('bootstrap.js', '');
+      break;
+    }
+  }
 })();
 NPMap.bootstrap = (function() {
   return {
+    //
+    presets: {},
+    /**
+     *
+     */
     buildMap: function(config) {
       if (typeof config.div !== 'string') {
         throw new Error('The div config must be a string!');
       }
 
-      var i = 0,
-          map = L.npmap.map(config.div, {});
+      config.baseLayers = (function() {
+        var visible = false;
 
-      //console.log(map);
+        if (L.Util.isArray(config.baseLayers) && config.baseLayers.length) {
+          for (var i = 0; i < config.baseLayers.length; i++) {
+            var baseLayer = config.baseLayers[i];
 
-      for (i; i < this.options.baseLayers.length; i++) {
-        var baseLayer = this.options.baseLayers[i];
+            if (typeof baseLayer === 'string') {
+              var name = baseLayer.split('-');
 
-        if (baseLayer.visible === true || typeof baseLayer.visible === 'undefined') {
-          L.npmap.layer(baseLayer).addTo(this);
+              baseLayer = config.baseLayers[i] = NPMap.bootstrap.presets.baseLayers[name[0]][name[1]];
+            }
+
+            baseLayer.zIndex = 0;
+
+            if (baseLayer.visible === true || typeof baseLayer.visible === 'undefined') {
+              if (visible) {
+                baseLayer.visible = false;
+              } else {
+                baseLayer.visible = true;
+                visible = true;
+              }
+            } else {
+              baseLayer.visible = false;
+            }
+          }
+        }
+
+        if (visible) {
+          return config.baseLayers;
+        } else {
+          return [{
+            id: 'nps.map-lj6szvbq',
+            type: 'mapbox',
+            visible: true
+          }];
+        }
+      })();
+      config.center = (function() {
+        var c = config.center;
+
+        if (c) {
+          return L.latLng(c.lat, c.lng);
+        } else {
+          return L.latLng(39, -96);
+        }
+      })();
+      config.zoom = typeof config.zoom === 'number' ? config.zoom : 4;
+      config.zoomControl = false;
+      config.L = L.npmap.map(config);
+
+      for (var i = 0; i < config.baseLayers.length; i++) {
+        var baseLayer = config.baseLayers[i];
+
+        if (baseLayer.visible === true) {
+          baseLayer.L = L.npmap.layer[baseLayer.type](baseLayer).addTo(config.L);
           break;
         }
       }
 
-      for (i = 0; i < this.options.layers.length; i++) {
-        var layer = this.options.baseLayers[i];
+      if (typeof config.layers === 'array') {
+        for (var j = 0; j < config.layers.length; j++) {
+          var layer = config.layers[j];
 
-        if (layer.visible || typeof layer.visible === 'undefined') {
-          L.npmap.layer[layer.type](layer).addTo(this);
+          if (layer.visible || typeof layer.visible === 'undefined') {
+            layer.visible = true;
+            layer.L = L.npmap.layer[layer.type](layer).addTo(config.L);
+          } else {
+            layer.visible = false;
+          }
         }
       }
-    },
-    destroyMap: function(config) {
 
+      config.L.setView(config.center, config.zoom);
     }
-  }
+  };
 })();
 (function() {
-  // TODO: Load CSS.
-  var s = document.createElement('script');
+  var script = document.createElement('script');
 
   function callback() {
-    if (typeof NPMap.config === 'array') {
-      var i = 0;
+    L.npmap.util.appendCssFile(NPMap.path + 'npmap.css');
+    if (L.Browser.ie6 || L.Browser.ie7) L.npmap.util.appendCssFile(NPMap.path + 'npmap.ie.css');
+    L.npmap.util.request(NPMap.path + 'presets/baseLayers.json', function(error, response) {
+      NPMap.bootstrap.presets.baseLayers = response;
 
-      for (i; i < NPMap.config.length; i++) {
-        NPMap.bootstrap.buildMap(NPMap.config[i]);
+      if (typeof NPMap.config === 'array') {
+        for (var i = 0; i < NPMap.config.length; i++) {
+          NPMap.bootstrap.buildMap(NPMap.config[i]);
+        }
+      } else {
+        NPMap.bootstrap.buildMap(NPMap.config);
       }
-    } else {
-      NPMap.bootstrap.buildMap(NPMap.config);
-    }
+    });
   }
 
-  document.getElementsByTagName('head')[0].appendChild('../dist/npmap.css');
-  s.src = '../dist/npmap.js';
+  script.src = NPMap.path + 'npmap.js';
 
-  if (s.readyState) {
-    s.onreadystatechange = function() {
-      if (s.readyState === 'loaded' || s.readyState === 'complete') {
-        s.onreadystatechange = null;
+  if (script.readyState) {
+    script.onreadystatechange = function() {
+      if (script.readyState === 'loaded' || script.readyState === 'complete') {
+        script.onreadystatechange = null;
         callback();
       }
     };
   } else {
-    s.onload = function() {
+    script.onload = function() {
       callback();
     };
   }
 
-  document.body.appendChild(s);
+  document.body.appendChild(script);
 })();

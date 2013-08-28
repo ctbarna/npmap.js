@@ -4,17 +4,24 @@
 
 # NPMap.js
 
-A JavaScript mapping library for the National Park Service, built as a Leaflet plugin. Includes functionality and a look-and-feel that fits into the strong graphic tradition of the National Park Service.
+A JavaScript mapping library for the National Park Service, built as a Leaflet plugin. Includes functionality and a look-and-feel that fits into the graphic tradition of the National Park Service.
 
-This is pre-alpha software - not production ready! NPMap.js will eventually take the place of the [NPMap JavaScript library](https://github.com/nationalparkservice/npmap).
+This is pre-alpha software that is nowhere close to being production ready! NPMap.js will eventually take the place of the [NPMap JavaScript library](https://github.com/nationalparkservice/npmap), but it isn't ready for that yet.
 
 ## Building
 
+The build process uses [node.js](http://nodejs.org/). After installing node.js:
+
     git clone https://github.com/nationalparkservice/npmap.git
+    cd npmap
     npm install
     make
 
-This project uses [browserify](https://github.com/substack/node-browserify) to combine dependencies and installs a local copy when you run `npm install`. `make` will build NPMap.js in `dist/`.
+The [browserify](https://github.com/substack/node-browserify) package is used to combine dependencies. It, along with other required packages, are installed locally when you run `npm install`. Running `make` will build NPMap.js, using [UglifyJS](https://github.com/mishoo/UglifyJS) to create minified versions, in https://github.com/mishoo/UglifyJS.
+
+## Hosted Version
+
+NPMap.js is also hosted on the National Park Service's content delivery network. Feel free to load the library directly from there. You can access the hosted versions at http://www.nps.gov/npmap/dev/tools/npmap.js/x.y.z/. You should replace "x.y.z" with the number of the version you want to access and append the name of the file you are loading to the end of the URL: `bootstrap.js`, `npmap.min.js`, `npmap.css`, or `npmap.ie.css`.
 
 ## Credits
 
@@ -22,15 +29,15 @@ Heavily inspired (cough cough) by [MapBox.js](https://github.com/mapbox/mapbox.j
 
 ## Docs
 
-None available yet, but will eventually live in `API.md`.
+Take a look at [API.md](https://github.com/nationalparkservice/npmap.js/blob/master/API.md).
 
 ## Examples
 
-Take a look in the `examples` directory. Again, not much there at the moment, but lots of examples coming soon.
+Take a look in the `examples` directory. Again, not much there at the moment, but more examples coming soon.
 
-Each example that is there has two versions: An "api" version and a "bootstrap" version. This reflects the different ways NPMap.js can be used:
+Each example has two versions: A `-api` version and a `-bootstrap` version. This reflects the two different ways NPMap.js can be used:
 
-1. If you have control of the web page you are embedding the map into and want to build your map with a traditional API, you should manually include `npmap.js`, along with the required CSS files, in your HTML and then build the map using the API.
-2. If you want a simplified way of building your map and/or don't have control over the web page you are embedding your map into, you should create a config object and then load `npmap-bootstrap.js` into your web page dynamically. The bootstrap script will then take care of loading all the JavaScript and CSS dependencies for you.
+1. Like most "traditional" mapping APIs. This works well if you are familiar with JavaScript *and* have access to include JavaScript and CSS files in the web page your map is going to be included in. These examples use `npmap.js` directly, and utilize the [API](https://github.com/nationalparkservice/npmap.js/blob/master/API.md) to build the map.
+2. Indirectly, through the use of `bootstrap.js`. This allows you to configure your map using the `NPMap.config` property. This is the better approach for non-technical users and/or those who don't have access to the web page the map is going to be included in.
 
 [![Build Status](https://travis-ci.org/nationalparkservice/npmap.js.png)](https://travis-ci.org/nationalparkservice/npmap.js)

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>'baseLayer' Presets (Bootstrap) | Examples | NPMap.js</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        bottom: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      var NPMap = {
+        config: {
+          baseLayers: [
+            'esri-gray',
+            'esri-grayLabels',
+            'esri-imagery',
+            'esri-imageryLabels',
+            'esri-nationalGeographic',
+            'esri-oceans',
+            'esri-streets',
+            'esri-topographic',
+            'mapbox-light',
+            'mapbox-satellite',
+            'mapbox-satelliteLabels',
+            'mapbox-streets',
+            'mapbox-terrain',
+            'stamen-terrain',
+            'stamen-toner',
+            'stamen-watercolor'
+          ],
+          div: 'map',
+          tools: [{
+            html: '<select>'
+          }]
+        }
+      };
+
+      (function() {
+        var s = document.createElement('script');
+        s.src = '../dist/bootstrap.js';
+        document.body.appendChild(s);
+      })();
+    </script>
+  </body>
+</html>

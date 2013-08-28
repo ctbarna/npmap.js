@@ -1,16 +1,17 @@
 {
   "author": "National Park Service",
   "name": "npmap.js",
-  "description": "NPMap JavaScript API",
+  "description": "NPMap JavaScript library.",
   "version": "0.0.0",
   "homepage": "http://www.nps.gov/npmap",
   "repository": {
     "type": "git",
-    "url": "git://github.com/nationalparkserviec/npmap.js.git"
+    "url": "git://github.com/nationalparkservice/npmap.js.git"
   },
   "main": "index.js",
   "dependencies": {
     "leaflet": "git://github.com/Leaflet/Leaflet.git#016f635616fa1df18744baa036cc0e67f94f6248",
+    "mapbox.js": "git://github.com/mapbox/mapbox.js.git#v1.3.1",
     "corslite": "0.0.4",
     "json3": "git://github.com/bestiejs/json3.git#v3.2.5a"
   },
@@ -18,8 +19,6 @@
     "test": "mocha-phantomjs test/index.html"
   },
   "devDependencies": {
-    "leaflet-hash": "git://github.com/mlevans/leaflet-hash.git#b039a3aa4e2492a5c7448075172ac26769e601d6",
-    "leaflet-fullscreen": "0.0.0",
     "uglify-js": "~2.2.5",
     "mocha": "~1.9",
     "expect.js": "~0.2.0",

@@ -1,10 +1,12 @@
+/* global L */
+
 'use strict';
 
 var Map = L.Map.extend({
-  includes: [],
-  options: {},
-  initialize: function(element, _, options) {
-    L.Map.prototype.initialize.call(this, element, options);
+  initialize: function(config) {
+    var element = typeof config.div === 'string' ? document.getElementById(config.div) : config.div;
+
+    L.Map.prototype.initialize.call(this, element, config);
 
     if (this.attributionControl) {
       this.attributionControl.setPrefix('');
@@ -12,6 +14,6 @@ var Map = L.Map.extend({
   }
 });
 
-module.exports = function(element, _, options) {
-  return new Map(element, _, options);
+module.exports = function(config) {
+  return new Map(config);
 };
