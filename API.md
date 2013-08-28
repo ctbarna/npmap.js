@@ -11,7 +11,6 @@ Create and configure a map.
 The first, and only, argument is required, and must a map config object with the following properties:
 
 - (Required) `div` (Object or String): Either an HTML element or the id of an HTML element to render the map into.
-- 
 
 You can also (optionally) provide it with any of the options supported by [`L.Map`](http://leafletjs.com/reference.html#map-options).
 
