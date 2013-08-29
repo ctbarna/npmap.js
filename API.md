@@ -41,6 +41,30 @@ You can also (optionally) provide it with any of the options supported by [`L.Ti
       url: 'http://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}/'
     });
 
+### L.npmap.layer.github(config: object)
+
+Add a GeoJson layer from GitHub to your map with `L.npmap.layer.github()`.
+
+*Arguments:*
+
+The first, and only, argument is required, and must be a layer config object with the following properties:
+
+- (Depends) `data` (Object | String): The GeoJSON data you'd like to add to the map. If this is a string, NPMap.js will parse it into an object for you. Required if your GitHub details (the other three "depends" properties) aren't provided.
+- (Depends) `path` (String): The path to your GitHub file. This **should not** include your GitHub organization/user name or the name of the repository. This is the path to the GeoJSON file in your GitHub repository: e.g. `fire/CA-STF-HV2F.geojson`.
+- (Depends) `repo` (String): The name of the repository that contains the data.
+- (Depends) `user` (String): The name of the organization or user that owns the repository.
+
+You can also (optionally) provide it with any of the options supported by [`L.GeoJSON`](http://leafletjs.com/reference.html#tilelayer).
+
+*Example:*
+
+    var layer = L.npmap.layer.github({
+      path: 'fire/CA-STF-HV2F.geojson',
+      repo: 'data',
+      type: 'github',
+      user: 'nationalparkservice'
+    });
+
 ### L.npmap.layer.mapbox(config: object)
 
 Add a layer from MapBox Hosting to your map with `L.npmap.layer.mapbox()`.
