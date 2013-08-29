@@ -30,7 +30,7 @@ dist/bootstrap.js: src/bootstrap.js
 				cp src/bootstrap.js dist/bootstrap.js
 
 dist/npmap-standalone.css: theme/nps.css
-				cp theme/nps.css > dist/npmap-standalone.css
+				cp theme/nps.css dist/npmap-standalone.css
 
 dist/npmap.css: node_modules/Leaflet/dist/leaflet.css theme/nps.css
 				cat node_modules/Leaflet/dist/leaflet.css theme/nps.css > dist/npmap.css
