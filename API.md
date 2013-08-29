@@ -12,7 +12,7 @@ The first, and only, argument is required, and must be a map config object with 
 
 - (Required) `div` (Object or String): Either an HTML element or the id of an HTML element to render the map into.
 
-You can also (optionally) provide it with any of the options supported by [`L.Map`](http://leafletjs.com/reference.html#map-options).
+You can also (optionally) provide any of the options supported by [`L.Map`](http://leafletjs.com/reference.html#map-options).
 
 *Example:*
 
@@ -33,7 +33,7 @@ The first, and only, argument is required, and must be a layer config object wit
 - (Optional) `icon` (String)
 - (Optional) `name` (String)
 
-You can also (optionally) provide it with any of the options supported by [`L.TileLayer`](http://leafletjs.com/reference.html#tilelayer).
+You can also (optionally) provide any of the options supported by [`L.TileLayer`](http://leafletjs.com/reference.html#tilelayer).
 
 *Example:*
 
@@ -54,7 +54,7 @@ The first, and only, argument is required, and must be a layer config object wit
 - (Depends) `repo` (String): The name of the repository that contains the data.
 - (Depends) `user` (String): The name of the organization or user that owns the repository.
 
-You can also (optionally) provide it with any of the options supported by [`L.GeoJSON`](http://leafletjs.com/reference.html#tilelayer).
+You can also (optionally) provide any of the options supported by [`L.GeoJSON`](http://leafletjs.com/reference.html#tilelayer).
 
 *Example:*
 
@@ -80,13 +80,27 @@ The first, and only, argument is required, and must be a layer config object wit
 - (Optional) `name` (String)
 - (Optional) `retinaVersion` (String): The id ('account.id') of the MapBox map or tileset designed specifically for retina devices.
 
-You can also (optionally) provide it with any of the options supported by [`L.TileLayer`](http://leafletjs.com/reference.html#tilelayer).
+You can also (optionally) provide any of the options supported by [`L.TileLayer`](http://leafletjs.com/reference.html#tilelayer).
 
 *Example:*
 
     var layer = L.npmap.layer.mapbox({
       id: 'examples.map-20v6611k'
     });
+
+## Controls (aka "Tools" in old NPMap-speak)
+
+### L.npmap.navigationControl(config: object)
+
+A map control that contains zoom in/out buttons, pan buttons, and a home button to take you back to the initial extent of the map.
+
+*Arguments:*
+
+You can (optionally) provide any of the options supported by [`L.Control`](http://leafletjs.com/reference.html#control).
+
+*Example:*
+
+    var control = L.npmap.control.navigation();
 
 ==================================================
 

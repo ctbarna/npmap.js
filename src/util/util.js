@@ -19,21 +19,6 @@ module.exports = {
       callback();
     }
   },
-  /**
-   * Extends an object with the properties of another object, preserving original properties if they exist. Not recursive!
-   * @param {Object} destination
-   * @param {Object} source
-   * @return {Object}
-   */
-  extend: function(destination, source) {
-    for (var prop in source) {
-      if (typeof destination[prop] === 'undefined') {
-        destination[prop] = source[prop];
-      }
-    }
-
-    return destination;
-  },
   log: function(_) {
     if (console && typeof console.error === 'function') {
       console.error(_);

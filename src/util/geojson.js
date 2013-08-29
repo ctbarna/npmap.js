@@ -2,8 +2,6 @@
 
 'use strict';
 
-var util = require('./util');
-
 module.exports = {
   /**
    * Converts an NPMap.js GeoJSON layer config object to a Leaflet GeoJSON layer config object.
@@ -11,19 +9,7 @@ module.exports = {
    * @return {Object} config
    */
   _toLeaflet: function(config) {
-    // TODO: Setup "shortcuts" for pre-defined styles, taken from Mamata's work on colors.
-    config.style = config.style || {};
-
-    util.extend(config.style, {
-      color: '#d9bd38',
-      fill: true,
-      fillColor: '#d9bd38',
-      fillOpacity: 0.2,
-      opacity: 0.8,
-      stroke: true,
-      weight: 5
-    });
-
+    // TODO: How can you move this into L.GeoJSON to make it the default?
     if (typeof config.onEachFeature !== 'function') {
       if (config.popup) {
         config.onEachFeature = function(feature, layer) {
@@ -49,14 +35,7 @@ module.exports = {
 
     if (typeof config.pointToLayer !== 'function') {
       config.pointToLayer = function(feature, latlng) {
-        return L.circleMarker(latlng, {
-          color: '#000',
-          fillColor: '#7a4810',
-          fillOpacity: 0.8,
-          opacity: 1,
-          radius: 8,
-          weight: 1
-        });
+        return L.circleMarker(latlng);
       };
     }
 

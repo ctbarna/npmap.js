@@ -93,7 +93,6 @@ NPMap.bootstrap = (function() {
         }
       })();
       config.zoom = typeof config.zoom === 'number' ? config.zoom : 4;
-      config.zoomControl = false;
       config.L = L.npmap.map(config);
 
       if (layers) {

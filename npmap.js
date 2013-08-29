@@ -5,6 +5,9 @@ window.L.Icon.Default.imagePath = 'http://www.nps.gov/npmap/npmap.js/' + require
 
 L.npmap = module.exports = {
   VERSION: require('./package.json').version,
+  control: {
+    navigation: require('./src/control/navigation')
+  },
   layer: {
     arcgisserver: require('./src/layer/arcgisserver'),
     github: require('./src/layer/github'),
@@ -13,7 +16,6 @@ L.npmap = module.exports = {
   },
   map: require('./src/map/map'),
   util: {
-    _: require('./src/util/util'),
-    geojson: require('./src/util/geojson')
+    _: require('./src/util/util')
   }
 };

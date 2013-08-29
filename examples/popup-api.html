@@ -32,15 +32,7 @@
           map = L.npmap.map({
             div: 'map'
           }),
-          // TODO: Make these configs the default for all popups.
-          popup = L.popup({
-            // Coming soon!
-            //autoPanPadding: L.bounds(L.point(45, 20), L.point(20, 20)),
-            autoPanPadding: L.point(45, 20),
-            //maxHeight: 5,
-            //maxWidth: 5,
-            offset: L.point(0, -8)
-          }).setContent('<div class="title">Hello World!</div><p>Duis pretium vulputate tortor et ullamcorper. Fusce quis quam mauris, ut posuere nunc. Vestibulum a magna a lorem pharetra malesuada. Morbi et lacus tincidunt velit sollicitudin elementum sed nec augue. Quisque et velit dui.</p><p>Duis pretium vulputate tortor et ullamcorper. Fusce quis quam mauris, ut posuere nunc. Vestibulum a magna a lorem pharetra malesuada. Morbi et lacus tincidunt velit sollicitudin elementum sed nec augue. Quisque et velit dui.</p>');
+          popup = L.popup().setContent('<div class="title">Hello World!</div><p>Duis pretium vulputate tortor et ullamcorper. Fusce quis quam mauris, ut posuere nunc. Vestibulum a magna a lorem pharetra malesuada. Morbi et lacus tincidunt velit sollicitudin elementum sed nec augue. Quisque et velit dui.</p><p>Duis pretium vulputate tortor et ullamcorper. Fusce quis quam mauris, ut posuere nunc. Vestibulum a magna a lorem pharetra malesuada. Morbi et lacus tincidunt velit sollicitudin elementum sed nec augue. Quisque et velit dui.</p>');
 
       layer.addTo(map);
       map.setView(L.latLng(39, -96), 4).on('click', function(e) {
