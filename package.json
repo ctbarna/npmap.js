@@ -1,21 +1,21 @@
 {
-  "author": "National Park Service",
-  "name": "npmap.js",
-  "description": "NPMap JavaScript library.",
-  "version": "0.0.0",
+  "name": "npmap",
+  "description": "A JavaScript library, built as a Leaflet plugin, for the National Park Service.",
   "homepage": "http://www.nps.gov/npmap",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/nationalparkservice/npmap.js.git"
+  "keywords": ["Map", "US Government", "Department of Interior","Leaflet"],
+  "version": "0.0.0",
+  "author": {
+    "name": "Nate Irwin",
+    "url": "http://www.nps.gov/npmap/team/nate-irwin.html"
   },
-  "main": "index.js",
+  "bugs": {
+    "email": "npmap@nps.gov",
+    "url": "https://github.com/nationalparkservice/npmap.js/issues"
+  },
   "dependencies": {
-    "leaflet": "git://github.com/Leaflet/Leaflet.git#016f635616fa1df18744baa036cc0e67f94f6248",
     "corslite": "0.0.4",
-    "json3": "git://github.com/bestiejs/json3.git#v3.2.5a"
-  },
-  "scripts": {
-    "test": "mocha-phantomjs test/index.html"
+    "json3": "git://github.com/bestiejs/json3.git#v3.2.5a",
+    "leaflet": "git://github.com/Leaflet/Leaflet.git#016f635616fa1df18744baa036cc0e67f94f6248"
   },
   "devDependencies": {
     "uglify-js": "~2.2.5",
@@ -24,10 +24,22 @@
     "sinon": "~1.7.3",
     "mocha-phantomjs": "~1.1.1",
     "happen": "~0.1.2",
-    "browserify": "~2.18.1"
+    "browserify": "~2.22.0"
   },
-  "optionalDependencies": {},
   "engines": {
     "node": "*"
+  },
+  "licenses": [{
+    "type": "MIT/Public Domain",
+    "url": "https://github.com/nationalparkservice/npmap.js/blob/master/LICENSE.md"
+  }],
+  "main": "main.js",
+  "optionalDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nationalparkservice/npmap.js.git"
+  },
+  "scripts": {
+    "test": "mocha-phantomjs test/index.html"
   }
 }
