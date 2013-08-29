@@ -2,19 +2,26 @@
 
 'use strict';
 
-var util = require('../util');
+var util = require('../util/util');
 
 var ArcGisServerLayer = L.TileLayer.extend({
   // The default options to initialize the layer with.
   options: {
-    errorTileUrl: null
+    // TODO: Does this work?
+    errorTileUrl: L.Util.emptyImageUrl
   },
+  /**
+   * Removes the layer's attribution string from the attribution control.
+   */
   _removeAttribution: function() {
     if (this.options.attribution) {
       this._map.attributionControl.removeAttribution(this.options.attribution);
       this.options.attribution = null;
     }
   },
+  /** 
+   * Updates the layer's attribution string from the "dynamic attribution" object.
+   */
   _updateAttribution: function() {
     var map = this._map,
         bounds = map.getBounds(),
@@ -44,7 +51,13 @@ var ArcGisServerLayer = L.TileLayer.extend({
       map.attributionControl.addAttribution(this.options.attribution);
     }
   },
+  /**
+   * Initializes the layer. Called by the layer constructor.
+   * @param {Object} config
+   * @return {Object}
+   */
   initialize: function(config) {
+    // TODO: Handle tiled and dynamic by building the URL in the library.
     util.strict(config.url, 'string');
     L.TileLayer.prototype.initialize.call(this, config.url, config);
 
@@ -60,6 +73,10 @@ var ArcGisServerLayer = L.TileLayer.extend({
 
     return this;
   },
+  /**
+   * Called when the layer is removed from the map.
+   * @param {Object} map
+   */
   onRemove: function(map) {
     if (this._dynamicAttributionData) {
       this._removeAttribution();
