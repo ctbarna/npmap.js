@@ -11,7 +11,6 @@
   "main": "index.js",
   "dependencies": {
     "leaflet": "git://github.com/Leaflet/Leaflet.git#016f635616fa1df18744baa036cc0e67f94f6248",
-    "mapbox.js": "git://github.com/mapbox/mapbox.js.git#v1.3.1",
     "corslite": "0.0.4",
     "json3": "git://github.com/bestiejs/json3.git#v3.2.5a"
   },
