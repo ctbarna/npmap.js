@@ -8,7 +8,7 @@ Create and configure a map.
 
 *Arguments:*
 
-The first, and only, argument is required, and must a map config object with the following properties:
+The first, and only, argument is required, and must be a map config object with the following properties:
 
 - (Required) `div` (Object or String): Either an HTML element or the id of an HTML element to render the map into.
 
@@ -43,7 +43,7 @@ You can also (optionally) provide it with any of the options supported by [`L.Ti
 
 ### L.npmap.layer.mapbox(config: object)
 
-Add a layer from MapBox hosting, with interactivity, to your map with `L.npmap.layer.mapbox()`.
+Add a layer from MapBox Hosting to your map with `L.npmap.layer.mapbox()`.
 
 *Arguments:*
 
@@ -64,18 +64,9 @@ You can also (optionally) provide it with any of the options supported by [`L.Ti
       id: 'examples.map-20v6611k'
     });
 
+==================================================
 
-
-
-
-
-
-
-
-
-
-
-
+Docs under construction:
 
 ### Layer
 
