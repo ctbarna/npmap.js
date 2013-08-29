@@ -1,4 +1,6 @@
-describe('L.mapbox.map', function() {
+/* global afterEach, beforeEach, describe, expect, it, L, sinon */
+
+describe('L.npmap.map', function() {
   var element,
       server;
 
@@ -11,10 +13,24 @@ describe('L.mapbox.map', function() {
   });
 
   it('passes options to constructor when called without new', function() {
-      var map = L.npmap.map(element, {
+      var map = L.npmap.map({
+        div: element,
         zoomControl: false
       });
 
       expect(map.options.zoomControl).to.equal(false);
+  });
+
+  describe('constructor', function() {
+
+  });
+  describe('layers', function() {
+
+  });
+  describe('modules', function() {
+
+  });
+  describe('tools', function() {
+
   });
 });
