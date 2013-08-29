@@ -85,3 +85,8 @@
   font-size: 13px;
   font-weight: bold;
 }
+.leaflet-zoom-box {
+  border: 3px solid #d29700;
+  background: white;
+  opacity: 0.5;
+}
