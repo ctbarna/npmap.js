@@ -7,9 +7,13 @@ L.npmap = module.exports = {
   VERSION: require('./package.json').version,
   layer: {
     arcgisserver: require('./src/layer/arcgisserver'),
+    github: require('./src/layer/github'),
     mapbox: require('./src/layer/mapbox'),
     tiled: require('./src/layer/tiled')
   },
   map: require('./src/map/map'),
-  util: require('./src/util')
+  util: {
+    _: require('./src/util/util'),
+    geojson: require('./src/util/geojson')
+  }
 };

@@ -8,10 +8,6 @@ var NavigationControl = L.Control.extend({
   options: {
     position: 'topleft'
   },
-
-  initialize: function(_) {
-
-  },
   onAdd: function(map) {
     var container = L.DomUtil.create('div', 'leaflet-control-npmap-navigation leaflet-bar leafet-control');
 
@@ -20,6 +16,9 @@ var NavigationControl = L.Control.extend({
     this._map = map;
 
     return container;
+  },
+  onRemove: function(map) {
+
   }
 });
 

@@ -40,8 +40,8 @@ dist/npmap.css: node_modules/Leaflet/dist/leaflet.css theme/nps.css
 dist/npmap.ie.css: node_modules/Leaflet/dist/leaflet.ie.css
 				cp node_modules/Leaflet/dist/leaflet.ie.css dist/npmap.ie.css
 
-dist/npmap.js: node_modules/.install dist $(shell $(BROWSERIFY) --list index.js)
-				$(BROWSERIFY) --debug index.js > $@
+dist/npmap.js: node_modules/.install dist $(shell $(BROWSERIFY) --list main.js)
+				$(BROWSERIFY) --debug main.js > $@
 
 dist/npmap.min.js: dist/npmap.js
 				$(UGLIFY) $< -c -m -o $@

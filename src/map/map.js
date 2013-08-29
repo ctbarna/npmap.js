@@ -11,6 +11,8 @@ var Map = L.Map.extend({
     if (this.attributionControl) {
       this.attributionControl.setPrefix('');
     }
+
+    return this;
   }
 });
 

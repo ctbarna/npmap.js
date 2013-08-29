@@ -36,6 +36,13 @@ NPMap.bootstrap = (function() {
         throw new Error('The div config must be a string!');
       }
 
+      var layers;
+
+      if (config.layers) {
+        layers = config.layers;
+        delete config.layers;
+      }
+
       config.baseLayers = (function() {
         var visible = false;
 
@@ -43,11 +50,13 @@ NPMap.bootstrap = (function() {
           for (var i = 0; i < config.baseLayers.length; i++) {
             var baseLayer = config.baseLayers[i];
 
+            /*
             if (typeof baseLayer === 'string') {
               var name = baseLayer.split('-');
 
               baseLayer = config.baseLayers[i] = NPMap.bootstrap.presets.baseLayers[name[0]][name[1]];
             }
+            */
 
             baseLayer.zIndex = 0;
 
@@ -87,6 +96,10 @@ NPMap.bootstrap = (function() {
       config.zoomControl = false;
       config.L = L.npmap.map(config);
 
+      if (layers) {
+        config.layers = layers;
+      }
+
       for (var i = 0; i < config.baseLayers.length; i++) {
         var baseLayer = config.baseLayers[i];
 
@@ -96,7 +109,7 @@ NPMap.bootstrap = (function() {
         }
       }
 
-      if (typeof config.layers === 'array') {
+      if (L.Util.isArray(config.layers) && config.layers.length) {
         for (var j = 0; j < config.layers.length; j++) {
           var layer = config.layers[j];
 
@@ -117,10 +130,10 @@ NPMap.bootstrap = (function() {
   var script = document.createElement('script');
 
   function callback() {
-    L.npmap.util.appendCssFile(NPMap.path + 'npmap.css');
-    if (L.Browser.ie6 || L.Browser.ie7) L.npmap.util.appendCssFile(NPMap.path + 'npmap.ie.css');
-    L.npmap.util.request(NPMap.path + 'presets/baseLayers.json', function(error, response) {
-      NPMap.bootstrap.presets.baseLayers = response;
+    L.npmap.util._.appendCssFile(NPMap.path + 'npmap.css');
+    if (L.Browser.ie6 || L.Browser.ie7) L.npmap.util._.appendCssFile(NPMap.path + 'npmap.ie.css');
+    //L.npmap.util._.request(NPMap.path + 'presets/baseLayers.json', function(error, response) {
+      //NPMap.bootstrap.presets.baseLayers = response;
 
       if (typeof NPMap.config === 'array') {
         for (var i = 0; i < NPMap.config.length; i++) {
@@ -129,7 +142,7 @@ NPMap.bootstrap = (function() {
       } else {
         NPMap.bootstrap.buildMap(NPMap.config);
       }
-    });
+    //});
   }
 
   script.src = NPMap.path + 'npmap.js';
