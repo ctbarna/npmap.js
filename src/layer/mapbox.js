@@ -2,12 +2,9 @@
 
 'use strict';
 
-var //m = require('mapbox.js').tileLayer,
-    util = require('../util');
+var util = require('../util');
 
-//console.log(m);
-
-var MapBoxLayerTest = L.TileLayer.extend({
+var MapBoxLayer = L.TileLayer.extend({
   options: {
     //errorTileUrl: '',
     format: 'png',
@@ -123,5 +120,5 @@ var MapBoxLayerTest = L.TileLayer.extend({
 });
 
 module.exports = function(config) {
-  return new MapBoxLayerTest(config);
+  return new MapBoxLayer(config);
 };
