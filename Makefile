@@ -21,9 +21,11 @@ dist:
 				mkdir -p dist
 
 dist/images:
+				mkdir -p dist/images
 				cp -r node_modules/Leaflet/dist/images dist/images
 
 dist/presets:
+				mkdir -p dist/presets
 				cp -r src/presets dist/presets
 
 dist/bootstrap.js: src/bootstrap.js
