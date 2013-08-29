@@ -1,0 +1,87 @@
+.leaflet-container {
+  color: #464646;
+  font-family: "Arial", Helvetica, sans-serif;
+}
+.leaflet-popup-content-wrapper {
+     -moz-background-clip: padding;
+  -webkit-background-clip: padding-box;
+          background-clip: padding-box;
+  -webkit-border-radius: 0;
+     -moz-border-radius: 0;
+      -ms-border-radius: 0;
+       -o-border-radius: 0;
+          border-radius: 0;
+     -moz-box-shadow: 0 1px 5px rgba(0,0,0,.18);
+  -webkit-box-shadow: 0 1px 5px rgba(0,0,0,.18);
+          box-shadow: 0 1px 5px rgba(0,0,0,.18);
+  background-color: #f9f7f1;
+  border: 1px solid #bdbbb1;
+}
+.leaflet-popup-tip-container {
+  height: 25px;
+  margin: -1px auto;
+  padding-left: 21px;
+  width: 25px;
+}
+.leaflet-popup-tip {
+  -webkit-box-shadow: none;
+     -moz-box-shadow: none;
+      -ms-box-shadow: none;
+       -o-box-shadow: none;
+          box-shadow: none;
+  -webkit-transform: none;
+     -moz-transform: none;
+      -ms-transform: none;
+       -o-transform: none;
+          transform: none;
+  background-color: transparent;
+  border-left: solid 1px #bdbbb1;
+  height: 24px;
+  margin: 0 auto;
+  padding: 0;
+  padding-bottom: 1px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+.leaflet-popup-tip:after {
+  -webkit-box-shadow: 0 1px 5px rgba(0,0,0,.18);
+     -moz-box-shadow: 0 1px 5px rgba(0,0,0,.18);
+      -ms-box-shadow: 0 1px 5px rgba(0,0,0,.18);
+       -o-box-shadow: 0 1px 5px rgba(0,0,0,.18);
+          box-shadow: 0 1px 5px rgba(0,0,0,.18);
+   -webkit-transform: rotate(45deg);
+      -moz-transform: rotate(45deg);
+       -ms-transform: rotate(45deg);
+        -o-transform: rotate(45deg);
+           transform: rotate(45deg);
+   background-color: #f9f7f1;
+   border: 1px solid #bdbbb1;
+   content: "";
+   height: 50px;
+   left: -15px;
+   position: absolute;
+   top: -25px;
+   width: 30px;
+}
+.leaflet-container a.leaflet-popup-close-button {
+  background: #d29700;
+  border-radius: 90%;
+  color: #fff;
+  height: 21px;
+  line-height: 19px;
+  padding: 0;
+  position: absolute;
+  right: -9px;
+  text-align: center;
+  top: -10px;
+  width: 21px;
+}
+.leaflet-container a.leaflet-popup-close-button:focus, .leaflet-container a.leaflet-popup-close-button:hover {
+  background-color: #8f8f7d;
+  color: #fff;
+}
+.leaflet-popup-content .title {
+  font-size: 13px;
+  font-weight: bold;
+}
