@@ -22,23 +22,20 @@ var NavigationControl = L.Control.extend({
     map.off('zoomend zoomlevelschange', this._updateDisabled, this);
   },
   _createButton: function(html, title, clsName, container, handler, context) {
-    var link = L.DomUtil.create('a', clsName, container),
+    var button = L.DomUtil.create('button', clsName, container),
         stop = L.DomEvent.stopPropagation;
 
-    link.href = '#';
-    link.innerHTML = html;
-    link.title = title;
+    button.innerHTML = html;
+    button.title = title;
 
     L.DomEvent
-      .on(link, 'click', stop)
-      .on(link, 'mousedown', stop)
-      .on(link, 'dblclick', stop)
-      .on(link, 'click', L.DomEvent.preventDefault)
-      .on(link, 'click', handler, context);
+      .on(button, 'click', stop)
+      .on(button, 'mousedown', stop)
+      .on(button, 'dblclick', stop)
+      .on(button, 'click', L.DomEvent.preventDefault)
+      .on(button, 'click', handler, context);
 
-    console.log(link);
-
-    return link;
+    return button;
   },
   _updateDisabled: function() {
     var clsName = 'leaflet-disabled',

@@ -1,6 +1,6 @@
 /* global L */
 
-window.L = require('Leaflet/dist/leaflet-src');
+window.L = require('leaflet/dist/leaflet-src');
 window.L.Icon.Default.imagePath = 'http://www.nps.gov/npmap/npmap.js/' + require('./package.json').version + '/images';
 
 L.npmap = module.exports = {
@@ -16,6 +16,7 @@ L.npmap = module.exports = {
   },
   map: require('./src/map/map'),
   util: {
-    _: require('./src/util/util')
+    _: require('./src/util/util'),
+    geojson: require('./src/util/geojson')
   }
 };

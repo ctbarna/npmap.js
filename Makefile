@@ -22,7 +22,7 @@ dist:
 
 dist/images:
 				mkdir -p dist/images
-				cp -r node_modules/Leaflet/dist/images dist/images
+				cp -r node_modules/leaflet/dist/images dist/images
 
 dist/presets:
 				mkdir -p dist/presets
@@ -34,11 +34,11 @@ dist/bootstrap.js: src/bootstrap.js
 dist/npmap-standalone.css: theme/nps.css
 				cp theme/nps.css dist/npmap-standalone.css
 
-dist/npmap.css: node_modules/Leaflet/dist/leaflet.css theme/nps.css
-				cat node_modules/Leaflet/dist/leaflet.css theme/nps.css > dist/npmap.css
+dist/npmap.css: node_modules/leaflet/dist/leaflet.css theme/nps.css
+				cat node_modules/leaflet/dist/leaflet.css theme/nps.css > dist/npmap.css
 
-dist/npmap.ie.css: node_modules/Leaflet/dist/leaflet.ie.css
-				cp node_modules/Leaflet/dist/leaflet.ie.css dist/npmap.ie.css
+dist/npmap.ie.css: node_modules/leaflet/dist/leaflet.ie.css
+				cp node_modules/leaflet/dist/leaflet.ie.css dist/npmap.ie.css
 
 dist/npmap.js: node_modules/.install dist $(shell $(BROWSERIFY) --list main.js)
 				$(BROWSERIFY) --debug main.js > $@

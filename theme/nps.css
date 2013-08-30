@@ -25,8 +25,12 @@
   background-color: #f9f7f1;
   border: 1px solid #bdbbb1;
   pointer-events: auto;
+  overflow: auto;
   text-align: left;
 }
+  .leaflet-popup-content-wrapper .npmap-overflow {
+    overflow: auto;
+  }
 .leaflet-popup-pane {
   pointer-events: none;
 }
@@ -99,6 +103,7 @@
 .leaflet-popup-content .title {
   font-size: 13px;
   font-weight: bold;
+  margin-bottom: 8px;
 }
 .leaflet-zoom-box {
   border: 3px solid #d29700;
