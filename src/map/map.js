@@ -49,7 +49,7 @@ var Map = L.Map.extend({
   L.Polyline.mergeOptions(style);
   L.Popup.mergeOptions({
     autoPanPadding: L.point(45, 20), // autoPanPadding: L.bounds(L.point(45, 20), L.point(20, 20))
-    offset: L.point(0, -8)
+    offset: L.point(0, -2)
   });
 })();
 
