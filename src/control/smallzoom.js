@@ -2,19 +2,20 @@
 
 'use strict';
 
-var NavigationControl = L.Control.extend({
+var SmallZoomControl = L.Control.extend({
   options: {
     position: 'topleft'
   },
   onAdd: function(map) {
-    var cls = 'npmap-control-navigation',
-        container = L.DomUtil.create('div', 'leaflet-control ' + cls);
+    var clsName = 'leaflet-control-zoom',
+        container = L.DomUtil.create('div', clsName + ' leaflet-bar');
 
     this._map = map;
-    this._zoomInButton = this._createButton('+', 'Zoom in', cls + '-in', container, this._zoomIn, this);
-    this._zoomOutButton = this._createButton('-', 'Zoom out', cls + '-out', container, this._zoomOut, this);
+    this._zoomInButton = this._createButton('+', 'Zoom in', clsName + '-in', container, this._zoomIn, this);
+    this._zoomOutButton = this._createButton('-', 'Zoom out', clsName + '-out', container, this._zoomOut, this);
 
     map.on('zoomend zoomlevelschange', this._updateDisabled, this);
+    this._updateDisabled();
 
     return container;
   },
@@ -22,20 +23,21 @@ var NavigationControl = L.Control.extend({
     map.off('zoomend zoomlevelschange', this._updateDisabled, this);
   },
   _createButton: function(html, title, clsName, container, handler, context) {
-    var button = L.DomUtil.create('button', clsName, container),
+    var link = L.DomUtil.create('a', clsName, container),
         stop = L.DomEvent.stopPropagation;
 
-    button.innerHTML = html;
-    button.title = title;
+    link.href = '#';
+    link.innerHTML = html;
+    link.title = title;
 
     L.DomEvent
-      .on(button, 'click', stop)
-      .on(button, 'mousedown', stop)
-      .on(button, 'dblclick', stop)
-      .on(button, 'click', L.DomEvent.preventDefault)
-      .on(button, 'click', handler, context);
+      .on(link, 'click', stop)
+      .on(link, 'mousedown', stop)
+      .on(link, 'dblclick', stop)
+      .on(link, 'click', L.DomEvent.preventDefault)
+      .on(link, 'click', handler, context);
 
-    return button;
+    return link;
   },
   _updateDisabled: function() {
     var clsName = 'leaflet-disabled',
@@ -52,23 +54,23 @@ var NavigationControl = L.Control.extend({
     }
   },
   _zoomIn: function(e) {
-
+    this._map.zoomIn(e.shiftKey ? 3 : 1);
   },
   _zoomOut: function(e) {
-
+    this._map.zoomOut(e.shiftKey ? 3 : 1);
   }
 });
 
 L.Map.mergeOptions({
-  navigationControl: true
+  smallzoomControl: true
 });
 L.Map.addInitHook(function() {
-  if (this.options.navigationControl) {
-    this.zoomControl = new L.npmap.control.navigation();
-    this.addControl(this.zoomControl);
+  if (this.options.smallzoomControl) {
+    this.smallzoomControl = new L.npmap.control.smallzoom();
+    this.addControl(this.smallzoomControl);
   }
 });
 
 module.exports = function(options) {
-  return new NavigationControl(options);
+  return new SmallZoomControl(options);
 };

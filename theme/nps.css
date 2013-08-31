@@ -128,13 +128,45 @@
 .leaflet-popup-content tr:last-child td, .leaflet-popup-content tr:last-child th {
   border-bottom: none;
 }
-.leaflet-container .leaflet-control-attribution {
+.leaflet-control {
   -webkit-box-shadow: 0 0 15px #888;
      -moz-box-shadow: 0 0 15px #888;
       -ms-box-shadow: 0 0 15px #888;
        -o-box-shadow: 0 0 15px #888;
           box-shadow: 0 0 15px #888;
+}
+.leaflet-control-attribution {
   line-height: 13px;
   padding: 3px 5px;
   text-align: right;
+}
+.leaflet-bar a, .leaflet-bar a:hover {
+  -webkit-text-shadow: 0px 2px 2px #757571;
+     -moz-text-shadow: 0px 2px 2px #757571;
+      -ms-text-shadow: 0px 2px 2px #757571;
+       -o-text-shadow: 0px 2px 2px #757571;
+          text-shadow: 0px 2px 2px #757571;
+  background-color: #74746a;
+  border: 1px solid #1a2423;
+  color: #fff;
+  text-decoration: none;
+}
+.leaflet-bar a:hover {
+  background-color: #626159;
+}
+.leaflet-bar a:active {
+  background-color: #53534a;
+}
+.leaflet-bar a.leaflet-disabled, .leaflet-bar a.leaflet-disabled:hover {
+  -webkit-text-shadow: none;
+     -moz-text-shadow: none;
+      -ms-text-shadow: none;
+       -o-text-shadow: none;
+          text-shadow: none;
+  background-color: #4b4B44;
+  color: #bbb;
+}
+.leaflet-bar a:last-child {
+  border-bottom: solid 1px #1a2423;
+  border-top: none;
 }

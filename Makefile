@@ -47,7 +47,7 @@ dist/npmap.min.js: dist/npmap.js
 				$(UGLIFY) $< -c -m -o $@
 
 dist/npmap-standalone.js: node_modules/.install dist $(shell $(BROWSERIFY) --list npmap.js)
-				$(BROWSERIFY) --debug npmap.js > $@
+				$(BROWSERIFY) --debug npmap.js  > $@
 
 dist/npmap-standalone.min.js: dist/npmap-standalone.js
 				$(UGLIFY) $< -c -m -o $@

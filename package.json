@@ -15,8 +15,7 @@
   "dependencies": {
     "corslite": "0.0.4",
     "json3": "3.2.5",
-    "leaflet": "0.6.4",
-    "topojson": "1.2.3"
+    "leaflet": "0.6.4"
   },
   "devDependencies": {
     "uglify-js": "~2.2.5",
