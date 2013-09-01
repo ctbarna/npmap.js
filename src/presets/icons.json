@@ -1,0 +1,22 @@
+/*
+  From http://leafletjs.com/reference.html#icon:
+    - iconUrl
+    - iconRetinaUrl
+    - iconSize
+    - iconAnchor
+    - shadowUrl
+    - shadowRetinaUrl
+    - shadowSize
+    - shadowAnchor
+    - popupAnchor
+    - className (will this allow you to use sprites? Look at the Leaflet font icon plugin)
+*/
+
+
+
+{
+  "camping": {
+    "base64": "",
+    "url": ""
+  }
+}

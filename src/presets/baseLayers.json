@@ -1,6 +1,5 @@
 {
-  "bing": {},
-  "esri2": {
+  "esri": {
     "gray": {
       "attribution": "Copyright: &copy;2013 Esri, DeLorme, NAVTEQ",
       "maxZoom": 16,
@@ -61,9 +60,6 @@
       "url": "http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}/"
     }
   },
-  "google": {
-
-  },
   "mapbox": {
     "light": {
       "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a> | &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
@@ -100,9 +96,6 @@
       "name": "MapBox Terrain",
       "type": "mapbox"
     }
-  },
-  "nps": {
-
   },
   "openstreetmap": {
     "attribution": "&copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
