@@ -29,7 +29,9 @@
             id: 'nps.map-lj6szvbq',
             visible: true
           }),
-          map = L.npmap.map('map');
+          map = L.npmap.map({
+            div: 'map'
+          });
 
       layer.addTo(map);
       map.setView(L.latLng(39, -96), 4);

@@ -6,6 +6,7 @@ window.L.Icon.Default.imagePath = 'http://www.nps.gov/npmap/npmap.js/' + require
 L.npmap = module.exports = {
   VERSION: require('./package.json').version,
   control: {
+    overview: require('./src/control/overview'),
     smallzoom: require('./src/control/smallzoom')
   },
   layer: {

@@ -9,7 +9,6 @@ module.exports = {
    * @return {Object} config
    */
   _toLeaflet: function(config) {
-    // TODO: How can you move this into L.GeoJSON to make it the default?
     // TODO: This isn't really working. Clicks are turned off, but mouseover still changes to pointer. GitHub issue: https://github.com/Leaflet/Leaflet/pull/1107.
     if (typeof config.clickable === 'undefined' || config.clickable === true) {
       if (typeof config.onEachFeature !== 'function') {
