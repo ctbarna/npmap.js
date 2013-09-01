@@ -2,12 +2,16 @@
 
 'use strict';
 
+var baseLayerPresets = require('../presets/baseLayers.json');
+var colorPresets = require('../presets/colors.json');
 var Map = L.Map.extend({
   options: {
     zoomControl: false
   },
   initialize: function(config) {
     var element = typeof config.div === 'string' ? document.getElementById(config.div) : config.div;
+
+    console.log(config);
 
     L.Map.prototype.initialize.call(this, element, config);
 
@@ -16,6 +20,42 @@ var Map = L.Map.extend({
     }
 
     return this;
+  },
+  /**
+   * Converts an NPMap.js map config object to a Leaflet map config object.
+   * @param {Object} config
+   * @return {Object} config
+   */
+  _toLeaflet: function(config) {
+    // baseLayers (presets available in baseLayerPresets)
+    // center
+    // layer: Differentiate between layers already created with L and layers that still need to be created with L.npmap.
+    // modules
+    // tools
+    // zoom (done)
+
+
+
+    // Move bootstrap.js functionality into here.
+    // Still use bootstrap.js for loading indicator...
+
+
+
+
+
+
+
+    if (L.isArray(config.layers) && config.layers.length) {
+      for (var i = 0; i < config.layers.length; i++) {
+        var layer = config.layers[i];
+
+        if (typeof layer.L === 'object') {
+          // This is a NPMap layer config object.
+          // Create layer using L.npmap.whatever()
+          // Then set config.layers[i] = newLayerObj;
+        }
+      }
+    }
   }
 });
 
@@ -48,7 +88,7 @@ var Map = L.Map.extend({
   L.Polygon.mergeOptions(style);
   L.Polyline.mergeOptions(style);
   L.Popup.mergeOptions({
-    autoPanPadding: L.point(45, 20), // autoPanPadding: L.bounds(L.point(45, 20), L.point(20, 20))
+    autoPanPadding: L.point(48, 20), // autoPanPadding: L.bounds(L.point(45, 20), L.point(20, 20))
     offset: L.point(0, -2)
   });
 })();
