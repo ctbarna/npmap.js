@@ -3,7 +3,6 @@ BROWSERIFY = node_modules/.bin/browserify
 
 all: \
 				dist/images \
-				dist/presets \
 				dist/bootstrap.js \
 				dist/npmap-standalone.css \
 				dist/npmap.css \
@@ -23,6 +22,7 @@ dist:
 dist/images:
 				mkdir -p dist/images
 				cp -r node_modules/leaflet/dist/images dist/images
+				cp -r theme/images dist/images
 
 dist/bootstrap.js: src/bootstrap.js
 				cp src/bootstrap.js dist/bootstrap.js
