@@ -15,10 +15,10 @@ describe('L.npmap.map', function() {
   it('passes options to constructor when called without new', function() {
       var map = L.npmap.map({
         div: element,
-        zoomControl: false
+        smallzoomControl: false
       });
 
-      expect(map.options.zoomControl).to.equal(false);
+      expect(map.options.smallzoomControl).to.equal(false);
   });
 
   describe('constructor', function() {
