@@ -7,7 +7,6 @@ var util = require('../util/util');
 var ArcGisServerLayer = L.TileLayer.extend({
   // The default options to initialize the layer with.
   options: {
-    // TODO: Does this work?
     errorTileUrl: L.Util.emptyImageUrl
   },
   /**

@@ -6,7 +6,7 @@ var util = require('../util/util');
 
 var TiledLayer = L.TileLayer.extend({
   options: {
-    errorTileUrl: ''
+    errorTileUrl: L.Util.emptyImageUrl
   },
   initialize: function(config) {
     util.strict(config.url, 'string');

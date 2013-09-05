@@ -14,7 +14,7 @@ if (typeof NPMap.config !== 'array' && typeof NPMap.config !== 'object') {
   var script = document.createElement('script'),
       scripts = document.getElementsByTagName('script');
 
-  function buildMap(config) {
+  function build(config) {
     config.L = L.npmap.map(config);
   }
   function callback() {
@@ -26,10 +26,10 @@ if (typeof NPMap.config !== 'array' && typeof NPMap.config !== 'object') {
 
     if (typeof NPMap.config === 'array') {
       for (var i = 0; i < NPMap.config.length; i++) {
-        buildMap(NPMap.config[i]);
+        build(NPMap.config[i]);
       }
     } else {
-      buildMap(NPMap.config);
+      build(NPMap.config);
     }
   }
 

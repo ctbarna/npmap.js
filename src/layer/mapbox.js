@@ -6,7 +6,7 @@ var util = require('../util/util');
 
 var MapBoxLayer = L.TileLayer.extend({
   options: {
-    //errorTileUrl: '',
+    errorTileUrl: L.Util.emptyImageUrl,
     format: 'png',
     subdomains: [
       'a',

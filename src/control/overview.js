@@ -46,8 +46,6 @@ var OverviewControl = L.Control.extend({
     L.DomEvent.disableClickPropagation(this._container);
     L.DomEvent.on(this._container, 'mousewheel', L.DomEvent.stopPropagation);
 
-    console.log(this._layer);
-
     this._miniMap = new L.npmap.map({
       attributionControl: false,
       autoToggleDisplay: this.options.autoToggleDisplay,

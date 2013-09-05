@@ -2,10 +2,11 @@
 
 'use strict';
 
-var baseLayerPresets = require('../presets/baseLayers.json');
-var colorPresets = require('../presets/colors.json');
-var iconPresets = require('../presets/icons.json');
-var layerPresets = require('../presets/layers.json');
+var baseLayerPresets = require('../presets/baseLayers.json'),
+    colorPresets = require('../presets/colors.json'),
+    iconPresets = require('../presets/icons.json'),
+    layerPresets = require('../presets/layers.json');
+
 var Map = L.Map.extend({
   options: {
     zoomControl: false
