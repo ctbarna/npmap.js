@@ -43,7 +43,7 @@ You can also (optionally) provide any of the options supported by [`L.TileLayer`
 
 ### L.npmap.layer.github(config: object)
 
-Add a GeoJson layer from GitHub to your map with `L.npmap.layer.github()`.
+Add a GeoJSON/TopoJSON layer from GitHub to your map with `L.npmap.layer.github()`.
 
 *Arguments:*
 

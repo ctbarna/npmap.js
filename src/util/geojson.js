@@ -1,8 +1,23 @@
-/* global Base64, L */
+/* global L */
 
 'use strict';
 
+var topojson = require('./topojson');
+
 module.exports = {
+  /**
+   * Override L.GeoJSON.addData to support TopoJSON format.
+   * @param {Object} feature
+   */
+  addData: function(feature) {
+    if (/\btopology\b/i.test(feature.type)) {
+      for (var prop in feature.objects) {
+        L.GeoJSON.prototype.addData.call(this, topojson.feature(feature, feature.objects[prop]));
+      }
+    } else {
+      L.GeoJSON.prototype.addData.call(this, feature);
+    }
+  },
   /**
    * Converts an NPMap.js GeoJSON layer config object to a Leaflet GeoJSON layer config object.
    * @param {Object} config

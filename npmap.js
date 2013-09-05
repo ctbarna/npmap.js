@@ -18,6 +18,7 @@ L.npmap = module.exports = {
   map: require('./src/map/map'),
   util: {
     _: require('./src/util/util'),
-    geojson: require('./src/util/geojson')
+    geojson: require('./src/util/geojson'),
+    topojson: require('./src/util/topojson')
   }
 };

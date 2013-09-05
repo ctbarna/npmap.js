@@ -1,4 +1,4 @@
-/* global Base64, L */
+/* global L */
 
 'use strict';
 
@@ -8,7 +8,6 @@ var GitHubLayer = L.GeoJSON.extend({
   includes: [
     require('../util/geojson')
   ],
-  options: {},
   initialize: function(config) {
     config = this._toLeaflet(config);
 
@@ -33,4 +32,3 @@ var GitHubLayer = L.GeoJSON.extend({
 module.exports = function(config) {
   return new GitHubLayer(config);
 };
-
