@@ -29,7 +29,7 @@ Heavily inspired (cough cough) by [MapBox.js](https://github.com/mapbox/mapbox.j
 
 ## Docs
 
-Take a look at [API.md](https://github.com/nationalparkservice/npmap.js/blob/master/API.md). Ignore the random notes at the bottom; they will be cleaned up and turned into complete soon.
+Take a look at [API.md](https://github.com/nationalparkservice/npmap.js/blob/master/API.md). Ignore the random notes at the bottom; they will be cleaned up and turned into complete thoughts soon.
 
 ## Examples
 

@@ -4,19 +4,23 @@
 
 var baseLayerPresets = require('../presets/baseLayers.json');
 var colorPresets = require('../presets/colors.json');
+var iconPresets = require('../presets/icons.json');
+var layerPresets = require('../presets/layers.json');
 var Map = L.Map.extend({
   options: {
     zoomControl: false
   },
   initialize: function(config) {
-    var element = typeof config.div === 'string' ? document.getElementById(config.div) : config.div;
+    config = this._toLeaflet(config);
 
-    console.log(config);
-
-    L.Map.prototype.initialize.call(this, element, config);
+    L.Map.prototype.initialize.call(this, config.div, config);
 
     if (this.attributionControl) {
       this.attributionControl.setPrefix('');
+    }
+
+    if (!this._loaded) {
+      this.setView(config.center, config.zoom);
     }
 
     return this;
@@ -27,35 +31,95 @@ var Map = L.Map.extend({
    * @return {Object} config
    */
   _toLeaflet: function(config) {
-    // baseLayers (presets available in baseLayerPresets)
-    // center
-    // layer: Differentiate between layers already created with L and layers that still need to be created with L.npmap.
-    // modules
-    // tools
-    // zoom (done)
+    if (!config.div || (typeof config.div !== 'string' && typeof config.div !== 'object')) {
+      throw new Error('The map config object must have a div property');
+    }
 
+    if (typeof config.div === 'string') {
+      config.div = document.getElementById(config.div);
+    }
 
+    if (config.layers) {
+      config.overlays = config.layers;
+      config.layers = [];
+    } else {
+      config.layers = [];
+      config.overlays = [];
+    }
 
-    // Move bootstrap.js functionality into here.
-    // Still use bootstrap.js for loading indicator...
+    config.baseLayers = (function() {
+      var visible = false;
 
+      if (config.baseLayers && L.Util.isArray(config.baseLayers) && config.baseLayers.length) {
+        for (var i = 0; i < config.baseLayers.length; i++) {
+          var baseLayer = config.baseLayers[i];
 
+          if (typeof baseLayer === 'string') {
+            var name = baseLayer.split('-');
 
+            baseLayer = config.baseLayers[i] = baseLayerPresets[name[0]][name[1]];
+          }
 
+          baseLayer.zIndex = 0;
 
+          if (baseLayer.visible === true || typeof baseLayer.visible === 'undefined') {
+            if (visible) {
+              baseLayer.visible = false;
+            } else {
+              baseLayer.visible = true;
+              visible = true;
+            }
+          } else {
+            baseLayer.visible = false;
+          }
+        }
+      }
 
+      if (visible) {
+        return config.baseLayers;
+      } else {
+        var active = baseLayerPresets.mapbox.terrain;
+        active.visible = true;
+        active.zIndex = 0;
+        return [active];
+      }
+    })();
+    config.center = (function() {
+      var c = config.center;
 
-    if (L.isArray(config.layers) && config.layers.length) {
-      for (var i = 0; i < config.layers.length; i++) {
-        var layer = config.layers[i];
+      if (c) {
+        return L.latLng(c.lat, c.lng);
+      } else {
+        return L.latLng(39, -96);
+      }
+    })();
+    config.zoom = typeof config.zoom === 'number' ? config.zoom : 4;
 
-        if (typeof layer.L === 'object') {
-          // This is a NPMap layer config object.
-          // Create layer using L.npmap.whatever()
-          // Then set config.layers[i] = newLayerObj;
+    for (var i = 0; i < config.baseLayers.length; i++) {
+      var baseLayer = config.baseLayers[i];
+
+      if (baseLayer.visible === true) {
+        baseLayer.L = L.npmap.layer[baseLayer.type](baseLayer);
+        config.layers.push(baseLayer.L);
+        break;
+      }
+    }
+
+    if (config.overlays.length) {
+      for (var j = 0; j < config.overlays.length; j++) {
+        var layer = config.overlays[j];
+
+        if (layer.visible || typeof layer.visible === 'undefined') {
+          layer.visible = true;
+          config.overlays[j].L = L.npmap.layer[layer.type](layer);
+          config.layers.push(config.overlays[j].L);
+        } else {
+          layer.visible = false;
         }
       }
     }
+
+    return config;
   }
 });
 
@@ -88,7 +152,7 @@ var Map = L.Map.extend({
   L.Polygon.mergeOptions(style);
   L.Polyline.mergeOptions(style);
   L.Popup.mergeOptions({
-    autoPanPadding: L.point(48, 20), // autoPanPadding: L.bounds(L.point(45, 20), L.point(20, 20))
+    autoPanPadding: L.point(48, 20), // autoPanPadding: L.bounds(L.point(45, 20), L.point(20, 20)) https://github.com/Leaflet/Leaflet/issues/1588
     offset: L.point(0, -2)
   });
 })();

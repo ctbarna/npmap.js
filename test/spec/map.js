@@ -21,6 +21,9 @@ describe('L.npmap.map', function() {
       expect(map.options.smallzoomControl).to.equal(false);
   });
 
+  describe('baseLayers', function() {
+
+  });
   describe('constructor', function() {
 
   });
