@@ -2,8 +2,7 @@
 
 'use strict';
 
-var baseLayerPresets = require('../presets/baseLayers.json'),
-    colorPresets = require('../presets/colors.json'),
+var colorPresets = require('../presets/colors.json'),
     iconPresets = require('../presets/icons.json'),
     layerPresets = require('../presets/layers.json');
 
@@ -11,6 +10,9 @@ var Map = L.Map.extend({
   options: {
     zoomControl: false
   },
+  /**
+   *
+   */
   initialize: function(config) {
     config = this._toLeaflet(config);
 
@@ -58,7 +60,7 @@ var Map = L.Map.extend({
           if (typeof baseLayer === 'string') {
             var name = baseLayer.split('-');
 
-            baseLayer = config.baseLayers[i] = baseLayerPresets[name[0]][name[1]];
+            baseLayer = config.baseLayers[i] = layerPresets[name[0]][name[1]];
           }
 
           baseLayer.zIndex = 0;
@@ -79,7 +81,7 @@ var Map = L.Map.extend({
       if (visible) {
         return config.baseLayers;
       } else {
-        var active = baseLayerPresets.mapbox.terrain;
+        var active = layerPresets.mapbox.terrain;
         active.visible = true;
         active.zIndex = 0;
         return [active];
