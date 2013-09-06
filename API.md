@@ -92,13 +92,19 @@ You can also (optionally) provide any of the options supported by [`L.TileLayer`
 
 ### L.npmap.overviewControl(config: object)
 
-Create a map control that provides context for the currently-visible area of the map.
+Create a map control that provides context for the currently-visible area of the map. Adapted from the [Leaflet-MiniMap](https://github.com/Norkart/Leaflet-MiniMap) plugin.
 
 *Arguments:*
 
-The first, and only, argument is required, and must be a config object with the following property:
+The first, and only, argument is required, and must be a config object with the following properties:
 
+- (Optional) `autoToggleDisplay` (Boolean): Should the overview hide automatically if the parent map bounds does not fit within the bounds of the overview map? Defaults to `false`.
+- (Optional) `height` (Number): The height of the overview map. Defaults to 150 pixels.
 - (Required) `layer` (String|Object): A layer config object that you would like to add to the map. Can either be a layer preset string or a layer config object.
+- (Optional) `toggleDisplay` (Boolean): Should the overview map be togglable? Defaults to `true`.
+- (Optional) `width` (Number): The width of the overview map. Defaults to 150 pixels.
+- (Optional) `zoomLevelFixed` (Number): Overrides `zoomLevelOffset`, sets the map to a fixed zoom level.
+- (Optional) `zoomLevelOffset` (Number): A positive or negative number that configures the overview map to a zoom level relative to the zoom level of the main map.
 
 You can also (optionally) provide any of the options supported by [`L.Control`](http://leafletjs.com/reference.html#control).
 

@@ -85,14 +85,14 @@ var OverviewControl = L.Control.extend({
     }
   },
   _minimize: function() {
-    if (this.options.toggleDisplay) {
-      this._container.style.width = '19px';
-      this._container.style.height = '19px';
-      this._toggleDisplayButton.className += ' minimized';
-    } else {
-      this._container.style.display = 'none';
-    }
-
+    this._container.style.width = '47px';
+    this._container.style.height = '47px';
+    //this._miniMap.invalidateSize();
+    this._toggleDisplayButton.className += ' minimized';
+    this._toggleDisplayButton.style.bottom = 'auto';
+    this._toggleDisplayButton.style.right = 'auto';
+    this._toggleDisplayButton.style.left = '10px';
+    this._toggleDisplayButton.style.top = '10px';
     this._minimized = true;
   },
   _onMainMapMoved: function() {
@@ -133,15 +133,14 @@ var OverviewControl = L.Control.extend({
     }
   },
   _restore: function() {
-    if (this.options.toggleDisplay) {
-      this._container.style.width = this.options.width + 'px';
-      this._container.style.height = this.options.height + 'px';
-      this._toggleDisplayButton.className = this._toggleDisplayButton.className
-          .replace(/(?:^|\s)minimized(?!\S)/g, '');
-    }
-    else {
-      this._container.style.display = 'block';
-    }
+    this._toggleDisplayButton.style.left = 'auto';
+    this._toggleDisplayButton.style.top = 'auto';
+    this._toggleDisplayButton.style.bottom = '10px';
+    this._toggleDisplayButton.style.right = '10px';
+    this._container.style.width = this.options.width + 'px';
+    this._container.style.height = this.options.height + 'px';
+    //this._miniMap.invalidateSize();
+    this._toggleDisplayButton.className = this._toggleDisplayButton.className.replace(/(?:^|\s)minimized(?!\S)/g, '');
     this._minimized = false;
   },
   _setDisplay: function(minimize) {
@@ -213,8 +212,18 @@ var OverviewControl = L.Control.extend({
     }
 
     this._miniMap.whenReady(L.Util.bind(function() {
-      this._aimingRect = L.rectangle(this._mainMap.getBounds(), {color: '#ff7800', weight: 1, clickable: false}).addTo(this._miniMap);
-      this._shadowRect = L.rectangle(this._mainMap.getBounds(), {color: '#000000', weight: 1, clickable: false,opacity:0,fillOpacity:0}).addTo(this._miniMap);
+      this._aimingRect = L.rectangle(this._mainMap.getBounds(), {
+        clickable: false,
+        color: '#d29700',
+        weight: 3
+      }).addTo(this._miniMap);
+      this._shadowRect = L.rectangle(this._mainMap.getBounds(), {
+        clickable: false,
+        color: '#000',
+        fillOpacity: 0,
+        opacity: 0,
+        weight: 3
+      }).addTo(this._miniMap);
       this._mainMap.on('moveend', this._onMainMapMoved, this);
       this._mainMap.on('move', this._onMainMapMoving, this);
       this._miniMap.on('movestart', this._onMiniMapMoveStarted, this);

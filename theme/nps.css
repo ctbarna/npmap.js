@@ -10,6 +10,15 @@
   color: #d39700;
   text-decoration: underline;
 }
+/* Control */
+.leaflet-control {
+  -webkit-box-shadow: 0 0 15px #888;
+     -moz-box-shadow: 0 0 15px #888;
+      -ms-box-shadow: 0 0 15px #888;
+       -o-box-shadow: 0 0 15px #888;
+          box-shadow: 0 0 15px #888;
+}
+/* Popup */
 .leaflet-popup-content-wrapper {
      -moz-background-clip: padding;
   -webkit-background-clip: padding-box;
@@ -105,11 +114,6 @@
   font-weight: bold;
   margin-bottom: 8px;
 }
-.leaflet-zoom-box {
-  border: 3px solid #d29700;
-  background: white;
-  opacity: 0.5;
-}
 .leaflet-popup-content table {
   background-color: #fff;
   border: 1px solid  #918f7d;
@@ -128,13 +132,13 @@
 .leaflet-popup-content tr:last-child td, .leaflet-popup-content tr:last-child th {
   border-bottom: none;
 }
-.leaflet-control {
-  -webkit-box-shadow: 0 0 15px #888;
-     -moz-box-shadow: 0 0 15px #888;
-      -ms-box-shadow: 0 0 15px #888;
-       -o-box-shadow: 0 0 15px #888;
-          box-shadow: 0 0 15px #888;
+/* Zoombox */
+.leaflet-zoom-box {
+  border: 3px solid #d29700;
+  background: white;
+  opacity: 0.5;
 }
+/* Attribution */
 .leaflet-control-attribution {
   line-height: 13px;
   padding: 3px 5px;
@@ -170,36 +174,36 @@
   border-bottom: solid 1px #1a2423;
   border-top: none;
 }
-
 /* Overview Control */
 .leaflet-control-overview {
-  border: solid #000 3px;
-  box-shadow: 0 1px 7px #999;
-  background: #f8f8f9;
-  -moz-border-radius: 8px;
-  -webkit-border-radius: 8px;
-  border-radius: 8px;
+  -webkit-box-shadow: -1px 0 5px rgba(0,0,0,.28);
+     -moz-box-shadow: -1px 0 5px rgba(0,0,0,.28);
+          box-shadow: -1px 0 5px rgba(0,0,0,.28);
+  background-color: #fff;
+  border-left: solid #454545 3px;
+  border-top: solid #454545 3px;
+  margin: 0 !important;
   transition: all .2s;
 }
 .leaflet-control-overview a {
-  background-color: rgba(255, 255, 255, 1.0);
-  background-position: 1px 2px;
   background-repeat: no-repeat;
   display: block;
   outline: none;
-  z-index: 99999;
   transition: all .2s;
+  z-index: 99999;
 }
-.leaflet-control-overview a.minimized {
-  transform: rotate(180deg);
-  -webkit-transform: rotate(180deg);
-}
+  .leaflet-control-overview a.minimized {
+    -webkit-transform: rotate(180deg);
+       -moz-transform: rotate(180deg);
+        -ms-transform: rotate(180deg);
+         -o-transform: rotate(180deg);
+            transform: rotate(180deg);
+  }
 .leaflet-control-overview-toggle-display {
-  background-image: url('images/toggle.png');
-  border-radius: 2px 0px 2px 0px;
-  height: 19px;
-  width: 19px;
+  background-image: url('images/overview-toggle.png');
+  bottom: 10px;
+  height: 10px;
   position: absolute;
-  bottom: 0;
-  right: 0; 
+  right: 10px; 
+  width: 10px;
 }
