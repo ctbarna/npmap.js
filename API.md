@@ -90,9 +90,27 @@ You can also (optionally) provide any of the options supported by [`L.TileLayer`
 
 ## Controls (aka "Tools" in old NPMap-speak)
 
-### L.npmap.navigationControl(config: object)
+### L.npmap.overviewControl(config: object)
 
-A map control that contains zoom in/out buttons, pan buttons, and a home button to take you back to the initial extent of the map.
+Create a map control that provides context for the currently-visible area of the map.
+
+*Arguments:*
+
+The first, and only, argument is required, and must be a config object with the following property:
+
+- (Required) `layer` (String|Object): A layer config object that you would like to add to the map. Can either be a layer preset string or a layer config object.
+
+You can also (optionally) provide any of the options supported by [`L.Control`](http://leafletjs.com/reference.html#control).
+
+*Example:*
+
+    var control = L.npmap.control.overview({
+      layer: 'mapbox-light'
+    });
+
+### L.npmap.smallzoomControl(config: object)
+
+Create a map control that contains zoom in/out buttons.
 
 *Arguments:*
 
@@ -100,7 +118,7 @@ You can (optionally) provide any of the options supported by [`L.Control`](http:
 
 *Example:*
 
-    var control = L.npmap.control.navigation();
+    var control = L.npmap.control.smallzoom();
 
 ==================================================
 

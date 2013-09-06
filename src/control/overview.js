@@ -2,8 +2,11 @@
 
 'use strict';
 
+var layerPresets = require('../presets/layers.json'),
+    util = require('../util/util');
+
 var OverviewControl = L.Control.extend({
-  hideText: 'Hide MiniMap',
+  hideText: 'Hide Overview',
   options: {
     autoToggleDisplay: false,
     height: 150,
@@ -14,100 +17,16 @@ var OverviewControl = L.Control.extend({
     zoomLevelFixed: false,
     zoomLevelOffset: -5
   },
-  showText: 'Show MiniMap',
-  addTo: function(map) {
-    L.Control.prototype.addTo.call(this, map);
-    this._miniMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
-    this._setDisplay(this._decideMinimized());
-
-    return this;
-  },
-  initialize: function (options) {
-    if (options) {
-      L.Util.setOptions(this, options);
-
-      if (typeof options.layer === 'object') {
-        this._layer = options.layer;
-      }
-    }
-  },
-  onAdd: function(map) {
-    // TODO: Grab the baseLayer from the map object, clone the object, delete baseLayer.L, and pass into map constructor below.
-
-    if (!this._layer) {
-      // Do something here.
-    }
-
-    this._mainMap = map;
-    this._container = L.DomUtil.create('div', 'leaflet-control-minimap');
-    this._container.style.height = this.options.height + 'px';
-    this._container.style.width = this.options.width + 'px';
-
-    L.DomEvent.disableClickPropagation(this._container);
-    L.DomEvent.on(this._container, 'mousewheel', L.DomEvent.stopPropagation);
-
-    this._miniMap = new L.npmap.map({
-      attributionControl: false,
-      autoToggleDisplay: this.options.autoToggleDisplay,
-      baseLayers: [
-        this._layer
-      ],
-      boxZoom: !this.options.zoomLevelFixed,
-      crs: map.options.crs,
-      div: this._container,
-      doubleClickZoom: !this.options.zoomLevelFixed,
-      smallzoomControl: false,
-      scrollWheelZoom: !this.options.zoomLevelFixed,
-      touchZoom: !this.options.zoomLevelFixed,
-      zoomAnimation: this.options.zoomAnimation
-    });
-
-    this._mainMapMoving = false;
-    this._miniMapMoving = false;
-    this._minimized = false;
-    this._userToggledDisplay = false;
-
-    if (this.options.toggleDisplay) {
-      this._addToggleButton();
-    }
-
-    this._miniMap.whenReady(L.Util.bind(function () {
-      this._aimingRect = L.rectangle(this._mainMap.getBounds(), {
-        clickable: false,
-        color: '#ff7800',
-        weight: 1
-      }).addTo(this._miniMap);
-      this._shadowRect = L.rectangle(this._mainMap.getBounds(), {
-        clickable: false,
-        color: '#000',
-        fillOpacity: 0,
-        opacity: 0,
-        weight: 1
-      }).addTo(this._miniMap);
-      this._mainMap.on('moveend', this._onMainMapMoved, this);
-      this._mainMap.on('move', this._onMainMapMoving, this);
-      this._miniMap.on('movestart', this._onMiniMapMoveStarted, this);
-      this._miniMap.on('move', this._onMiniMapMoving, this);
-      this._miniMap.on('moveend', this._onMiniMapMoved, this);
-    }, this));
-
-    return this._container;
-  },
-  onRemove: function () {
-    this._mainMap.off('moveend', this._onMainMapMoved, this);
-    this._mainMap.off('move', this._onMainMapMoving, this);
-    this._miniMap.off('moveend', this._onMiniMapMoved, this);
-    this._miniMap.removeLayer(this._layer);
-  },
-  _addToggleButton: function () {
-    this._toggleDisplayButton = this.options.toggleDisplay ? this._createButton('', this.hideText, 'leaflet-control-minimap-toggle-display', this._container, this._toggleDisplayButtonClicked, this) : undefined;
+  showText: 'Show Overview',
+  _addToggleButton: function() {
+    this._toggleDisplayButton = this._createButton('', this.hideText, 'leaflet-control-overview-toggle-display', this._container, this._toggleDisplayButtonClicked, this);
   },
   _createButton: function(html, title, className, container, fn, context) {
     var link = L.DomUtil.create('a', className, container),
         stop = L.DomEvent.stopPropagation;
 
-    link.innerHTML = html;
     link.href = '#';
+    link.innerHTML = html;
     link.title = title;
 
     L.DomEvent
@@ -119,7 +38,7 @@ var OverviewControl = L.Control.extend({
 
     return link;
   },
-  _decideMinimized: function () {
+  _decideMinimized: function() {
     if (this._userToggledDisplay) {
       return this._minimized;
     }
@@ -142,11 +61,11 @@ var OverviewControl = L.Control.extend({
         var currentDiff = this._miniMap.getZoom() - this._mainMap.getZoom(),
             proposedZoom = this._miniMap.getZoom() - this.options.zoomLevelOffset,
             toRet;
-
+        
         if (currentDiff > this.options.zoomLevelOffset && this._mainMap.getZoom() < this._miniMap.getMinZoom() - this.options.zoomLevelOffset) {
           if (this._miniMap.getZoom() > this._lastMiniMapZoom) {
             toRet = this._mainMap.getZoom() + 1;
-            this._miniMap.setZoom(this._miniMap.getZoom() - 1);
+            this._miniMap.setZoom(this._miniMap.getZoom() -1);
           } else {
             toRet = this._mainMap.getZoom();
           }
@@ -155,7 +74,6 @@ var OverviewControl = L.Control.extend({
         }
 
         this._lastMiniMapZoom = this._miniMap.getZoom();
-
         return toRet;
       }
     } else {
@@ -166,10 +84,10 @@ var OverviewControl = L.Control.extend({
       }
     }
   },
-  _minimize: function () {
+  _minimize: function() {
     if (this.options.toggleDisplay) {
-      this._container.style.height = '19px';
       this._container.style.width = '19px';
+      this._container.style.height = '19px';
       this._toggleDisplayButton.className += ' minimized';
     } else {
       this._container.style.display = 'none';
@@ -177,7 +95,7 @@ var OverviewControl = L.Control.extend({
 
     this._minimized = true;
   },
-  _onMainMapMoved: function () {
+  _onMainMapMoved: function() {
     if (!this._miniMapMoving) {
       this._mainMapMoving = true;
       this._miniMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
@@ -188,22 +106,19 @@ var OverviewControl = L.Control.extend({
 
     this._aimingRect.setBounds(this._mainMap.getBounds());
   },
-  _onMainMapMoving: function () {
+  _onMainMapMoving: function() {
     this._aimingRect.setBounds(this._mainMap.getBounds());
   },
-  _onMiniMapMoved: function () {
+  _onMiniMapMoved: function() {
     if (!this._mainMapMoving) {
       this._miniMapMoving = true;
       this._mainMap.setView(this._miniMap.getCenter(), this._decideZoom(false));
-      this._shadowRect.setStyle({
-        fillOpacity:0,
-        opacity:0
-      });
+      this._shadowRect.setStyle({opacity:0,fillOpacity:0});
     } else {
       this._mainMapMoving = false;
     }
   },
-  _onMiniMapMoveStarted:function () {
+  _onMiniMapMoveStarted:function() {
     var lastAimingRect = this._aimingRect.getBounds();
 
     this._lastAimingRectPosition = {
@@ -211,21 +126,22 @@ var OverviewControl = L.Control.extend({
       ne: this._miniMap.latLngToContainerPoint(lastAimingRect.getNorthEast())
     };
   },
-  _onMiniMapMoving: function () {
+  _onMiniMapMoving: function() {
     if (!this._mainMapMoving && this._lastAimingRectPosition) {
       this._shadowRect.setBounds(new L.LatLngBounds(this._miniMap.containerPointToLatLng(this._lastAimingRectPosition.sw),this._miniMap.containerPointToLatLng(this._lastAimingRectPosition.ne)));
       this._shadowRect.setStyle({opacity:1,fillOpacity:0.3});
     }
   },
-  _restore: function () {
+  _restore: function() {
     if (this.options.toggleDisplay) {
-      this._container.style.height = this.options.height + 'px';
       this._container.style.width = this.options.width + 'px';
-      this._toggleDisplayButton.className = this._toggleDisplayButton.className.replace(/(?:^|\s)minimized(?!\S)/g, '');
-    } else {
+      this._container.style.height = this.options.height + 'px';
+      this._toggleDisplayButton.className = this._toggleDisplayButton.className
+          .replace(/(?:^|\s)minimized(?!\S)/g, '');
+    }
+    else {
       this._container.style.display = 'block';
     }
-
     this._minimized = false;
   },
   _setDisplay: function(minimize) {
@@ -237,7 +153,7 @@ var OverviewControl = L.Control.extend({
       }
     }
   },
-  _toggleDisplayButtonClicked: function () {
+  _toggleDisplayButtonClicked: function() {
     this._userToggledDisplay = true;
 
     if (!this._minimized) {
@@ -247,6 +163,72 @@ var OverviewControl = L.Control.extend({
       this._restore();
       this._toggleDisplayButton.title = this.hideText;
     }
+  },
+  addTo: function(map) {
+    L.Control.prototype.addTo.call(this, map);
+    this._miniMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
+    this._setDisplay(this._decideMinimized());
+    return this;
+  },
+  initialize: function(options) {
+    util.strict(options, 'object');
+
+    if (typeof options.layer === 'string') {
+      var name = options.layer.split('-');
+
+      options.layer = layerPresets[name[0]][name[1]];
+    }
+
+    L.Util.setOptions(this, options);
+    this._layer = options.layer.L = L.npmap.layer[options.layer.type](options.layer);
+  },
+  onAdd: function(map) {
+    this._mainMap = map;
+    this._container = L.DomUtil.create('div', 'leaflet-control-overview');
+    this._container.style.width = this.options.width + 'px';
+    this._container.style.height = this.options.height + 'px';
+    L.DomEvent.disableClickPropagation(this._container);
+    L.DomEvent.on(this._container, 'mousewheel', L.DomEvent.stopPropagation);
+    this._miniMap = this.options.L = new L.Map(this._container, {
+      attributionControl: false,
+      autoToggleDisplay: this.options.autoToggleDisplay,
+      boxZoom: !this.options.zoomLevelFixed,
+      crs: map.options.crs,
+      doubleClickZoom: !this.options.zoomLevelFixed,
+      scrollWheelZoom: !this.options.zoomLevelFixed,
+      smallzoomControl: false,
+      touchZoom: !this.options.zoomLevelFixed,
+      zoomAnimation: this.options.zoomAnimation,
+      zoomControl: false
+    });
+
+    this._miniMap.addLayer(this._layer);
+    this._mainMapMoving = false;
+    this._miniMapMoving = false;
+    this._userToggledDisplay = false;
+    this._minimized = false;
+
+    if (this.options.toggleDisplay) {
+      this._addToggleButton();
+    }
+
+    this._miniMap.whenReady(L.Util.bind(function() {
+      this._aimingRect = L.rectangle(this._mainMap.getBounds(), {color: '#ff7800', weight: 1, clickable: false}).addTo(this._miniMap);
+      this._shadowRect = L.rectangle(this._mainMap.getBounds(), {color: '#000000', weight: 1, clickable: false,opacity:0,fillOpacity:0}).addTo(this._miniMap);
+      this._mainMap.on('moveend', this._onMainMapMoved, this);
+      this._mainMap.on('move', this._onMainMapMoving, this);
+      this._miniMap.on('movestart', this._onMiniMapMoveStarted, this);
+      this._miniMap.on('move', this._onMiniMapMoving, this);
+      this._miniMap.on('moveend', this._onMiniMapMoved, this);
+    }, this));
+
+    return this._container;
+  },
+  onRemove: function() {
+    this._mainMap.off('moveend', this._onMainMapMoved, this);
+    this._mainMap.off('move', this._onMainMapMoving, this);
+    this._miniMap.off('moveend', this._onMiniMapMoved, this);
+    this._miniMap.removeLayer(this._layer);
   }
 });
 
@@ -255,13 +237,7 @@ L.Map.mergeOptions({
 });
 L.Map.addInitHook(function() {
   if (this.options.overviewControl) {
-    var options = {};
-
-    if (typeof this.options.overviewControl === 'object') {
-      options = this.options.overviewControl;
-    }
-
-    this.overviewControl = new L.npmap.control.overview(options).addTo(this);
+    this.overviewControl = (new L.npmap.control.overview(this.options.overviewControl)).addTo(this);
   }
 });
 

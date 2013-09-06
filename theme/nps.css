@@ -172,7 +172,7 @@
 }
 
 /* Overview Control */
-.leaflet-control-minimap {
+.leaflet-control-overview {
   border: solid #000 3px;
   box-shadow: 0 1px 7px #999;
   background: #f8f8f9;
@@ -181,7 +181,7 @@
   border-radius: 8px;
   transition: all .2s;
 }
-.leaflet-control-minimap a {
+.leaflet-control-overview a {
   background-color: rgba(255, 255, 255, 1.0);
   background-position: 1px 2px;
   background-repeat: no-repeat;
@@ -190,11 +190,11 @@
   z-index: 99999;
   transition: all .2s;
 }
-.leaflet-control-minimap a.minimized {
+.leaflet-control-overview a.minimized {
   transform: rotate(180deg);
   -webkit-transform: rotate(180deg);
 }
-.leaflet-control-minimap-toggle-display {
+.leaflet-control-overview-toggle-display {
   background-image: url('images/toggle.png');
   border-radius: 2px 0px 2px 0px;
   height: 19px;

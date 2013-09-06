@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>Overview Control (API) | Examples | NPMap.js</title>
+    <link rel="stylesheet" href="../dist/npmap.css"/>
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="../dist/npmap.ie.css"/>
+    <![endif]-->
+    <script src="../dist/npmap.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        bottom: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      var map = L.npmap.map({
+        div: 'map'
+      }).setView(new L.LatLng(59.9, 10.7), 10);
+      var overview = L.npmap.control.overview({
+        layer: {
+          attribution: 'Map data &copy; OpenStreetMap contributors',
+          maxZoom: 13,
+          minZoom: 0,
+          type: 'tiled',
+          url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        }
+      }).addTo(map);
+    </script>
+  </body>
+</html>
