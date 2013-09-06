@@ -66,7 +66,7 @@ L.Map.mergeOptions({
 });
 L.Map.addInitHook(function() {
   if (this.options.smallzoomControl) {
-    this.smallzoomControl = new L.npmap.control.smallzoom();
+    this.smallzoomControl = L.npmap.control.smallzoom();
     this.addControl(this.smallzoomControl);
   }
 });
