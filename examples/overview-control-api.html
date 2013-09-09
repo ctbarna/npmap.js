@@ -29,13 +29,7 @@
         div: 'map'
       });
       var overview = L.npmap.control.overview({
-        layer: {
-          attribution: 'Map data &copy; OpenStreetMap contributors',
-          maxZoom: 13,
-          minZoom: 0,
-          type: 'tiled',
-          url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-        }
+        layer: 'mapbox-light'
       }).addTo(map);
     </script>
   </body>
