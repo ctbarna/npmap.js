@@ -4,7 +4,10 @@
 
 var util = require('../util/util');
 
-var FullscreenControl = L.Class.extend({
+var FullscreenControl = L.Control.extend({
+  _bodyMargin: null,
+  _bodyOverflow: null,
+  _bodyPadding: null,
   _onKeyUp: function(e) {
     if (!e) {
       e = window.event;
@@ -14,13 +17,39 @@ var FullscreenControl = L.Class.extend({
       this.fullscreen();
     }
   },
+  addTo: function(map) {
+    var toolbar = util.getChildElementsByClassName(map.getContainer().parentNode.parentNode, 'npmap-toolbar')[0];
+
+    toolbar.appendChild(this._button);
+    toolbar.style.display = 'block';
+    this._container = toolbar.parentNode.parentNode;
+    this._isFullscreen = false;
+    this._map = map;
+    util.getChildElementsByClassName(this._container.parentNode, 'npmap-map-wrapper')[0].style.top = '26px';
+    return this;
+  },
   fullscreen: function() {
+    var body = document.body;
+
     if (this._isFullscreen) {
+      body.style.margin = this._bodyMargin;
+      body.style.overflow = this._bodyOverflow;
+      body.style.padding = this._bodyPadding;
+      this._container.style.left = 'auto';
+      this._container.style.top = 'auto';
       this._container.style.position = 'relative';
       L.DomEvent.removeListener(document, 'keyup', this._onKeyUp);
       this._isFullscreen = false;
       this._map.fire('exitfullscreen');
     } else {
+      this._bodyMargin = body.style.margin;
+      this._bodyOverflow = body.style.overflow;
+      this._bodyPadding = body.style.padding;
+      body.style.margin = '0';
+      body.style.overflow = 'hidden';
+      body.style.padding = '0';
+      this._container.style.left = '0';
+      this._container.style.top = '0';
       this._container.style.position = 'fixed';
       L.DomEvent.addListener(document, 'keyup', this._onKeyUp, this);
       this._isFullscreen = true;
@@ -30,21 +59,16 @@ var FullscreenControl = L.Class.extend({
     this._map.invalidateSize();
   },
   initialize: function(options) {
-    var button = document.createElement('button'),
-        toolbar = util.getChildElementsByClassName(options.map.getContainer().parentNode.parentNode, 'npmap-toolbar')[0];
-
-    button.className = 'npmap-toolbar-button last-child pull-right';
+    this._button = document.createElement('button');
+    this._button.className = 'npmap-toolbar-button last-child pull-right';
     // TODO: Also add ARIA attributes.
-    button.innerHTML = '<span class="ico-fullscreen"></span>';
-    button.title = 'Toggle Fullscreen';
-    toolbar.style.display = 'block';
-    toolbar.appendChild(button);
-    this._container = toolbar.parentNode.parentNode;
-    this._isFullscreen = false;
-    this._map = options.map;
+    this._button.innerHTML = '<span class="ico-fullscreen"></span>';
+    this._button.title = 'Toggle Fullscreen';
+    L.DomEvent.addListener(this._button, 'click', this.fullscreen, this);
 
-    L.DomEvent.addListener(button, 'click', this.fullscreen, this);
-    util.getChildElementsByClassName(this._container.parentNode, 'npmap-map-wrapper')[0].style.top = '26px';
+    if (options && options.map) {
+      this.addTo(options.map);
+    }
 
     return this;
   }

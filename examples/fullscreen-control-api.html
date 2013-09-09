@@ -3,7 +3,12 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-    <title>Fullscreen Control (Bootstrap) | Examples | NPMap.js</title>
+    <title>Fullscreen Control (API) | Examples | NPMap.js</title>
+    <link rel="stylesheet" href="../dist/npmap.css"/>
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="../dist/npmap.ie.css"/>
+    <![endif]-->
+    <script src="../dist/npmap.js"></script>
     <style>
       #map {
         height: 400px;
@@ -18,18 +23,10 @@
     <p>Cras sed leo a massa posuere lacinia id vel nibh. Quisque a mattis sapien. Sed sit amet lorem ac purus semper elementum quis feugiat diam. Morbi nec nibh vel purus cursus luctus. Suspendisse et nisl pretium, pretium leo sed, adipiscing felis. Sed vitae dui quis lectus laoreet suscipit et eu arcu. Sed ac blandit justo.</p>
     <div id="map"></div>
     <script>
-      var NPMap = {
-        config: {
-          div: 'map',
-          fullscreenControl: true
-        }
-      };
-
-      (function() {
-        var s = document.createElement('script');
-        s.src = '../dist/bootstrap.js';
-        document.body.appendChild(s);
-      })();
+      var map = L.npmap.map({
+        div: 'map'
+      });
+      var fullscreen = L.npmap.control.fullscreen().addTo(map);
     </script>
   </body>
 </html>
