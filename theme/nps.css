@@ -235,25 +235,34 @@
   border-top: solid #454545 3px;
   transition: all .2s;
 }
-.leaflet-control-overview a {
-  background-repeat: no-repeat;
+.leaflet-control-overview button {
+  background-color: transparent;
+  border: none;
+  bottom: 0;
+  cursor: pointer;
   display: block;
+  height: 20px;
   outline: none;
-  transition: all .2s;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  width: 20px;
   z-index: 99999;
 }
-  .leaflet-control-overview a.minimized {
-    -webkit-transform: rotate(180deg);
-       -moz-transform: rotate(180deg);
-        -ms-transform: rotate(180deg);
-         -o-transform: rotate(180deg);
-            transform: rotate(180deg);
-  }
-.leaflet-control-overview-toggle-display {
+.leaflet-control-overview button span {
   background-image: url('images/overview-toggle.png');
+  background-repeat: no-repeat;
   bottom: 10px;
   height: 10px;
   position: absolute;
   right: 10px; 
+  transition: all .2s;
   width: 10px;
 }
+  .leaflet-control-overview button span.minimized {
+  -webkit-transform: rotate(180deg);
+     -moz-transform: rotate(180deg);
+      -ms-transform: rotate(180deg);
+       -o-transform: rotate(180deg);
+          transform: rotate(180deg);
+  }

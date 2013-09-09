@@ -19,24 +19,24 @@ var OverviewControl = L.Control.extend({
   },
   showText: 'Show Overview',
   _addToggleButton: function() {
-    this._toggleDisplayButton = this._createButton('', this.hideText, 'leaflet-control-overview-toggle-display', this._container, this._toggleDisplayButtonClicked, this);
+    this._toggleDisplayButton = this._createButton('', this.hideText, null, this._container, this._toggleDisplayButtonClicked, this);
+    this._toggleDisplayButtonImage = L.DomUtil.create('span', null, this._toggleDisplayButton);
   },
   _createButton: function(html, title, className, container, fn, context) {
-    var link = L.DomUtil.create('a', className, container),
+    var button = L.DomUtil.create('button', className, container),
         stop = L.DomEvent.stopPropagation;
 
-    link.href = '#';
-    link.innerHTML = html;
-    link.title = title;
+    button.innerHTML = html;
+    button.title = title;
 
     L.DomEvent
-      .on(link, 'click', stop)
-      .on(link, 'mousedown', stop)
-      .on(link, 'dblclick', stop)
-      .on(link, 'click', L.DomEvent.preventDefault)
-      .on(link, 'click', fn, context);
+      .on(button, 'click', stop)
+      .on(button, 'mousedown', stop)
+      .on(button, 'dblclick', stop)
+      .on(button, 'click', L.DomEvent.preventDefault)
+      .on(button, 'click', fn, context);
 
-    return link;
+    return button;
   },
   _decideMinimized: function() {
     if (this._userToggledDisplay) {
@@ -88,14 +88,16 @@ var OverviewControl = L.Control.extend({
     var me = this;
 
     this._toggleDisplayButton.style.display = 'none';
+    this._toggleDisplayButton.style.height = '47px';
+    this._toggleDisplayButton.style.width = '47px';
+    this._toggleDisplayButtonImage.className += ' minimized';
+    this._toggleDisplayButtonImage.style.bottom = 'auto';
+    this._toggleDisplayButtonImage.style.right = 'auto';
+    this._toggleDisplayButtonImage.style.left = '10px';
+    this._toggleDisplayButtonImage.style.top = '10px';
     this._container.style.width = '47px';
     this._container.style.height = '47px';
-    this._toggleDisplayButton.className += ' minimized';
     this._attributionContainer.style.marginRight = '50px';
-    this._toggleDisplayButton.style.bottom = 'auto';
-    this._toggleDisplayButton.style.right = 'auto';
-    this._toggleDisplayButton.style.left = '10px';
-    this._toggleDisplayButton.style.top = '10px';
     this._minimized = true;
 
     setTimeout(function() {
@@ -143,13 +145,21 @@ var OverviewControl = L.Control.extend({
     var me = this;
 
     this._toggleDisplayButton.style.display = 'none';
+    this._toggleDisplayButton.style.height = '20px';
+    this._toggleDisplayButton.style.bottom = '0';
     this._toggleDisplayButton.style.left = 'auto';
+    this._toggleDisplayButton.style.position = 'absolute';
+    this._toggleDisplayButton.style.right = '0';
     this._toggleDisplayButton.style.top = 'auto';
-    this._toggleDisplayButton.style.bottom = '10px';
-    this._toggleDisplayButton.style.right = '10px';
+    this._toggleDisplayButton.style.width = '20px';
+    this._toggleDisplayButtonImage.className = this._toggleDisplayButtonImage.className.replace(/(?:^|\s)minimized(?!\S)/g, '');
+    this._toggleDisplayButtonImage.style.bottom = '10px';
+    this._toggleDisplayButtonImage.style.left = 'auto';
+    this._toggleDisplayButtonImage.style.right = '10px';
+    this._toggleDisplayButtonImage.style.top = 'auto';
     this._container.style.width = this.options.width + 'px';
     this._container.style.height = this.options.height + 'px';
-    this._toggleDisplayButton.className = this._toggleDisplayButton.className.replace(/(?:^|\s)minimized(?!\S)/g, '');
+    
     this._attributionContainer.style.marginRight = (this.options.width + 3) + 'px';
     this._minimized = false;
 
