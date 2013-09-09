@@ -8,6 +8,7 @@ L.npmap = module.exports = {
   control: {
     fullscreen: require('./src/control/fullscreen'),
     overview: require('./src/control/overview'),
+    scale: require('./src/control/scale'),
     smallzoom: require('./src/control/smallzoom')
   },
   layer: {
