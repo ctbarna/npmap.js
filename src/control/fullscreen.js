@@ -2,75 +2,65 @@
 
 'use strict';
 
-var SmallZoomControl = L.Control.extend({
-  options: {
-    position: 'topleft'
-  },
-  onAdd: function(map) {
-    var clsName = 'leaflet-control-zoom',
-        container = L.DomUtil.create('div', clsName + ' leaflet-bar');
+var util = require('../util/util');
 
-    this._map = map;
-    this._zoomInButton = this._createButton('+', 'Zoom in', clsName + '-in', container, this._zoomIn, this);
-    this._zoomOutButton = this._createButton('-', 'Zoom out', clsName + '-out', container, this._zoomOut, this);
-
-    map.on('zoomend zoomlevelschange', this._updateDisabled, this);
-    this._updateDisabled();
-
-    return container;
-  },
-  onRemove: function(map) {
-    map.off('zoomend zoomlevelschange', this._updateDisabled, this);
-  },
-  _createButton: function(html, title, clsName, container, handler, context) {
-    var link = L.DomUtil.create('a', clsName, container),
-        stop = L.DomEvent.stopPropagation;
-
-    link.href = '#';
-    link.innerHTML = html;
-    link.title = title;
-
-    L.DomEvent
-      .on(link, 'click', stop)
-      .on(link, 'mousedown', stop)
-      .on(link, 'dblclick', stop)
-      .on(link, 'click', L.DomEvent.preventDefault)
-      .on(link, 'click', handler, context);
-
-    return link;
-  },
-  _updateDisabled: function() {
-    var clsName = 'leaflet-disabled',
-        map = this._map;
-
-    L.DomUtil.removeClass(this._zoomInButton, clsName);
-    L.DomUtil.removeClass(this._zoomOutButton, clsName);
-
-    if (map._zoom === map.getMinZoom()) {
-      L.DomUtil.addClass(this._zoomOutButton, clsName);
+var FullscreenControl = L.Class.extend({
+  _onKeyUp: function(e) {
+    if (!e) {
+      e = window.event;
     }
-    if (map._zoom === map.getMaxZoom()) {
-      L.DomUtil.addClass(this._zoomInButton, clsName);
+
+    if (this._isFullscreen === true && e.keyCode === 27) {
+      this.fullscreen();
     }
   },
-  _zoomIn: function(e) {
-    this._map.zoomIn(e.shiftKey ? 3 : 1);
+  fullscreen: function() {
+    if (this._isFullscreen) {
+      this._container.style.position = 'relative';
+      L.DomEvent.removeListener(document, 'keyup', this._onKeyUp);
+      this._isFullscreen = false;
+      this._map.fire('exitfullscreen');
+    } else {
+      this._container.style.position = 'fixed';
+      L.DomEvent.addListener(document, 'keyup', this._onKeyUp, this);
+      this._isFullscreen = true;
+      this._map.fire('enterfullscreen');
+    }
+
+    this._map.invalidateSize();
   },
-  _zoomOut: function(e) {
-    this._map.zoomOut(e.shiftKey ? 3 : 1);
+  initialize: function(options) {
+    var button = document.createElement('button'),
+        toolbar = util.getChildElementsByClassName(options.map.getContainer().parentNode.parentNode, 'npmap-toolbar')[0];
+
+    button.className = 'npmap-toolbar-button last-child pull-right';
+    // TODO: Also add ARIA attributes.
+    button.innerHTML = '<span class="ico-fullscreen"></span>';
+    button.title = 'Toggle Fullscreen';
+    toolbar.style.display = 'block';
+    toolbar.appendChild(button);
+    this._container = toolbar.parentNode.parentNode;
+    this._isFullscreen = false;
+    this._map = options.map;
+
+    L.DomEvent.addListener(button, 'click', this.fullscreen, this);
+    util.getChildElementsByClassName(this._container.parentNode, 'npmap-map-wrapper')[0].style.top = '26px';
+
+    return this;
   }
 });
 
 L.Map.mergeOptions({
-  smallzoomControl: true
+  fullscreenControl: false
 });
 L.Map.addInitHook(function() {
-  if (this.options.smallzoomControl) {
-    this.smallzoomControl = L.npmap.control.smallzoom();
-    this.addControl(this.smallzoomControl);
+  if (this.options.fullscreenControl) {
+    this.fullscreenControl = L.npmap.control.fullscreen({
+      map: this
+    });
   }
 });
 
 module.exports = function(options) {
-  return new SmallZoomControl(options);
+  return new FullscreenControl(options);
 };

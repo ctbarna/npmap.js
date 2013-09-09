@@ -35,6 +35,9 @@
   width: 100%;
 }
 .npmap-toolbar {
+  -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, .15);
+     -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, .15);
+          box-shadow: 0 1px 5px rgba(0, 0, 0, .15);
   background-color: #908e7d;
   display: none;
   height: 26px;
@@ -43,6 +46,28 @@
   top: 0;
   width: 100%;
 }
+  .npmap-toolbar button {
+    background-color: #828171;
+    background-repeat: no-repeat;
+    border: none;
+    border-left: solid 1px #adaca2;
+    border-right: solid 1px #adaca2;
+    cursor: pointer;
+    height: 100%;
+    position: relative;
+    width: 32px;
+  }
+  .npmap-toolbar button:hover {
+    background-color: #74746a;
+  }
+  .npmap-toolbar button.last-child {
+    border-right: solid 1px transparent;
+  }
+  .npmap-toolbar button .ico-fullscreen {
+    left: 9px;
+    position: absolute;
+    top: 7px;
+  }
 .npmap .pull-right {
   float: right;
 }
@@ -265,3 +290,10 @@
        -o-transform: rotate(180deg);
           transform: rotate(180deg);
   }
+/* Icons */
+.ico-fullscreen {
+  background-image: url('images/fullscreen-toggle.png');
+  height: 12px;
+  position: absolute;
+  width: 13px;
+}
