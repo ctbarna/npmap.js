@@ -72,7 +72,7 @@ if (typeof NPMap.config !== 'array' && typeof NPMap.config !== 'object') {
       corners: 1,
       direction: 1,
       hwaccel: true,
-      left: 'auto'
+      left: 'auto',
       length: 15,
       lines: 13,
       radius: 15,
