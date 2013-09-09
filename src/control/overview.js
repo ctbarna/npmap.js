@@ -288,7 +288,7 @@ L.Map.mergeOptions({
 });
 L.Map.addInitHook(function() {
   if (this.options.overviewControl) {
-    this.overviewControl = (new L.npmap.control.overview(this.options.overviewControl)).addTo(this);
+    this.overviewControl = new L.npmap.control.overview(this.options.overviewControl).addTo(this);
   }
 });
 
