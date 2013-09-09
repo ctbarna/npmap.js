@@ -85,15 +85,22 @@ var OverviewControl = L.Control.extend({
     }
   },
   _minimize: function() {
+    var me = this;
+
+    this._toggleDisplayButton.style.display = 'none';
     this._container.style.width = '47px';
     this._container.style.height = '47px';
-    //this._miniMap.invalidateSize();
     this._toggleDisplayButton.className += ' minimized';
+    this._attributionContainer.style.marginRight = '50px';
     this._toggleDisplayButton.style.bottom = 'auto';
     this._toggleDisplayButton.style.right = 'auto';
     this._toggleDisplayButton.style.left = '10px';
     this._toggleDisplayButton.style.top = '10px';
     this._minimized = true;
+
+    setTimeout(function() {
+      me._toggleDisplayButton.style.display = 'block';
+    }, 200);
   },
   _onMainMapMoved: function() {
     if (!this._miniMapMoving) {
@@ -133,15 +140,22 @@ var OverviewControl = L.Control.extend({
     }
   },
   _restore: function() {
+    var me = this;
+
+    this._toggleDisplayButton.style.display = 'none';
     this._toggleDisplayButton.style.left = 'auto';
     this._toggleDisplayButton.style.top = 'auto';
     this._toggleDisplayButton.style.bottom = '10px';
     this._toggleDisplayButton.style.right = '10px';
     this._container.style.width = this.options.width + 'px';
     this._container.style.height = this.options.height + 'px';
-    //this._miniMap.invalidateSize();
     this._toggleDisplayButton.className = this._toggleDisplayButton.className.replace(/(?:^|\s)minimized(?!\S)/g, '');
+    this._attributionContainer.style.marginRight = (this.options.width + 3) + 'px';
     this._minimized = false;
+
+    setTimeout(function() {
+      me._toggleDisplayButton.style.display = 'block';
+    }, 200);
   },
   _setDisplay: function(minimize) {
     if (minimize !== this._minimized) {
@@ -183,7 +197,9 @@ var OverviewControl = L.Control.extend({
   },
   onAdd: function(map) {
     this._mainMap = map;
+    this._attributionContainer = this._mainMap.attributionControl._container;
     this._container = L.DomUtil.create('div', 'leaflet-control-overview');
+    this._container.style.margin = '0 0 ' + -this._attributionContainer.offsetHeight + 'px 0';
     this._container.style.width = this.options.width + 'px';
     this._container.style.height = this.options.height + 'px';
     L.DomEvent.disableClickPropagation(this._container);
@@ -200,7 +216,7 @@ var OverviewControl = L.Control.extend({
       zoomAnimation: this.options.zoomAnimation,
       zoomControl: false
     });
-
+    this._attributionContainer.style.marginRight = (this.options.width + 3) + 'px';
     this._miniMap.addLayer(this._layer);
     this._mainMapMoving = false;
     this._miniMapMoving = false;
@@ -219,7 +235,7 @@ var OverviewControl = L.Control.extend({
       }).addTo(this._miniMap);
       this._shadowRect = L.rectangle(this._mainMap.getBounds(), {
         clickable: false,
-        color: '#000',
+        color: '#454545',
         fillOpacity: 0,
         opacity: 0,
         weight: 3
@@ -238,6 +254,7 @@ var OverviewControl = L.Control.extend({
     this._mainMap.off('move', this._onMainMapMoving, this);
     this._miniMap.off('moveend', this._onMiniMapMoved, this);
     this._miniMap.removeLayer(this._layer);
+    this._attributionContainer.style.marginRight = '0px';
   }
 });
 

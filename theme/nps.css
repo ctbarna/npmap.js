@@ -1,3 +1,53 @@
+/* NPMap.js Components */
+.npmap {
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+.npmap-modules {
+  -webkit-box-shadow: 2px 0 2px rgba(0,0,0,.2);
+     -moz-box-shadow: 2px 0 2px rgba(0,0,0,.2);
+          box-shadow: 2px 0 2px rgba(0,0,0,.2);
+  background-color: #f9f7f1;
+  display: none;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 300px;
+}
+.npmap-container {
+  bottom: 0;
+  /*left: 300px;*/
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+.npmap-map-wrapper {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+.npmap-map {
+  height: 100%;
+  width: 100%;
+}
+.npmap-toolbar {
+  background-color: #908e7d;
+  display: none;
+  height: 26px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+}
+.npmap .pull-right {
+  float: right;
+}
+/* Leaflet Overrides */
 .leaflet-container {
   color: #464646;
   font-family: "Arial", Helvetica, sans-serif;
@@ -10,7 +60,7 @@
   color: #d39700;
   text-decoration: underline;
 }
-/* Control */
+/* Controls */
 .leaflet-control {
   -webkit-box-shadow: 0 0 15px #888;
      -moz-box-shadow: 0 0 15px #888;
@@ -143,6 +193,7 @@
   line-height: 13px;
   padding: 3px 5px;
   text-align: right;
+  transition: all .2s;
 }
 .leaflet-bar a, .leaflet-bar a:hover {
   -webkit-text-shadow: 0px 2px 2px #757571;
@@ -182,7 +233,6 @@
   background-color: #fff;
   border-left: solid #454545 3px;
   border-top: solid #454545 3px;
-  margin: 0 !important;
   transition: all .2s;
 }
 .leaflet-control-overview a {
