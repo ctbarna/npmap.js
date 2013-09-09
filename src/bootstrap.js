@@ -3,11 +3,11 @@
 var NPMap = NPMap || {};
 
 if (!NPMap.config) {
-  throw new Error('The NPMap.config property is required!');
+  throw new Error('The NPMap.config property is required');
 }
 
 if (typeof NPMap.config !== 'array' && typeof NPMap.config !== 'object') {
-  throw new Error('NPMap.config must be either an array or an object!');
+  throw new Error('NPMap.config must be either an array or an object');
 }
 
 (function() {
@@ -18,12 +18,23 @@ if (typeof NPMap.config !== 'array' && typeof NPMap.config !== 'object') {
     config.L = L.npmap.map(config);
   }
   function callback() {
-    L.npmap.util._.appendCssFile(NPMap.path + 'npmap.css');
+    var legacy = false;
 
     if (L.Browser.ie6 || L.Browser.ie7) {
-      L.npmap.util._.appendCssFile(NPMap.path + 'npmap.ie.css');
+      legacy = true;
     }
 
+    L.npmap.util._.appendCssFile(NPMap.path + 'npmap.css', function() {
+      if (!legacy) {
+        cssLoaded();
+      }
+    });
+
+    if (legacy) {
+      L.npmap.util._.appendCssFile(NPMap.path + 'npmap.ie.css', cssLoaded);
+    }
+  }
+  function cssLoaded() {
     if (typeof NPMap.config === 'array') {
       for (var i = 0; i < NPMap.config.length; i++) {
         build(NPMap.config[i]);
