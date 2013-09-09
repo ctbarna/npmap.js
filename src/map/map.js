@@ -14,8 +14,21 @@ var Map = L.Map.extend({
    *
    */
   initialize: function(config) {
-    config = this._toLeaflet(config);
+    var container = L.DomUtil.create('div', 'npmap-container'),
+        map = L.DomUtil.create('div', 'npmap-map'),
+        mapWrapper = L.DomUtil.create('div', 'npmap-map-wrapper'),
+        modules = L.DomUtil.create('div', 'npmap-modules'),
+        npmap = L.DomUtil.create('div', 'npmap'),
+        toolbar = L.DomUtil.create('div', 'npmap-toolbar');
 
+    config = this._toLeaflet(config);
+    config.div.insertBefore(npmap, config.div.childNodes[0]);
+    npmap.appendChild(modules);
+    npmap.appendChild(container);
+    container.appendChild(toolbar);
+    container.appendChild(mapWrapper);
+    mapWrapper.appendChild(map);
+    config.div = map;
     L.Map.prototype.initialize.call(this, config.div, config);
 
     if (this.attributionControl) {
