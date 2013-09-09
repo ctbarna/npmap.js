@@ -65,23 +65,24 @@ if (typeof NPMap.config !== 'array' && typeof NPMap.config !== 'object') {
     }
 
     div.appendChild(mask);
+
     return new Spinner({
-      lines: 13,
-      length: 15,
-      width: 5,
-      radius: 15,
-      corners: 1,
-      rotate: 0,
-      direction: 1,
-      color: '#454545',
-      speed: 1,
-      trail: 60,
-      shadow: false,
-      hwaccel: true,
       className: 'npmap-loading-spinner',
-      zIndex: 2e9,
-      top: 'auto',
+      color: '#454545',
+      corners: 1,
+      direction: 1,
+      hwaccel: true,
       left: 'auto'
+      length: 15,
+      lines: 13,
+      radius: 15,
+      rotate: 0,
+      shadow: false,
+      speed: 1,
+      top: 'auto',
+      trail: 60,
+      width: 5,
+      zIndex: 2e9
     }).spin(mask);
   }
 
