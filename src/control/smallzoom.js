@@ -6,6 +6,9 @@ var SmallZoomControl = L.Control.extend({
   options: {
     position: 'topleft'
   },
+  initialize: function(options) {
+    return this;
+  },
   onAdd: function(map) {
     var clsName = 'leaflet-control-zoom',
         container = L.DomUtil.create('div', clsName + ' leaflet-bar');
@@ -66,8 +69,13 @@ L.Map.mergeOptions({
 });
 L.Map.addInitHook(function() {
   if (this.options.smallzoomControl) {
-    this.smallzoomControl = L.npmap.control.smallzoom();
-    this.addControl(this.smallzoomControl);
+    var options = {};
+
+    if (typeof this.options.smallzoomControl === 'object') {
+      options = this.options.smallzoomControl;
+    }
+
+    this.smallzoomControl = L.npmap.control.smallzoom(options).addTo(this);
   }
 });
 

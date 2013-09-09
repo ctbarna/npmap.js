@@ -66,10 +66,6 @@ var FullscreenControl = L.Control.extend({
     this._button.title = 'Toggle Fullscreen';
     L.DomEvent.addListener(this._button, 'click', this.fullscreen, this);
 
-    if (options && options.map) {
-      this.addTo(options.map);
-    }
-
     return this;
   }
 });
@@ -79,9 +75,13 @@ L.Map.mergeOptions({
 });
 L.Map.addInitHook(function() {
   if (this.options.fullscreenControl) {
-    this.fullscreenControl = L.npmap.control.fullscreen({
-      map: this
-    });
+    var options = {};
+
+    if (typeof this.options.fullscreenControl === 'object') {
+      options = this.options.fullscreenControl;
+    }
+
+    this.fullscreenControl = L.npmap.control.fullscreen(options).addTo(this);
   }
 });
 
