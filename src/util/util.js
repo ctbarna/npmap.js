@@ -12,17 +12,85 @@ var base64,
 
 module.exports = {
   appendCssFile: function(url, callback) {
-    var css = document.createElement('link');
-    css.href = url;
-    css.rel = 'stylesheet';
-    document.getElementsByTagName('head')[0].appendChild(css);
+    var head = document.getElementsByTagName('head')[0],
+        link = document.createElement('link'),
+        cssRules, sheet, timeout;
 
-    // TODO: You need to validate that CSS is loaded before calling callback.
+    link.setAttribute('href', url);
+    link.setAttribute('rel', 'stylesheet');
+    link.setAttribute('type', 'text/css');
+
     if (callback) {
-      callback();
+      if ('sheet' in link) {
+        cssRules = 'cssRules';
+        sheet = 'sheet';
+      } else {
+        cssRules = 'rules';
+        sheet = 'styleSheet';
+      }
+
+      timeout = setInterval(function() {
+        try {
+          if (link[sheet] && link[sheet][cssRules].length) {
+            clearInterval(timeout);
+            clearTimeout(timeout);
+            callback.call(window, true, link);
+          }
+        } catch(e) {} finally {}
+      }, 10),
+      timeout = setTimeout(function() {
+        clearInterval(timeout);
+        clearTimeout(timeout);
+        head.removeChild(link);
+        callback.call(window, false, link);
+      }, 15000);
     }
+
+    head.appendChild(link);
   },
   base64: base64,
+  getChildElementsByClassName: function(parentNode, className) {
+    var children = parentNode.childNodes,
+        matches = [];
+
+    function recurse(el) {
+      var grandChildren = el.children;
+
+      if (typeof el.className === 'string' && el.className.indexOf(className) !== -1) {
+        var classNames = el.className.split(' ');
+
+        for (var k = 0; k < classNames.length; k++) {
+          if (classNames[k] === className) {
+            matches.push(el);
+            break;
+          }
+        }
+      }
+
+      for (var j = 0; j < grandChildren.length; j++) {
+        recurse(grandChildren[j]);
+      }
+    }
+
+    for (var i = 0; i < children.length; i++) {
+      recurse(children[i]);
+    }
+
+    return matches;
+  },
+  getElementsByClassName: function(className) {
+    var elArray = [],
+        regex = new RegExp('(^|\\s)' + className + '(\\s|$)'),
+        tmp = document.getElementsByTagName('*');
+    
+    for (var i = 0; i < tmp.length; i++) {
+      if (regex.test(tmp[i].className)) {
+        elArray.push(tmp[i]);
+      }
+    }
+
+    return elArray;
+  },
   log: function(_) {
     if (console && typeof console.error === 'function') {
       console.error(_);
