@@ -54,8 +54,7 @@ if (typeof NPMap.config !== 'array' && typeof NPMap.config !== 'object') {
     }
   }
   function showLoader(div) {
-    var mask = document.createElement('div'),
-        spinner;
+    var mask = document.createElement('div');
 
     mask.className = 'npmap-loading';
     mask.style.cssText = 'background-color:#f9f7f1;height:100%;position:absolute;width:100%;z-index:99999;';
