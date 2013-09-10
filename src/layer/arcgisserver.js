@@ -46,7 +46,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
     }
 
     if (include.length) {
-      this.options.attribution = include.join(' | ');
+      this.options.attribution = include.join(', ');
       map.attributionControl.addAttribution(this.options.attribution);
     }
   },
