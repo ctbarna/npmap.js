@@ -2,7 +2,8 @@
 
 'use strict';
 
-var topojson = require('./topojson');
+var mustache = require('mustache'),
+    topojson = require('./topojson');
 
 module.exports = {
   /**
@@ -19,6 +20,22 @@ module.exports = {
     }
   },
   /**
+   *
+   */
+  _addAttribution: function() {
+    if (this.options.attribution && this._map.attributionControl) {
+      this._map.attributionControl.addAttribution(this.options.attribution);
+    }
+  },
+  /**
+   *
+   */
+  _removeAttribution: function() {
+    if (this.options.attribution && this._map.attributionControl) {
+      this._map.attributionControl.removeAttribution(this.options.attribution);
+    }
+  },
+  /**
    * Converts an NPMap.js GeoJSON layer config object to a Leaflet GeoJSON layer config object.
    * @param {Object} config
    * @return {Object} config
@@ -28,9 +45,15 @@ module.exports = {
     if (typeof config.clickable === 'undefined' || config.clickable === true) {
       if (typeof config.onEachFeature !== 'function') {
         if (config.popup) {
-          config.onEachFeature = function(feature, layer) {
-            layer.bindPopup('<div class="npmap-overflow">' + config.popup(feature.properties) + '</div>');
-          };
+          if (typeof config.popup === 'string') {
+            config.onEachFeature = function(feature, layer) {
+              layer.bindPopup('<div class="npmap-overflow">' + mustache.render(config.popup, feature.properties) + '</div>');
+            };
+          } else {
+            config.onEachFeature = function(feature, layer) {
+              layer.bindPopup('<div class="npmap-overflow">' + config.popup(feature.properties) + '</div>');
+            };
+          }
         } else {
           config.onEachFeature = function(feature, layer) {
             var properties = feature.properties;
