@@ -97,7 +97,6 @@ if (typeof NPMap.config !== 'array' && typeof NPMap.config !== 'object') {
   for (var i = 0; i < scripts.length; i++) {
     var src = scripts[i].src;
 
-    // TODO: You need to change the name of the file to "npmap-bootstrap".
     if (typeof src === 'string' && src.indexOf('npmap-bootstrap.js') !== -1) {
       NPMap.path = src.replace('npmap-bootstrap.js', '');
       break;
