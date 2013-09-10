@@ -3,7 +3,7 @@ BROWSERIFY = node_modules/.bin/browserify
 
 all: \
 				dist/images \
-				dist/bootstrap.js \
+				dist/npmap-bootstrap.min.js \
 				dist/npmap-standalone.css \
 				dist/npmap.css \
 				dist/npmap.ie.css \
@@ -24,8 +24,11 @@ dist/images:
 				cp -r node_modules/leaflet/dist/images dist/images
 				cp -r theme/images dist/images
 
-dist/bootstrap.js: src/bootstrap.js
-				cp src/bootstrap.js dist/bootstrap.js
+dist/npmap-bootstrap.js: src/bootstrap.js
+				cp src/bootstrap.js dist/npmap-bootstrap.js
+
+dist/npmap-bootstrap.min.js: dist/npmap-bootstrap.js
+				$(UGLIFY) $< -c -m -o $@
 
 dist/npmap-standalone.css: theme/nps.css
 				cp theme/nps.css dist/npmap-standalone.css
