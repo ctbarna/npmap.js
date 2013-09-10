@@ -62,7 +62,7 @@
   },
   "mapbox": {
     "light": {
-      "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a> | &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+      "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a>, &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
       "icon": "street",
       "id": "nps.map-sligp1fr",
       "name": "MapBox Light",
@@ -76,21 +76,21 @@
       "type": "mapbox"
     },
     "satelliteLabels": {
-      "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a> | &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+      "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a>, &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
       "icon": "aerial",
       "id": "nps.map-r3ilza09",
       "name": "MapBox Satellite w/Labels",
       "type": "mapbox"
     },
     "streets": {
-      "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a> | &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+      "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a>, &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
       "icon": "street",
       "id": "nps.map-06dnxzq5",
       "name": "MapBox Streets",
       "type": "mapbox"
     },
     "terrain": {
-      "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a> | &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+      "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a>, &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
       "icon": "topo",
       "id": "nps.map-lj6szvbq",
       "name": "MapBox Terrain",
