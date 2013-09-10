@@ -13,6 +13,7 @@ var GitHubLayer = L.GeoJSON.extend({
 
     if (typeof config.data === 'object') {
       L.GeoJSON.prototype.initialize.call(this, config.data, config);
+      this._addAttribution();
       return this;
     } else {
       var me = this;
@@ -22,7 +23,7 @@ var GitHubLayer = L.GeoJSON.extend({
       util.strict(config.user, 'string');
       util.request('https://api.github.com/repos/' + config.user + '/' + config.repo + '/contents/' + config.path, function(error, response) {
         L.GeoJSON.prototype.initialize.call(me, JSON.parse(util.base64.decode(response.content.replace(/\n|\r/g, ''))), config);
-        me.fire('ready');
+        me._addAttribution();
         return me;
       });
     }
