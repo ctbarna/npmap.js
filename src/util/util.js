@@ -62,8 +62,10 @@ module.exports = {
         }
       }
 
-      for (var j = 0; j < grandChildren.length; j++) {
-        recurse(grandChildren[j]);
+      if (grandChildren && grandChildren.length) {
+        for (var j = 0; j < grandChildren.length; j++) {
+          recurse(grandChildren[j]);
+        }
       }
     }
 
