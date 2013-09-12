@@ -2,12 +2,27 @@
 
 'use strict';
 
-var util = require('../util/util');
+var json3 = require('json3'),
+    reqwest = require('reqwest'),
+    util = require('../util/util');
 
 var ArcGisServerLayer = L.TileLayer.extend({
-  // The default options to initialize the layer with.
   options: {
     errorTileUrl: L.Util.emptyImageUrl
+  },
+  statics: {
+    TILED_TEMPLATE: '{url}/tile/{z}/{y}/{x}'
+  },
+  /**
+   *
+   */
+  _handleClick: function(e) {
+    this.identify(e.latlng, function(response) {
+      if (response.results && response.results.length) {
+        console.log(response);
+
+      }
+    });
   },
   /**
    * Removes the layer's attribution string from the attribution control.
@@ -15,8 +30,21 @@ var ArcGisServerLayer = L.TileLayer.extend({
   _removeAttribution: function() {
     if (this.options.attribution) {
       this._map.attributionControl.removeAttribution(this.options.attribution);
-      this.options.attribution = null;
     }
+  },
+  /**
+   *
+   */
+  _toLeafletBounds: function(bounds) {
+    return {
+      spatalReference: {
+        wkid: 4326
+      },
+      xmax: bounds.getNorthEast().lng,
+      ymax: bounds.getNorthEast().lat,
+      xmin: bounds.getSouthWest().lng,
+      ymin: bounds.getSouthWest().lat
+    };
   },
   /** 
    * Updates the layer's attribution string from the "dynamic attribution" object.
@@ -51,26 +79,121 @@ var ArcGisServerLayer = L.TileLayer.extend({
     }
   },
   /**
+   *
+   */
+  identify: function(latLng, callback) {
+    var
+      container = this._map.getContainer(),
+      params = {
+        f: 'json',
+        geometry: json3.stringify({
+          spatialReference: {
+            wkid: 4265
+          },
+          x: latLng.lng,
+          y: latLng.lat
+        }),
+        geometryType: 'esriGeometryPoint',
+        imageDisplay: container.offsetWidth + ',' + container.offsetHeight + ',96',
+        mapExtent: json3.stringify(this._toLeafletBounds(this._map.getBounds())),
+        returnGeometry: false,
+        sr: '4265',
+        tolerance: 3
+      };
+
+    if (this._layers) {
+      params.layers = this._layers;
+    }
+
+    reqwest({
+      data: params,
+      success: function(response) {
+        if (callback) {
+          callback(response);
+        }
+      },
+      type: 'jsonp',
+      url: this.options.url + '/identify'
+    });
+  },
+  /**
    * Initializes the layer. Called by the layer constructor.
    * @param {Object} config
    * @return {Object}
    */
   initialize: function(config) {
-    // TODO: Handle tiled and dynamic by building the URL in the library.
+    var me = this;
+
+    util.strict(config.tiled, 'boolean');
     util.strict(config.url, 'string');
-    L.TileLayer.prototype.initialize.call(this, config.url, config);
+
+    if (config.layers) {
+      this._layers = config.layers;
+    }
+
+    if (config.tiled) {
+      var u;
+
+      if (config.url.indexOf('{s}') === -1 && config.url.indexOf('://tiles.arcgis.com')) {
+        config.subdomains = [
+          '1',
+          '2',
+          '3',
+          '4'
+        ];
+        u = config.url.replace('://tiles.arcgis.com', '://tiles{s}.arcgis.com');
+      } else {
+        u = config.url;
+      }
+
+      L.TileLayer.prototype.initialize.call(this, '{{url}}/tile/{z}/{y}/{x}'.replace('{{url}}', u), config);
+    } else {
+      this.getTileUrl = function(tilePoint) {
+        var hW = 256,
+            x = tilePoint.x,
+            y = tilePoint.y,
+            z = tilePoint.z,
+            u = config.url + '/export?dpi=96&transparent=true&format=png8&bbox=' + ((x * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - ((y + 1) * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - ((y + 1) * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + ',' + (((x + 1) * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - (y * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - (y * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + '&bboxSR=4326&imageSR=102100&size=256,256&f=image';
+
+        if (this._layers) {
+          u += '&layers=show:' + this._layers;
+        }
+
+        return u;
+      };
+      L.TileLayer.prototype.initialize.call(this, undefined, config);
+    }
 
     if (this.options.dynamicAttribution && this.options.dynamicAttribution.indexOf('http') === 0) {
-      var me = this;
-
-      util.request(me.options.dynamicAttribution, function(error, response) {
-        me._dynamicAttributionData = response.contributors;
-        me._map.on('viewreset zoomend dragend', me._updateAttribution, me);
-        me.on('load', me._updateAttribution, me);
+      util.request(this.options.dynamicAttribution, function(error, response) {
+        this._dynamicAttributionData = response.contributors;
+        this._map.on('viewreset zoomend dragend', this._updateAttribution, this);
+        this.on('load', this._updateAttribution, this);
       });
     }
 
+    reqwest({
+      success: function(response) {
+        me._metadata = response;
+        me.fire('metadata', response);
+      },
+      type: 'jsonp',
+      url: config.url + '?f=json'
+    });
+
     return this;
+  },
+  /**
+   *
+   */
+  onAdd: function(map) {
+    // TODO: Filter out if zIndex === 0.
+    if ((typeof this.options.popup === 'undefined' || this.options.popup !== false)) {
+      this._isIdentifiable = true;
+      map.on('click', this._handleClick, this);
+    }
+
+    L.TileLayer.prototype.onAdd.call(this, map);
   },
   /**
    * Called when the layer is removed from the map.
@@ -81,6 +204,10 @@ var ArcGisServerLayer = L.TileLayer.extend({
       this._removeAttribution();
       this.off('load', this._updateAttribution, this);
       this._map.off('viewreset zoomend dragend', this._updateAttribution, this);
+    }
+
+    if (this._isIdentifiable) {
+      map.off('click', this._identify);
     }
 
     L.TileLayer.prototype.onRemove.call(this, map);
