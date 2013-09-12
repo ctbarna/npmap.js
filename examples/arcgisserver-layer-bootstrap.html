@@ -21,20 +21,21 @@
     <div id="map"></div>
     <script>
       var NPMap = {
-        config: {
-          center: {
-            lat: 37.82551432799189,
-            lng: -119.57931518554688
-          },
-          div: 'map',
-          layers: [{
-            attribution: 'Land Resources Division',
-            layers: '2',
-            type: 'arcgisserver',
-            url: 'http://mapservices.nps.gov/arcgis/rest/services/LandResourcesDivisionTractAndBoundaryService/MapServer'
-          }],
-          zoom: 10
-        }
+        div: 'map',
+        baseLayers: [{
+          attribution: 'Esri',
+          popup: false,
+          tiled: true,
+          type: 'arcgisserver',
+          url: 'http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
+        }],
+        overlays: [{
+          attribution: 'Esri',
+          opacity: 0.5,
+          tiled: true,
+          type: 'arcgisserver',
+          url: 'http://services.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Unemployment_Rate/MapServer'
+        }]
       };
 
       (function() {

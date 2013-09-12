@@ -21,22 +21,20 @@
     <div id="map"></div>
     <script>
       var NPMap = {
-        config: {
-          center: {
-            lat: 37.82551432799189,
-            lng: -119.57931518554688
-          },
-          div: 'map',
-          layers: [{
-            attribution: 'Land Resources Division',
-            path: 'base_data/boundaries/parks/yose.topojson',
-            popup: '<span class="title">Yosemite National Park</span>',
-            repo: 'data',
-            type: 'github',
-            user: 'nationalparkservice'
-          }],
-          zoom: 10
-        }
+        center: {
+          lat: 37.82551432799189,
+          lng: -119.57931518554688
+        },
+        div: 'map',
+        layers: [{
+          attribution: 'Land Resources Division',
+          path: 'base_data/boundaries/parks/yose.topojson',
+          popup: '<span class="title">Yosemite National Park</span>',
+          repo: 'data',
+          type: 'github',
+          user: 'nationalparkservice'
+        }],
+        zoom: 10
       };
 
       (function() {
