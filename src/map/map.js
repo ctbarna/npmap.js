@@ -55,8 +55,10 @@ var Map = L.Map.extend({
       config.div = document.getElementById(config.div);
     }
 
-    if (config.layers) {
+    if (config.layers && L.Util.isArray(config.layers) && config.layers.length) {
       config.overlays = config.layers;
+      config.layers = [];
+    } else if (config.overlays && L.Util.isArray(config.overlays) && config.overlays.length) {
       config.layers = [];
     } else {
       config.layers = [];
