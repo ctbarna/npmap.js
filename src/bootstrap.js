@@ -1,14 +1,16 @@
-/* global L */
+/* global L, NPMap */
 
-var NPMap = NPMap || {};
-
-if (!NPMap.config) {
-  throw new Error('The NPMap.config property is required');
+if (!NPMap) {
+  throw new Error('The NPMap object is required');
 }
 
-if (typeof NPMap.config !== 'array' && typeof NPMap.config !== 'object') {
-  throw new Error('NPMap.config must be either an array or an object');
+if (typeof NPMap !== 'array' && typeof NPMap !== 'object') {
+  throw new Error('The NPMap object cannot be a ' + typeof NPMap);
 }
+
+NPMap = {
+  config: NPMap.config || NPMap
+};
 
 (function() {
   // Spin.js - http://fgnass.github.io/spin.js
