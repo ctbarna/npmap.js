@@ -11,16 +11,26 @@ var ArcGisServerLayer = L.TileLayer.extend({
     errorTileUrl: L.Util.emptyImageUrl
   },
   statics: {
-    TILED_TEMPLATE: '{url}/tile/{z}/{y}/{x}'
+    TILED_TEMPLATE: '{{url}}/tile/{z}/{y}/{x}'
   },
   /**
-   *
+   * Handles a  click operation for this layer.
+   * @param {Object} e
    */
   _handleClick: function(e) {
-    this.identify(e.latlng, function(response) {
-      if (response.results && response.results.length) {
-        console.log(response);
+    var latLng = e.latlng,
+        me = this;
 
+    this.identify(latLng, function(response) {
+      if (response.results && response.results.length) {
+        var html = '<table><tbody>',
+            popup = L.popup();
+
+        for (var i = 0; i < response.results.length; i++) {
+          html += '<tr><td>' + response.results[i].value + '</td></tr>';
+        }
+
+        popup.setContent('<div class="title">Information</div><div class="npmap-overflow">' + html + '</tbody></table></div>').setLatLng(latLng).openOn(me._map);
       }
     });
   },
@@ -33,9 +43,11 @@ var ArcGisServerLayer = L.TileLayer.extend({
     }
   },
   /**
-   *
+   * Converts a Leaflet bounds to an Esri bounds.
+   * @param {Object} bounds
+   * @return {Object}
    */
-  _toLeafletBounds: function(bounds) {
+  _toEsriBounds: function(bounds) {
     return {
       spatalReference: {
         wkid: 4326
@@ -79,11 +91,12 @@ var ArcGisServerLayer = L.TileLayer.extend({
     }
   },
   /**
-   *
+   * Perform an identify operation on this layer.
+   * @param {Object} latLng
+   * @param {Function} callback
    */
   identify: function(latLng, callback) {
-    var
-      container = this._map.getContainer(),
+    var container = this._map.getContainer(),
       params = {
         f: 'json',
         geometry: json3.stringify({
@@ -95,7 +108,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
         }),
         geometryType: 'esriGeometryPoint',
         imageDisplay: container.offsetWidth + ',' + container.offsetHeight + ',96',
-        mapExtent: json3.stringify(this._toLeafletBounds(this._map.getBounds())),
+        mapExtent: json3.stringify(this._toEsriBounds(this._map.getBounds())),
         returnGeometry: false,
         sr: '4265',
         tolerance: 3
@@ -146,7 +159,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
         u = config.url;
       }
 
-      L.TileLayer.prototype.initialize.call(this, '{{url}}/tile/{z}/{y}/{x}'.replace('{{url}}', u), config);
+      L.TileLayer.prototype.initialize.call(this, ArcGisServerLayer.TILED_TEMPLATE.replace('{{url}}', u), config);
     } else {
       this.getTileUrl = function(tilePoint) {
         var hW = 256,
@@ -184,13 +197,16 @@ var ArcGisServerLayer = L.TileLayer.extend({
     return this;
   },
   /**
-   *
+   * Called when the layer is added to the map.
+   * @param {Object} map
    */
   onAdd: function(map) {
     // TODO: Filter out if zIndex === 0.
     if ((typeof this.options.popup === 'undefined' || this.options.popup !== false)) {
       this._isIdentifiable = true;
       map.on('click', this._handleClick, this);
+    } else {
+      this._isIdentifiable = false;
     }
 
     L.TileLayer.prototype.onAdd.call(this, map);
