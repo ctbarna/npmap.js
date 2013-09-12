@@ -2,7 +2,8 @@
 
 'use strict';
 
-var util = require('../util/util');
+var reqwest = require('reqwest'),
+    util = require('../util/util');
 
 var MapBoxLayer = L.TileLayer.extend({
   options: {
@@ -25,6 +26,9 @@ var MapBoxLayer = L.TileLayer.extend({
     'png128',
     'png256'
   ],
+  _toLeafletBounds: function(_) {
+    return new L.LatLngBounds([[_[1], _[0]], [_[3], _[2]]]);
+  },
   initialize: function(config) {
     var _;
 
@@ -49,21 +53,62 @@ var MapBoxLayer = L.TileLayer.extend({
   },
   _loadTileJson: function(_) {
     if (typeof _ === 'string') {
+      var me = this;
+
       if (_.indexOf('/') === -1) {
-        _ = util.mapbox.url.base() + _ + '.json';
+        _ = (function(hash) {
+          var urls = (function() {
+            var endpoints = [
+              'http://a.tiles.mapbox.com/v3/',
+              'http://b.tiles.mapbox.com/v3/',
+              'http://c.tiles.mapbox.com/v3/',
+              'http://d.tiles.mapbox.com/v3/'
+            ];
+
+            if ('https:' === document.location.protocol) {
+              for (var i = 0; i < endpoints.length; i++) {
+                endpoints[i] = endpoints[i].replace('http', 'https');
+              }
+            }
+
+            return endpoints;
+          })();
+
+          if (hash === undefined || typeof hash !== 'number') {
+            return urls[0];
+          } else {
+            return urls[hash % urls.length];
+          }
+        })() + _ + '.json';
       }
 
-      util.request(util.mapbox.url.secureFlag(_), L.bind(function(error, json) {
-        if (error) {
-          util.log('could not load TileJSON at ' + _);
-          this.fire('error', {
-            error: error
-          });
-        } else if (json) {
-          this._setTileJson(json);
-          this.fire('ready');
-        }
-      }, this));
+      // TODO: Need to return errors from reqwest.
+      reqwest({
+        jsonpCallbackName: 'grid',
+        success: L.bind(function(json, error) {
+          if (error) {
+            util.log('could not load TileJSON at ' + _);
+            me.fire('error', {
+              error: error
+            });
+          } else if (json) {
+            me._setTileJson(json);
+            me.fire('ready');
+          }
+        }),
+        type: 'jsonp',
+        url: (function(url) {
+          if ('https:' !== document.location.protocol) {
+            return url;
+          } else if (url.match(/(\?|&)secure/)) {
+            return url;
+          } else if (url.indexOf('?') !== -1) {
+            return url + '&secure';
+          } else {
+            return url + '?secure';
+          }
+        })(_)
+      });
     } else if (typeof _ === 'object') {
       this._setTileJson(_);
     }
@@ -72,7 +117,7 @@ var MapBoxLayer = L.TileLayer.extend({
     util.strict(json, 'object');
 
     var extend = {
-      bounds: json.bounds && util.mapbox.toLeafletBounds(json.bounds),
+      bounds: json.bounds && this._toLeafletBounds(json.bounds),
       tiles: json.tiles,
       tms: json.scheme === 'tms'
     };

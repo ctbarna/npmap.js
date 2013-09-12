@@ -2,7 +2,8 @@
 
 'use strict';
 
-var util = require('../util/util');
+var reqwest = require('reqwest'),
+    util = require('../util/util');
 
 var GitHubLayer = L.GeoJSON.extend({
   includes: [
@@ -21,10 +22,14 @@ var GitHubLayer = L.GeoJSON.extend({
       util.strict(config.path, 'string');
       util.strict(config.repo, 'string');
       util.strict(config.user, 'string');
-      util.request('https://api.github.com/repos/' + config.user + '/' + config.repo + '/contents/' + config.path, function(error, response) {
-        L.GeoJSON.prototype.initialize.call(me, JSON.parse(util.base64.decode(response.content.replace(/\n|\r/g, ''))), config);
-        me._addAttribution();
-        return me;
+      reqwest({
+        success: function(response) {
+          L.GeoJSON.prototype.initialize.call(me, JSON.parse(util.base64.decode(response.data.content.replace(/\n|\r/g, ''))), config);
+          me._addAttribution();
+          return me;
+        },
+        type: 'jsonp',
+        url: 'https://api.github.com/repos/' + config.user + '/' + config.repo + '/contents/' + config.path
       });
     }
   }
