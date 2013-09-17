@@ -94,6 +94,71 @@ module.exports = {
   /**
    *
    */
+  getEventObject: function(e) {
+    if (!e) {
+      e = window.event;
+    }
+
+    return e;
+  },
+  /**
+   *
+   */
+  getEventObjectTarget: function(e) {
+    var target;
+
+    if (e.target) {
+      target = e.target;
+    } else {
+      target = e.srcElement;
+    }
+
+    if (target.nodeType === 3) {
+      target = target.parentNode;
+    }
+
+    return target;
+  },
+  /**
+   * http://stackoverflow.com/a/2474742/27540
+   */
+  getOuterHtml: function(el) {
+    if(!el || !el.tagName) {
+      return '';
+    }
+
+    var div = document.createElement('div'),
+        ax, txt;
+
+    div.appendChild(el.cloneNode(false));
+    txt = div.innerHTML;
+    ax = txt.indexOf('>') + 1;
+    txt = txt.substring(0, ax) + el.innerHTML + txt.substring(ax);
+    div = null;
+    return txt;
+  },
+  /**
+   * http://stackoverflow.com/a/5675579/27540
+   */
+  getPropertyCount: function(obj) {
+    if (!Object.keys) {
+      var keys = [],
+          k;
+
+      for (k in obj) {
+        if (Object.prototype.hasOwnProperty.call(obj, k)) {
+          keys.push(k);
+        }
+      }
+
+      return keys.length;
+    } else {
+      return Object.keys(obj).length;
+    }
+  },
+  /**
+   *
+   */
   strict: function(_, type) {
     if (typeof _ !== type) {
       throw new Error('Invalid argument: ' + type + ' expected');

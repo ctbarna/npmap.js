@@ -14,6 +14,17 @@ var ArcGisServerLayer = L.TileLayer.extend({
     TILED_TEMPLATE: '{{url}}/tile/{z}/{y}/{x}'
   },
   /**
+   * Adds click events to all the tr elements in the popup.
+   */
+  _addRowClickEvents: function() {
+    var me = this,
+        rows = me._popup._contentNode.childNodes[1].childNodes[0].childNodes;
+
+    for (var j = 0; j < rows.length; j++) {
+      L.DomEvent.addListener(rows[j], 'click', me._moreClick, me);
+    }
+  },
+  /**
    * Handles a  click operation for this layer.
    * @param {Object} e
    */
@@ -23,15 +34,69 @@ var ArcGisServerLayer = L.TileLayer.extend({
 
     this.identify(latLng, function(response) {
       if (response.results && response.results.length) {
-        var html = '<table><tbody>',
-            popup = L.popup();
+        var html = '',
+            layerResults = {};
+
+        me._popup = L.popup({
+          maxHeight: (me._map.getContainer().offsetHeight - 20),
+          maxWidth: (me._map.getContainer().offsetWidth - 20),
+          minWidth: 221
+        });
 
         for (var i = 0; i < response.results.length; i++) {
-          html += '<tr><td>' + response.results[i].value + '</td></tr>';
+          var result = response.results[i];
+
+          if (!layerResults[result.layerName]) {
+            layerResults[result.layerName] = {};
+          }
+
+          layerResults[result.layerName][result.value] = result.attributes;
         }
 
-        popup.setContent('<div class="title">Information</div><div class="npmap-overflow">' + html + '</tbody></table></div>').setLatLng(latLng).openOn(me._map);
+        for (var layerName in layerResults) {
+          var results = layerResults[layerName];
+
+          html += '<div class="title">' + layerName + ' (' + util.getPropertyCount(results) + ')</div><table><tbody>';
+
+          for (var value in results) {
+            html += '<tr class="hoverable"><td>' + value + '</td></tr>';
+          }
+
+          html += '</tbody></table>';
+        }
+
+        me._identifyResults = layerResults;
+        me._popup.setContent(html).setLatLng(latLng).openOn(me._map);
+        me._addRowClickEvents();
       }
+    });
+  },
+  /**
+   * Handles a click operation on a table row.
+   * @param {Object} e
+   */
+  _moreClick: function(e) {
+    var html = '',
+        me = this,
+        oldHtml = this._popup._contentNode.innerHTML,
+        attributes, name, target, value;
+
+    e = util.getEventObject(e);
+    target = util.getEventObjectTarget(e);
+    name = target.parentNode.parentNode.parentNode.previousSibling.innerHTML;
+    name = name.slice(0, name.indexOf(' ('));
+    value = target.innerHTML;
+    attributes = me._identifyResults[name][value];
+    html += '<div class="title">' + value + '</div><table><tbody>';
+
+    for (var prop in attributes) {
+      html += '<tr><td>' + prop + '</td><td style="text-align:right;">' + attributes[prop] + '</td></tr>';
+    }
+
+    me._popup.setContent(html + '</tbody></table><div class="footer"><button class="btn btn-sm">&lt; Back to Results</button></div>');
+    L.DomEvent.addListener(me._popup._contentNode.childNodes[2].childNodes[0], 'click', function() {
+      me._popup.setContent(oldHtml);
+      me._addRowClickEvents();
     });
   },
   /**
