@@ -291,6 +291,8 @@ var ArcGisServerLayer = L.TileLayer.extend({
       success: function(response) {
         me._metadata = response;
         me.fire('metadata', response);
+
+        // If not identifiable, take it out of identifiable queue.
       },
       type: 'jsonp',
       url: config.url + '?f=json'
