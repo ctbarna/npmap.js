@@ -78,6 +78,35 @@ module.exports = {
   /**
    *
    */
+  getChildElementsByNodeName: function(parentNode, nodeName) {
+    var children = parentNode.childNodes,
+        matches = [];
+
+    nodeName = nodeName.toLowerCase();
+
+    function recurse(el) {
+      var grandChildren = el.children;
+
+      if (typeof el.nodeName === 'string' && el.nodeName.toLowerCase() === nodeName) {
+        matches.push(el);
+      }
+
+      if (grandChildren && grandChildren.length) {
+        for (var j = 0; j < grandChildren.length; j++) {
+          recurse(grandChildren[j]);
+        }
+      }
+    }
+
+    for (var i = 0; i < children.length; i++) {
+      recurse(children[i]);
+    }
+
+    return matches;
+  },
+  /**
+   *
+   */
   getElementsByClassName: function(className) {
     var matches = [],
         regex = new RegExp('(^|\\s)' + className + '(\\s|$)'),

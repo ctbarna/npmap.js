@@ -352,7 +352,12 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 }
 .leaflet-popup-content td, .leaflet-popup-content th {
   border: none;
-  padding: 7px 5px;
+  padding-bottom: 7px;
+  padding-top: 7px;
+}
+.leaflet-popup-content tr.hoverable td, .leaflet-popup-content tr.hoverable th {
+  padding-left: 5px;
+  padding-right: 5px;
 }
 .leaflet-popup-content th {
   white-space: nowrap;
@@ -360,6 +365,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 .leaflet-popup-scrolled {
   border-bottom: none;
   border-top: none;
+  padding-right: 5px;
 }
 /* Zoombox */
 .leaflet-zoom-box {

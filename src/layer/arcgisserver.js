@@ -18,7 +18,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
    */
   _addRowClickEvents: function() {
     var me = this,
-        rows = me._popup._contentNode.childNodes[1].childNodes[0].childNodes;
+        rows = util.getChildElementsByNodeName(me._popup._contentNode, 'tr');
 
     for (var j = 0; j < rows.length; j++) {
       L.DomEvent.addListener(rows[j], 'click', me._moreClick, me);
@@ -32,14 +32,21 @@ var ArcGisServerLayer = L.TileLayer.extend({
     var latLng = e.latlng,
         me = this;
 
+    me._map.arcGisServerPending++;
+
+    if (me._map.arcGisServerIdentifiable === me._map.arcGisServerPending) {
+      me._map.arcGisServerHtml = '';
+      me._map.arcGisServerResults = [];
+    }
+
     this.identify(latLng, function(response) {
       if (response.results && response.results.length) {
         var html = '',
             layerResults = {};
 
         me._popup = L.popup({
-          maxHeight: (me._map.getContainer().offsetHeight - 20),
-          maxWidth: (me._map.getContainer().offsetWidth - 20),
+          maxHeight: (me._map.getContainer().offsetHeight - 86),
+          maxWidth: (me._map.getContainer().offsetWidth - 95),
           minWidth: 221
         });
 
@@ -56,7 +63,13 @@ var ArcGisServerLayer = L.TileLayer.extend({
         for (var layerName in layerResults) {
           var results = layerResults[layerName];
 
-          html += '<div class="title">' + layerName + ' (' + util.getPropertyCount(results) + ')</div><table><tbody>';
+          html += '<div class="title"';
+
+          if (me._map.arcGisServerHtml.length) {
+            html += ' style="margin-top:10px;"';
+          }
+
+          html += '>' + layerName + ' (' + util.getPropertyCount(results) + ')</div><table><tbody>';
 
           for (var value in results) {
             html += '<tr class="hoverable"><td>' + value + '</td></tr>';
@@ -65,8 +78,14 @@ var ArcGisServerLayer = L.TileLayer.extend({
           html += '</tbody></table>';
         }
 
-        me._identifyResults = layerResults;
-        me._popup.setContent(html).setLatLng(latLng).openOn(me._map);
+        me._map.arcGisServerResults.push(layerResults);
+        me._map.arcGisServerHtml += html;
+      }
+
+      me._map.arcGisServerPending--;
+
+      if (me._map.arcGisServerPending === 0) {
+        me._popup.setContent(me._map.arcGisServerHtml).setLatLng(latLng).openOn(me._map);
         me._addRowClickEvents();
       }
     });
@@ -86,7 +105,25 @@ var ArcGisServerLayer = L.TileLayer.extend({
     name = target.parentNode.parentNode.parentNode.previousSibling.innerHTML;
     name = name.slice(0, name.indexOf(' ('));
     value = target.innerHTML;
-    attributes = me._identifyResults[name][value];
+    attributes = (function() {
+      var attrs;
+
+      for (var i = 0; i < me._map.arcGisServerResults.length; i++) {
+        var result = me._map.arcGisServerResults[i];
+
+        for (var layerName in result) {
+          if (layerName === name) {
+            attrs = result[layerName];
+            break;
+          }
+        }
+
+        if (attrs) {
+          return attrs[value];
+        }
+      }
+    })();
+
     html += '<div class="title">' + value + '</div><table><tbody>';
 
     for (var prop in attributes) {
@@ -270,6 +307,13 @@ var ArcGisServerLayer = L.TileLayer.extend({
     if ((typeof this.options.popup === 'undefined' || this.options.popup !== false)) {
       this._isIdentifiable = true;
       map.on('click', this._handleClick, this);
+
+      if (typeof map.arcGisIdentifiable !== 'number') {
+        map.arcGisServerIdentifiable = 1;
+        map.arcGisServerPending = 0;
+      } else {
+        map.arcGisServerIdentifiable++;
+      }
     } else {
       this._isIdentifiable = false;
     }
@@ -289,6 +333,14 @@ var ArcGisServerLayer = L.TileLayer.extend({
 
     if (this._isIdentifiable) {
       map.off('click', this._identify);
+      map.arcGisServerIdentifiable--;
+
+      if (map.arcGisServerIdentifiable === 0) {
+        delete map.arcGisServerHtml;
+        delete map.arcGisServerIdentifiable;
+        delete map.arcGisServerPending;
+        delete map.arcGisServerResults;
+      }
     }
 
     L.TileLayer.prototype.onRemove.call(this, map);
