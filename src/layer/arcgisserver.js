@@ -280,10 +280,14 @@ var ArcGisServerLayer = L.TileLayer.extend({
     }
 
     if (this.options.dynamicAttribution && this.options.dynamicAttribution.indexOf('http') === 0) {
-      util.request(this.options.dynamicAttribution, function(error, response) {
-        this._dynamicAttributionData = response.contributors;
-        this._map.on('viewreset zoomend dragend', this._updateAttribution, this);
-        this.on('load', this._updateAttribution, this);
+      reqwest({
+        success: function(response) {
+          me._dynamicAttributionData = response.contributors;
+          me._map.on('viewreset zoomend dragend', me._updateAttribution, me);
+          me.on('load', me._updateAttribution, me);
+        },
+        type: 'jsonp',
+        url: this.options.dynamicAttribution
       });
     }
 
