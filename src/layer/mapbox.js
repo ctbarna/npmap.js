@@ -29,6 +29,59 @@ var MapBoxLayer = L.TileLayer.extend({
   _toLeafletBounds: function(_) {
     return new L.LatLngBounds([[_[1], _[0]], [_[3], _[2]]]);
   },
+  _handleClick: function(e) {
+    var latLng = e.latlng,
+    me = this;
+
+    me._popup = L.popup({
+      maxHeight: (me._map.getContainer().offsetHeight - 86),
+      maxWidth: (me._map.getContainer().offsetWidth - 95),
+      minWidth: 221
+    });
+
+    var getMapboxData = function getMapboxData(latLng, callback) {
+      callback({
+        'Example Layer1': ['Data 1', 'Data 2', 'Data 3'],
+        'Example Layer2': ['Test Data', 'Junk Data'],
+        'Example Layer3': ['Example Data', 'Sample Data', 'Junk Data', 'Gibberish']
+      });
+    };
+
+    // Create the HTML for the popup
+    var createPopup = function createPopup(layerResults){
+      var popupDiv = document.createElement('div');
+      for (var layerName in layerResults) {
+        var results = layerResults[layerName];
+
+        var theseResults = document.createElement('div');
+        var layerTitle = document.createElement('div');
+        layerTitle.setAttribute('class', 'title');
+        layerTitle.setAttribute('style', 'margin-top:10px;');
+        layerTitle.textContent = [layerName, ' (', results.length, ')'].join('');
+
+        var resultsTable = document.createElement('table');
+        var resultsTableBody = document.createElement('tbody');
+
+        for (var value in results) {
+          var tableRow = document.createElement('tr');
+          tableRow.setAttribute('class', 'hoverable');
+          var tableData = document.createElement('td');
+          tableData.textContent = value;
+          tableRow.appendChild(tableData);
+          resultsTableBody.appendChild(tableRow);
+        }
+        resultsTable.appendChild(resultsTableBody);
+        theseResults.appendChild(layerTitle);
+        theseResults.appendChild(resultsTable);
+        popupDiv.appendChild(theseResults);
+      }
+      return popupDiv.outerHTML;
+    };
+
+    getMapboxData(latLng, function drawPopup(resultData) {
+      me._popup.setContent(createPopup(resultData)).setLatLng(latLng).openOn(me._map);
+    });
+  },
   initialize: function(config) {
     var _;
 
@@ -50,6 +103,22 @@ var MapBoxLayer = L.TileLayer.extend({
     }
 
     this._loadTileJson(_);
+  },
+  onAdd: function onAdd(map) {
+    // TODO: Filter out if zIndex === 0.
+    if ((typeof this.options.popup === 'undefined' || this.options.popup !== false)) {
+      this._isIdentifiable = true;
+      map.on('click', this._handleClick, this);
+
+    } else {
+      this._isIdentifiable = false;
+    }
+
+    L.TileLayer.prototype.onAdd.call(this, map);
+  },
+  onRemove: function onRemove() {
+    this._map
+      .off('click', this._handleClick, this);
   },
   _loadTileJson: function(_) {
     if (typeof _ === 'string') {
