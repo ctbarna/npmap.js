@@ -9,7 +9,8 @@ L.npmap = module.exports = {
     fullscreen: require('./src/control/fullscreen'),
     overview: require('./src/control/overview'),
     scale: require('./src/control/scale'),
-    smallzoom: require('./src/control/smallzoom')
+    smallzoom: require('./src/control/smallzoom'),
+    switcher: require('./src/control/switcher')
   },
   layer: {
     arcgisserver: require('./src/layer/arcgisserver'),
