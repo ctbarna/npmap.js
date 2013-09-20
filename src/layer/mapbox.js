@@ -3,7 +3,9 @@
 'use strict';
 
 var reqwest = require('reqwest'),
-    util = require('../util/util');
+    util = require('../util/util'),
+    tileMath = require('../util/tileMath.js'),
+    Popup = require('../util/popup.js');
 
 var MapBoxLayer = L.TileLayer.extend({
   options: {
@@ -29,62 +31,36 @@ var MapBoxLayer = L.TileLayer.extend({
   _toLeafletBounds: function(_) {
     return new L.LatLngBounds([[_[1], _[0]], [_[3], _[2]]]);
   },
-  _handleClick: function(e) {
-    var latLng = e.latlng,
-      me = this;
+  _getTileGridPoint: function _getTileGridPoint(latLng,result) {
 
-    me._popup = L.popup({
-      maxHeight: (me._map.getContainer().offsetHeight - 86),
-      maxWidth: (me._map.getContainer().offsetWidth - 95),
-      minWidth: 221
-    });
+    // Forked from danzel/Leaflet.utfgrid
+    // https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js
+    var me = this,
+      point = me._map.project(latLng),
+      tileSize = me.options.tileSize || 256,
+      resolution = me.options.resolution || 4,
+      x = Math.floor(point.x / tileSize),
+      y = Math.floor(point.y / tileSize),
+      max = me._map.options.crs.scale(me._map.getZoom()) / tileSize;
 
-    // Probably more this out of this function
-    me._getDataFromGrid = function getDataFromGrid(latLng, callback) {
+    x = (x + max) % max;
+    y = (y + max) % max;
 
-      var getPointFromGrid = function getPointFromGrid(latLng,data) {
+    var gridX = Math.floor((point.x - (x * tileSize))/ resolution),
+        gridY = Math.floor((point.y - (y * tileSize)) / resolution),
+        key = result.grid[gridY].charCodeAt(gridX);
 
-        // MAPBOX CODE
-        var point = me._map.project(latLng),
-          tileSize = 256,
-          resolution = 4,
-          x = Math.floor(point.x / tileSize),
-          y = Math.floor(point.y / tileSize),
-          max = me._map.options.crs.scale(me._map.getZoom()) / tileSize;
-
-        x = (x + max) % max;
-        y = (y + max) % max;
-
-        var gridX = Math.floor((point.x - (x * tileSize))/ resolution),
-            gridY = Math.floor((point.y - (y * tileSize)) / resolution),
-            key = data.grid[gridY].charCodeAt(gridX);
-
-        // Decode that key
-        // https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js
-        if (key >= 93) {
-          key--;
-        }
-        if (key >= 35) {
-          key--;
-        }
-        key -= 32;
-
-        // Return the data from the key
-        return data.data[data.keys[key]];
-      };
-      // First we need to get the grid
-      // We do that by figuring out what tile we are on
-      // There's probably a MUCH better way to do this, but this is a start
-      function long2tile(lon,zoom) { return (Math.floor((lon+180)/360*Math.pow(2,zoom))); }
-      function lat2tile(lat,zoom)  { return (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom))); }
-
-      var tileCoords = {
-        x: long2tile(latLng.lng, this._map.getZoom()),
-        y: lat2tile(latLng.lat, this._map.getZoom()),
+    // Return the data from the key
+    return result.data[result.keys[me._utfDecode(key)]];
+  },
+  _getTileGrid: function _getTileGrid(latLng, callback) {
+    var me = this,
+      tileCoords = {
+        x: tileMath.long2tile(latLng.lng, this._map.getZoom()),
+        y: tileMath.lat2tile(latLng.lat, this._map.getZoom()),
         z: this._map.getZoom()
-      };
-
-      var tileUrl = [
+      },
+      tileUrl = [
         this.options.url,
         this.options.id,
         '/',
@@ -96,52 +72,24 @@ var MapBoxLayer = L.TileLayer.extend({
         '.grid.json'
       ].join('');
 
-      // Next we go and download that tile
-      reqwest({
-        url: tileUrl,
-        type: 'jsonp',
-        success: function (res) {
-          console.log('f');
-          callback(getPointFromGrid(latLng, res));
-        }
-      });
-    };
-
-    // Create the HTML for the popup
-    var createPopup = function createPopup(layerResults){
-      var popupDiv = document.createElement('div');
-      for (var layerName in layerResults) {
-        var results = layerResults[layerName];
-
-        var theseResults = document.createElement('div');
-        var layerTitle = document.createElement('div');
-        layerTitle.setAttribute('class', 'title');
-        layerTitle.setAttribute('style', 'margin-top:10px;');
-        layerTitle.textContent = [layerName, ' (', results.length, ')'].join('');
-
-        var resultsTable = document.createElement('table');
-        var resultsTableBody = document.createElement('tbody');
-
-        //for (var value in results) {
-        var tableRow = document.createElement('tr');
-        tableRow.setAttribute('class', 'hoverable');
-        var tableData = document.createElement('td');
-        tableData.textContent = results;
-        tableRow.appendChild(tableData);
-        resultsTableBody.appendChild(tableRow);
-        //}
-        resultsTable.appendChild(resultsTableBody);
-        theseResults.appendChild(layerTitle);
-        theseResults.appendChild(resultsTable);
-        popupDiv.appendChild(theseResults);
+    reqwest({
+      url: tileUrl,
+      type: 'jsonp',
+      success: function (res) {
+        callback(me._getTileGridPoint(latLng, res));
+      },
+      error: function (err) {
+        callback({'Error': err});
       }
-      return popupDiv.outerHTML;
-    };
+    });
+  },
+  _handleClick: function(e) {
+    var latLng = e.latlng,
+      me = this;
 
-    console.log('e', e);
-    console.log('latLng', latLng);
-    me._getDataFromGrid(latLng, function drawPopup(resultData) {
-      me._popup.setContent(createPopup(resultData)).setLatLng(latLng).openOn(me._map);
+    var clickPopup = new Popup(me._map, latLng);
+    me._getTileGrid(latLng, function drawPopup(resultData) {
+      clickPopup.addLayer(me, resultData);
     });
   },
   initialize: function(config) {
@@ -181,6 +129,7 @@ var MapBoxLayer = L.TileLayer.extend({
   onRemove: function onRemove() {
     this._map
       .off('click', this._handleClick, this);
+    L.TileLayer.prototype.onRemove.call(this, this._map);
   },
   _loadTileJson: function(_) {
     if (typeof _ === 'string') {
@@ -292,7 +241,13 @@ var MapBoxLayer = L.TileLayer.extend({
     this.redraw();
     return this;
   },
-  setUrl: null
+  setUrl: null,
+  _utfDecode: function _utfDecode(key) {
+    // https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js
+    if (key >= 93) key--;
+    if (key >= 35) key--;
+    return key - 32;
+  }
 });
 
 module.exports = function(config) {
