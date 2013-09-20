@@ -46,8 +46,6 @@ module.exports = function popup(map, latLng) {
     },
     _checkIfFinished = function _checkFinished() {
       if (layers.length === totalLayers) _show();
-      console.log('a', layers.length);
-      console.log('b', totalLayers);
     },
     _sortByOrder = function _sortByOrder(a,b){
       if (a.order < b.order) return -1;
@@ -55,16 +53,12 @@ module.exports = function popup(map, latLng) {
       return 0;
     },
     _show = function show() {
-      console.log(layers);
       var popupDiv = document.createElement('div'),
         sortedLayers = layers.sort(_sortByOrder);
-      console.log('sorted', sortedLayers);
 
       for (var sortedLayer in sortedLayers) {
-        console.log('sortedLayer', sortedLayer);
-        if (sortedLayer.el) popupDiv.appendChild(sortedLayer.el);
+        if (sortedLayers[sortedLayer].el) popupDiv.appendChild(sortedLayers[sortedLayer].el);
       }
-      console.log('popupDiv', popupDiv);
       _popup.setContent(popupDiv.outerHTML).setLatLng(latLng).openOn(map);
     },
     _popup = L.popup({
