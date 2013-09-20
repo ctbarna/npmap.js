@@ -25,6 +25,10 @@ Nodemon is not part of the package file, so if you'd like to use it, you will ne
 
     npm install -g nodemon
 
+You will also want to add the following line to the .nodemonignore file, otherwise it will rebuild a few times.
+
+    dist/*
+
 To set up nodemon watch your code and remake on every change run the command:
 
     nodemon -x "make -f" Makefile
