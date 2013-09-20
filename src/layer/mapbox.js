@@ -30,9 +30,8 @@ var MapBoxLayer = L.TileLayer.extend({
     return new L.LatLngBounds([[_[1], _[0]], [_[3], _[2]]]);
   },
   _handleClick: function(e) {
-    console.log('e', e);
     var latLng = e.latlng,
-    me = this;
+      me = this;
 
     me._popup = L.popup({
       maxHeight: (me._map.getContainer().offsetHeight - 86),
@@ -43,6 +42,36 @@ var MapBoxLayer = L.TileLayer.extend({
     // Probably more this out of this function
     me._getDataFromGrid = function getDataFromGrid(latLng, callback) {
 
+      var getPointFromGrid = function getPointFromGrid(latLng,data) {
+
+        // MAPBOX CODE
+        var point = me._map.project(latLng),
+          tileSize = 256,
+          resolution = 4,
+          x = Math.floor(point.x / tileSize),
+          y = Math.floor(point.y / tileSize),
+          max = me._map.options.crs.scale(me._map.getZoom()) / tileSize;
+
+        x = (x + max) % max;
+        y = (y + max) % max;
+
+        var gridX = Math.floor((point.x - (x * tileSize))/ resolution),
+            gridY = Math.floor((point.y - (y * tileSize)) / resolution),
+            key = data.grid[gridY].charCodeAt(gridX);
+
+        // Decode that key
+        // https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js
+        if (key >= 93) {
+          key--;
+        }
+        if (key >= 35) {
+          key--;
+        }
+        key -= 32;
+
+        // Return the data from the key
+        return data.data[data.keys[key]];
+      };
       // First we need to get the grid
       // We do that by figuring out what tile we are on
       // There's probably a MUCH better way to do this, but this is a start
@@ -72,14 +101,9 @@ var MapBoxLayer = L.TileLayer.extend({
         url: tileUrl,
         type: 'jsonp',
         success: function (res) {
-          console.log('success', res);
+          console.log('f');
+          callback(getPointFromGrid(latLng, res));
         }
-      });
-
-      callback({
-        'Example Layer1': ['Data 1', 'Data 2', 'Data 3'],
-        'Example Layer2': ['Test Data', 'Junk Data'],
-        'Example Layer3': ['Example Data', 'Sample Data', 'Junk Data', 'Gibberish']
       });
     };
 
@@ -98,14 +122,14 @@ var MapBoxLayer = L.TileLayer.extend({
         var resultsTable = document.createElement('table');
         var resultsTableBody = document.createElement('tbody');
 
-        for (var value in results) {
-          var tableRow = document.createElement('tr');
-          tableRow.setAttribute('class', 'hoverable');
-          var tableData = document.createElement('td');
-          tableData.textContent = value;
-          tableRow.appendChild(tableData);
-          resultsTableBody.appendChild(tableRow);
-        }
+        //for (var value in results) {
+        var tableRow = document.createElement('tr');
+        tableRow.setAttribute('class', 'hoverable');
+        var tableData = document.createElement('td');
+        tableData.textContent = results;
+        tableRow.appendChild(tableData);
+        resultsTableBody.appendChild(tableRow);
+        //}
         resultsTable.appendChild(resultsTableBody);
         theseResults.appendChild(layerTitle);
         theseResults.appendChild(resultsTable);
@@ -114,6 +138,8 @@ var MapBoxLayer = L.TileLayer.extend({
       return popupDiv.outerHTML;
     };
 
+    console.log('e', e);
+    console.log('latLng', latLng);
     me._getDataFromGrid(latLng, function drawPopup(resultData) {
       me._popup.setContent(createPopup(resultData)).setLatLng(latLng).openOn(me._map);
     });
