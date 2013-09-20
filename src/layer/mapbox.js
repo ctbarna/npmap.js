@@ -30,6 +30,7 @@ var MapBoxLayer = L.TileLayer.extend({
     return new L.LatLngBounds([[_[1], _[0]], [_[3], _[2]]]);
   },
   _handleClick: function(e) {
+    console.log('e', e);
     var latLng = e.latlng,
     me = this;
 
@@ -39,7 +40,42 @@ var MapBoxLayer = L.TileLayer.extend({
       minWidth: 221
     });
 
-    var getMapboxData = function getMapboxData(latLng, callback) {
+    // Probably more this out of this function
+    me._getDataFromGrid = function getDataFromGrid(latLng, callback) {
+
+      // First we need to get the grid
+      // We do that by figuring out what tile we are on
+      // There's probably a MUCH better way to do this, but this is a start
+      function long2tile(lon,zoom) { return (Math.floor((lon+180)/360*Math.pow(2,zoom))); }
+      function lat2tile(lat,zoom)  { return (Math.floor((1-Math.log(Math.tan(lat*Math.PI/180) + 1/Math.cos(lat*Math.PI/180))/Math.PI)/2 *Math.pow(2,zoom))); }
+
+      var tileCoords = {
+        x: long2tile(latLng.lng, this._map.getZoom()),
+        y: lat2tile(latLng.lat, this._map.getZoom()),
+        z: this._map.getZoom()
+      };
+
+      var tileUrl = [
+        this.options.url,
+        this.options.id,
+        '/',
+        tileCoords.z,
+        '/',
+        tileCoords.x,
+        '/',
+        tileCoords.y,
+        '.grid.json'
+      ].join('');
+
+      // Next we go and download that tile
+      reqwest({
+        url: tileUrl,
+        type: 'jsonp',
+        success: function (res) {
+          console.log('success', res);
+        }
+      });
+
       callback({
         'Example Layer1': ['Data 1', 'Data 2', 'Data 3'],
         'Example Layer2': ['Test Data', 'Junk Data'],
@@ -78,7 +114,7 @@ var MapBoxLayer = L.TileLayer.extend({
       return popupDiv.outerHTML;
     };
 
-    getMapboxData(latLng, function drawPopup(resultData) {
+    me._getDataFromGrid(latLng, function drawPopup(resultData) {
       me._popup.setContent(createPopup(resultData)).setLatLng(latLng).openOn(me._map);
     });
   },
