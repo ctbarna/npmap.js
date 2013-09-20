@@ -19,6 +19,16 @@ The build process uses [node.js](http://nodejs.org/). After installing node.js:
 
 The [browserify](https://github.com/substack/node-browserify) package is used to combine dependencies. It, along with other required packages, are installed locally when you run `npm install`. Running `make` builds NPMap.js, using [UglifyJS](https://github.com/mishoo/UglifyJS) to create minified versions in `dist/`.
 
+If you are interested in development, the watcher tool [nodemon](https://github.com/remy/nodemon) is great for watching your code for changes and running a command when it detects a change.
+
+Nodemon is not part of the package file, so if you'd like to use it, you will need to install it with npm:
+
+    npm install -g nodemon
+
+To set up nodemon watch your code and remake on every change run the command:
+
+    nodemon -x "make -f" Makefile
+
 ## Hosted Version
 
 NPMap.js is hosted on the National Park Service's content delivery network. Feel free to load the library directly from there. You can access hosted versions at http://www.nps.gov/npmap/dev/tools/npmap.js/x.y.z/. You should replace "x.y.z" with the number of the version you want to access.
