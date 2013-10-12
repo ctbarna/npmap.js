@@ -1,0 +1,46 @@
+{
+  "name": "npmap",
+  "description": "A JavaScript library, built as a Leaflet plugin, for the National Park Service.",
+  "homepage": "http://www.nps.gov/npmap",
+  "keywords": ["Map", "US Government", "Department of Interior","Leaflet"],
+  "version": "0.0.0",
+  "author": {
+    "name": "Nate Irwin",
+    "url": "http://www.nps.gov/npmap/team/nate-irwin.html"
+  },
+  "bugs": {
+    "email": "npmap@nps.gov",
+    "url": "https://github.com/nationalparkservice/npmap.js/issues"
+  },
+  "dependencies": {
+    "json3": "3.2.5",
+    "leaflet": "0.6.4",
+    "mustache": "0.7.2",
+    "reqwest": "0.9.0"
+  },
+  "devDependencies": {
+    "uglify-js": "~2.2.5",
+    "mocha": "~1.9",
+    "expect.js": "~0.2.0",
+    "sinon": "~1.7.3",
+    "mocha-phantomjs": "~1.1.1",
+    "happen": "~0.1.2",
+    "browserify": "~2.22.0"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "licenses": [{
+    "type": "MIT/Public Domain",
+    "url": "https://github.com/nationalparkservice/npmap.js/blob/master/LICENSE.md"
+  }],
+  "main": "main.js",
+  "optionalDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nationalparkservice/npmap.js.git"
+  },
+  "scripts": {
+    "test": "mocha-phantomjs test/index.html"
+  }
+}

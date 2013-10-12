@@ -1,0 +1,157 @@
+{
+  "esri": {
+    "gray": {
+      "attribution": "Copyright: &copy;2013 Esri, DeLorme, NAVTEQ",
+      "maxZoom": 16,
+      "minZoom": 1,
+      "name": "Esri World Light Gray",
+      "tiled": true,
+      "type": "arcgisserver",
+      "url": "http://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer"
+    },
+    "grayLabels": {
+      "attribution": "Copyright: &copy;2013 Esri, DeLorme, NAVTEQ",
+      "maxZoom": 16,
+      "minZoom": 1,
+      "name": "Esri World Light Gray Reference",
+      "tiled": true,
+      "type": "arcgisserver",
+      "url": "http://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer"
+    },
+    "imagery": {
+      "attribution": "Esri, DigitalGlobe, GeoEye, i-cubed, USDA, USGS, AEX, Getmapping, Aerogrid, IGN, IGP, swisstopo, and the GIS User Community",
+      "icon": "aerial",
+      "maxZoom": 19,
+      "minZoom": 1,
+      "name": "Esri World Imagery",
+      "tiled": true,
+      "type": "arcgisserver",
+      "url": "http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
+    },
+    "imageryLabels": {
+      "attribution": "Esri, DigitalGlobe, GeoEye, i-cubed, USDA, USGS, AEX, Getmapping, Aerogrid, IGN, IGP, swisstopo, and the GIS User Community",
+      "maxZoom": 19,
+      "minZoom": 1,
+      "name": "Esri World Boundaries & Places",
+      "tiled": true,
+      "type": "arcgisserver",
+      "url": "http://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer"
+    },
+    "nationalGeographic": {
+      "attribution": "Esri",
+      "maxZoom": 16,
+      "minZoom": 1,
+      "name": "Esri National Geographic",
+      "tiled": true,
+      "type": "arcgisserver",
+      "url": "http://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer"
+    },
+    "oceans": {
+      "attribution": "Esri",
+      "dynamicAttribution": "http://static.arcgis.com/attribution/World_Street_Map?f=json",
+      "maxZoom": 16,
+      "minZoom": 1,
+      "name": "Esri Ocean Basemap",
+      "tiled": true,
+      "type": "arcgisserver",
+      "url": "http://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer"
+    },
+    "streets": {
+      "attribution": "Esri",
+      "dynamicAttribution": "http://static.arcgis.com/attribution/World_Street_Map?f=json",
+      "icon": "street",
+      "maxZoom": 19,
+      "minZoom": 1,
+      "name": "Esri World Street Map",
+      "tiled": true,
+      "type": "arcgisserver",
+      "url": "http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer"
+    },
+    "topographic": {
+      "attribution": "Esri",
+      "dynamicAttribution": "http://static.arcgis.com/attribution/World_Street_Map?f=json",
+      "icon": "topo",
+      "maxZoom": 19,
+      "minZoom": 1,
+      "name": "Esri World Topo",
+      "tiled": true,
+      "type": "arcgisserver",
+      "url": "http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer"
+    }
+  },
+  "mapbox": {
+    "light": {
+      "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a>, &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+      "icon": "street",
+      "id": "nps.map-sligp1fr",
+      "name": "MapBox Light",
+      "type": "mapbox"
+    },
+    "satellite": {
+      "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a>",
+      "icon": "aerial",
+      "id": "nps.map-n9nxe12m",
+      "name": "MapBox Satellite",
+      "type": "mapbox"
+    },
+    "satelliteLabels": {
+      "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a>, &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+      "icon": "aerial",
+      "id": "nps.map-r3ilza09",
+      "name": "MapBox Satellite w/Labels",
+      "type": "mapbox"
+    },
+    "streets": {
+      "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a>, &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+      "icon": "street",
+      "id": "nps.map-06dnxzq5",
+      "name": "MapBox Streets",
+      "type": "mapbox"
+    },
+    "terrain": {
+      "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a>, &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+      "icon": "topo",
+      "id": "nps.map-lj6szvbq",
+      "name": "MapBox Terrain",
+      "type": "mapbox"
+    }
+  },
+  "openstreetmap": {
+    "attribution": "&copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+    "icon": "street",
+    "name": "OpenStreetMap",
+    "type": "tiled",
+    "url": "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+  },
+  "stamen": {
+    "terrain": {
+      "attribution": "Map tiles by <a href='http://stamen.com'>Stamen Design</a>, under <a href='http://creativecommons.org/licenses/by/3.0'>CC BY 3.0</a>. Data &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors.",
+      "icon": "topo",
+      "maxZoom": 18,
+      "minZoom": 4,
+      "name": "Stamen Terrain",
+      "subdomains": "abcd",
+      "type": "tiled",
+      "url": "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"
+    },
+    "toner": {
+      "attribution": "Map tiles by <a href='http://stamen.com'>Stamen Design</a>, under <a href='http://creativecommons.org/licenses/by/3.0'>CC BY 3.0</a>. Data &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors.",
+      "icon": "street",
+      "maxZoom": 20,
+      "minZoom": 0,
+      "name": "Stamen Toner",
+      "subdomains": "abcd",
+      "type": "tiled",
+      "url": "http://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png"
+    },
+    "watercolor": {
+      "attribution": "Map tiles by <a href='http://stamen.com'>Stamen Design</a>, under <a href='http://creativecommons.org/licenses/by/3.0'>CC BY 3.0</a>. Data &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors.",
+      "maxZoom": 16,
+      "minZoom": 3,
+      "name": "Stamen Watercolor",
+      "subdomains": "abcd",
+      "type": "tiled",
+      "url": "http://{s}.tile.stamen.com/watercolor/{z}/{x}/{y}.jpg"
+    }
+  }
+}

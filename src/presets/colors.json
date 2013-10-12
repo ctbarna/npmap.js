@@ -1,0 +1,126 @@
+{
+  "chesnut": {
+    "color": "#bf815d",
+    "fill": true,
+    "fillColor": "#bf815d",
+    "fillOpacity": 0.2,
+    "opacity": 0.5,
+    "stroke": true,
+    "weight": 3
+  },
+  "chill": {
+    "color": "#1b99aa",
+    "colorBlindGroups": [
+      "a",
+      "b"
+    ],
+    "fill": true,
+    "fillColor": "#1b99aa",
+    "fillOpacity": 0.2,
+    "opacity": 0.5,
+    "stroke": true,
+    "weight": 3
+  },
+  "currant": {
+    "color": "#5f3663",
+    "colorBlindGroups": [
+      "a",
+      "b",
+      "c"
+    ],
+    "fill": true,
+    "fillColor": "#5f3663",
+    "fillOpacity": 0.2,
+    "opacity": 0.5,
+    "stroke": true,
+    "weight": 3
+  },
+  "eucalyptus": {
+    "color": "#558877",
+    "colorBlindGroups": [
+      "a",
+      "b"
+    ],
+    "fill": true,
+    "fillColor": "#558877",
+    "fillOpacity": 0.2,
+    "opacity": 0.5,
+    "stroke": true,
+    "weight": 3
+  },
+  "gold": {
+    "color": "#d39800",
+    "colorBlindGroups": [
+      "a",
+      "b",
+      "c"
+    ],
+    "fill": true,
+    "fillColor": "#d39800",
+    "fillOpacity": 0.2,
+    "opacity": 0.5,
+    "stroke": true,
+    "weight": 3
+  },
+  "lilac": {
+    "color": "#896c9c",
+    "fill": true,
+    "fillColor": "#896c9c",
+    "fillOpacity": 0.2,
+    "opacity": 0.5,
+    "stroke": true,
+    "weight": 3
+  },
+  "mustard": {
+    "color": "#d98d38",
+    "colorBlindGroups": [
+      "a",
+      "b",
+      "c"
+    ],
+    "fill": true,
+    "fillColor": "#d98d38",
+    "fillOpacity": 0.2,
+    "opacity": 0.5,
+    "stroke": true,
+    "weight": 3
+  },
+  "parks": {
+    "color": "#7a9052",
+    "colorBlindGroups": [
+      "a"
+    ],
+    "fill": true,
+    "fillColor": "#7a9052",
+    "fillOpacity": 0.2,
+    "opacity": 0.5,
+    "stroke": true,
+    "weight": 3
+  },
+  "rose": {
+    "color": "#d46655",
+    "colorBlindGroups": [
+      "a",
+      "c"
+    ],
+    "fill": true,
+    "fillColor": "#d46655",
+    "fillOpacity": 0.2,
+    "opacity": 0.5,
+    "stroke": true,
+    "weight": 3
+  },
+  "russett": {
+    "color": "#7a4810",
+    "colorBlindGroups": [
+      "a",
+      "b"
+    ],
+    "fill": true,
+    "fillColor": "#7a4810",
+    "fillOpacity": 0.2,
+    "opacity": 0.5,
+    "stroke": true,
+    "weight": 3
+  }
+}

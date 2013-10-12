@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>Scale Control (API) | Examples | NPMap.js</title>
+    <link rel="stylesheet" href="../dist/npmap.css"/>
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="../dist/npmap.ie.css"/>
+    <![endif]-->
+    <script src="../dist/npmap.js"></script>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        bottom: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      var map = L.npmap.map({
+        div: 'map'
+      });
+      var scale = L.npmap.control.scale().addTo(map);
+    </script>
+  </body>
+</html>
