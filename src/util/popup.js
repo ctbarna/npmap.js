@@ -18,15 +18,20 @@ module.exports = function (map) {
       // Create a container for the popum
       var popupDiv = L.DomUtil.create('div', 'content'),
       newLayerDiv,
+      queryableLayers = false,
       config = {};
       popupDiv.setAttribute('id', 'current_popup');
-      popup.setContent(popupDiv.outerHTML).setLatLng(e.latlng).openOn(map);
+      popup.setContent(popupDiv.outerHTML).setLatLng(e.latlng);
 
       // Loop through all the available layers and determine which ones are queryable
       for (var layer in map._layers) {
         config = {};
-        if (map._layers[layer]._handleClick) {
+        if (map._layers[layer]._handleClick && map._layers[layer]._isQueryable && map._layers[layer]._isQueryable(e)) {
           // Layer has the ability to handle a click
+          if (!queryableLayers) {
+            popup.openOn(map);
+            queryableLayers = true;
+          }
           newLayerDiv = L.DomUtil.create('div', 'popup_content');
           config.divName = 'layer_' + layer;
           config.layer = map._layers[layer];

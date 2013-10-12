@@ -7,8 +7,7 @@
 
 var reqwest = require('reqwest'),
     util = require('../util/util'),
-    tileMath = require('../util/tileMath.js'),
-    Popup = require('../util/popup.js');
+    tileMath = require('../util/tileMath.js');
 
 var MapBoxLayer = L.TileLayer.extend({
   options: {
@@ -70,7 +69,7 @@ var MapBoxLayer = L.TileLayer.extend({
 
         reqwest({
           url: tileUrl,
-          type: 'jsonp',
+          type: 'json',
           success: function (res) {
             callback(me._getTileGridPoint(latLng, res));
           },
@@ -81,6 +80,9 @@ var MapBoxLayer = L.TileLayer.extend({
       } else {
         callback(null);
       }
+  },
+  _isQueryable: function(e) {
+      return this.options.grids && this.options.bounds.contains(e.latlng);
   },
   _handleClick: function(e, config, callback) {
     var latLng = e.latlng,
