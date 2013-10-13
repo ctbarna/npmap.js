@@ -19,6 +19,7 @@ module.exports = function (map) {
       var popupDiv = L.DomUtil.create('div', 'content'),
       newLayerDiv,
       queryableLayers = false,
+      latLng = e.latlng.wrap(),
       config = {};
       popupDiv.setAttribute('id', 'current_popup');
       popup.setContent(popupDiv.outerHTML).setLatLng(e.latlng);
@@ -26,7 +27,7 @@ module.exports = function (map) {
       // Loop through all the available layers and determine which ones are queryable
       for (var layer in map._layers) {
         config = {};
-        if (map._layers[layer]._handleClick && map._layers[layer]._isQueryable && map._layers[layer]._isQueryable(e)) {
+        if (map._layers[layer]._handleClick && map._layers[layer]._isQueryable && map._layers[layer]._isQueryable(latLng)) {
           // Layer has the ability to handle a click
           if (!queryableLayers) {
             popup.openOn(map);
@@ -41,7 +42,7 @@ module.exports = function (map) {
           L.DomUtil.get('current_popup').appendChild(newLayerDiv);
 
           // Call the function
-          map._layers[layer]._handleClick(e, config, drawLayer);
+          map._layers[layer]._handleClick(latLng, config, drawLayer);
         }
       }
   },
