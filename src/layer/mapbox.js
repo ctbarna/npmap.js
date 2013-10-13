@@ -30,6 +30,42 @@ var MapBoxLayer = L.TileLayer.extend({
     'png128',
     'png256'
   ],
+  cachedTiles: function () {
+    var tiles = [],
+      urls = [];
+
+    var getTileIndex = function(url) {
+      for (var urlIndex in urls) {
+        if (urls[urlIndex] === url) {
+          return urlIndex;
+        }
+      }
+      return -1;
+    };
+
+    var addTile = function(url, tile) {
+      var t =tiles.push(tile),
+        u = urls.push(url);
+
+      if (t===u) {
+        return t;
+      }
+      return null;
+    };
+
+    return {
+      'has': function(url) {
+        return getTileIndex(url) >= 0;
+      },
+      'tile': function(url) {
+        if (this.has(url)) {
+          return tiles[getTileIndex(url)];
+        }
+        return null;
+      } ,
+      'addTile': addTile
+    };
+  }(),
   _toLeafletBounds: function(_) {
     return new L.LatLngBounds([[_[1], _[0]], [_[3], _[2]]]);
   },
@@ -57,40 +93,56 @@ var MapBoxLayer = L.TileLayer.extend({
   },
   _getTileGrid: function _getTileGrid(latLng, callback) {
     var me = this,
-      gridPoint = {
-        x: tileMath.long2tile(latLng.lng, me._map.getZoom()),
-        y: tileMath.lat2tile(latLng.lat, me._map.getZoom()),
-        z: me._map.getZoom()
-      },
-      grids = me.options.grids,
-      tileUrl;
-      if (grids && me.options.bounds.contains(latLng)) {
-        tileUrl = L.Util.template(grids[Math.floor(Math.abs(gridPoint.x + gridPoint.y) % grids.length)], gridPoint);
+    gridPoint = {
+      x: tileMath.long2tile(latLng.lng, me._map.getZoom()),
+      y: tileMath.lat2tile(latLng.lat, me._map.getZoom()),
+      z: me._map.getZoom()
+    },
+    grids = me.options.grids,
+    tileUrl;
+    if (this._isQueryable(latLng)) {
+      tileUrl = L.Util.template(grids[Math.floor(Math.abs(gridPoint.x + gridPoint.y) % grids.length)], gridPoint);
 
+      // Check the cache for this particular tile
+      if (me.cachedTiles.has(tileUrl)) {
+        // Return it if we have it
+        callback(me.cachedTiles.tile(tileUrl));
+      } else {
+        // Go get it
         reqwest({
           url: tileUrl,
-          type: 'json',
+          type: 'jsonp',
           success: function (res) {
-            callback(me._getTileGridPoint(latLng, res));
+            callback(res);
+            me.cachedTiles.addTile(tileUrl, res);
           },
           error: function (err) {
-            callback({'Error': err});
+            callback(err);
           }
         });
-      } else {
-        callback(null);
       }
+    } else {
+      // Tile is not within range
+      callback(null);
+    }
   },
-  _isQueryable: function(e) {
-      return this.options.grids && this.options.bounds.contains(e.latlng);
+  _isQueryable: function(latLng) {
+      return this.options.grids && this.options.bounds.contains(latLng);
   },
-  _handleClick: function(e, config, callback) {
-    var latLng = e.latlng,
-      me = this;
+  _handleClick: function(latLng, config, callback) {
+    // Handles the click function
+    var me = this;
 
     me._getTileGrid(latLng, function drawPopup(resultData) {
-      callback(resultData, config);
+      callback(me._getTileGridPoint(latLng, resultData), config);
     });
+  },
+  _handleMouseOver: function (e, config, callback) {
+    // UTFGrid Tiles can be cached on mouseover
+    var latLng = e.latLng,
+      me = this;
+
+      me._getTileGrid(latLng, null);
   },
   initialize: function(config) {
     var _;
