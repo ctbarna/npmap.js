@@ -8,43 +8,58 @@ module.exports = function (map) {
   var initialize = function () {
     // Add a click event to the map
     map.on('click', clickHandler, this);
+    map.on('mousemove', mousemoveHandler, this);
   },
   popup = L.popup({
     maxHeight: (map.getContainer().offsetHeight - 86),
     maxWidth: (map.getContainer().offsetWidth - 95),
     minWidth: 221
   }),
+  getQueryableLayers = function (e, callback) {
+    // Loop through all the available layers and determine which ones are queryable
+    var latLng = e.latlng.wrap();
+    for (var layer in map._layers) {
+      if (map._layers[layer]._handleClick && map._layers[layer]._isQueryable && map._layers[layer]._isQueryable(latLng)) {
+        callback(map._layers[layer], layer);
+      }
+    }
+  },
   clickHandler = function(e) {
       // Create a container for the popum
       var popupDiv = L.DomUtil.create('div', 'content'),
       newLayerDiv,
+      outerDiv,
       queryableLayers = false,
-      latLng = e.latlng.wrap(),
-      config = {};
+      latLng = e.latlng.wrap();
       popupDiv.setAttribute('id', 'current_popup');
-      popup.setContent(popupDiv.outerHTML).setLatLng(e.latlng);
+      outerDiv = L.DomUtil.create('div');
+      outerDiv.appendChild(popupDiv);
+      popup.setContent(outerDiv.innerHTML).setLatLng(e.latlng);
 
-      // Loop through all the available layers and determine which ones are queryable
-      for (var layer in map._layers) {
-        config = {};
-        if (map._layers[layer]._handleClick && map._layers[layer]._isQueryable && map._layers[layer]._isQueryable(latLng)) {
-          // Layer has the ability to handle a click
-          if (!queryableLayers) {
-            popup.openOn(map);
-            queryableLayers = true;
-          }
-          newLayerDiv = L.DomUtil.create('div', 'popup_content');
-          config.divName = 'layer_' + layer;
-          config.layer = map._layers[layer];
-          config.id = layer;
-          newLayerDiv.setAttribute('id', config.divName);
-          newLayerDiv.textContent = "Waiting...";
-          L.DomUtil.get('current_popup').appendChild(newLayerDiv);
-
-          // Call the function
-          map._layers[layer]._handleClick(latLng, config, drawLayer);
+      getQueryableLayers(e, function (layer, layerIndex) {
+        var config = {};
+        // Layer has the ability to handle a click
+        if (!queryableLayers) {
+          popup.openOn(map);
+          queryableLayers = true;
         }
-      }
+        newLayerDiv = L.DomUtil.create('div', 'popup_content');
+        config.divName = 'layer_' + layerIndex;
+        config.layer = layer;
+        config.id = layerIndex;
+        newLayerDiv.setAttribute('id', config.divName);
+        newLayerDiv.textContent = "Waiting...";
+        L.DomUtil.get('current_popup').appendChild(newLayerDiv);
+
+        // Call the function
+        layer._handleClick(latLng, config, drawLayer);
+      });
+  },
+  mousemoveHandler = function (e) {
+    var latLng = e.latlng.wrap();
+    getQueryableLayers(e, function(layer, layerIndex) {
+      layer._handleMousemove(latLng);
+    });
   },
   drawLayer =  function (layerData, config) {
       var layerDiv,
