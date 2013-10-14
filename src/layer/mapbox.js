@@ -5,9 +5,9 @@
 
 'use strict';
 
-var reqwest = require('reqwest'),
+var reqwest = require('../util/cachedReqwest')().cachedReqwest,
     util = require('../util/util'),
-    tileMath = require('../util/tileMath.js');
+    tileMath = require('../util/tileMath');
 
 var MapBoxLayer = L.TileLayer.extend({
   options: {
@@ -30,42 +30,6 @@ var MapBoxLayer = L.TileLayer.extend({
     'png128',
     'png256'
   ],
-  cachedTiles: function () {
-    var tiles = [],
-      urls = [];
-
-    var getTileIndex = function(url) {
-      for (var urlIndex in urls) {
-        if (urls[urlIndex] === url) {
-          return urlIndex;
-        }
-      }
-      return -1;
-    };
-
-    var addTile = function(url, tile) {
-      var t =tiles.push(tile),
-        u = urls.push(url);
-
-      if (t===u) {
-        return t;
-      }
-      return null;
-    };
-
-    return {
-      'has': function(url) {
-        return getTileIndex(url) >= 0;
-      },
-      'tile': function(url) {
-        if (this.has(url)) {
-          return tiles[getTileIndex(url)];
-        }
-        return null;
-      } ,
-      'addTile': addTile
-    };
-  }(),
   _toLeafletBounds: function(_) {
     return new L.LatLngBounds([[_[1], _[0]], [_[3], _[2]]]);
   },
@@ -79,7 +43,8 @@ var MapBoxLayer = L.TileLayer.extend({
       resolution = me.options.resolution || 4,
       x = Math.floor(point.x / tileSize),
       y = Math.floor(point.y / tileSize),
-      max = me._map.options.crs.scale(me._map.getZoom()) / tileSize;
+      max = me._map.options.crs.scale(me._map.getZoom()) / tileSize,
+      returnValue;
 
     x = (x + max) % max;
     y = (y + max) % max;
@@ -89,7 +54,9 @@ var MapBoxLayer = L.TileLayer.extend({
         key = result.grid[gridY].charCodeAt(gridX);
 
     // Return the data from the key
-    return result.data[result.keys[me._utfDecode(key)]];
+    returnValue = (result.data[result.keys[me._utfDecode(key)]]);
+    returnValue = returnValue ? returnValue : {'Error': 'No Data Found'};
+    return returnValue;
   },
   _getTileGrid: function _getTileGrid(latLng, callback) {
     var me = this,
@@ -103,24 +70,16 @@ var MapBoxLayer = L.TileLayer.extend({
     if (this._isQueryable(latLng)) {
       tileUrl = L.Util.template(grids[Math.floor(Math.abs(gridPoint.x + gridPoint.y) % grids.length)], gridPoint);
 
-      // Check the cache for this particular tile
-      if (me.cachedTiles.has(tileUrl)) {
-        // Return it if we have it
-        callback(me.cachedTiles.tile(tileUrl));
-      } else {
-        // Go get it
         reqwest({
           url: tileUrl,
           type: 'jsonp',
           success: function (res) {
             callback(res);
-            me.cachedTiles.addTile(tileUrl, res);
           },
           error: function (err) {
             callback(err);
           }
         });
-      }
     } else {
       // Tile is not within range
       callback(null);
@@ -134,15 +93,16 @@ var MapBoxLayer = L.TileLayer.extend({
     var me = this;
 
     me._getTileGrid(latLng, function drawPopup(resultData) {
-      callback(me._getTileGridPoint(latLng, resultData), config);
+      if (resultData.error) {
+        callback({'Error': 'No Data Found'}, config);
+      } else {
+        callback(me._getTileGridPoint(latLng, resultData), config);
+      }
     });
   },
-  _handleMouseOver: function (e, config, callback) {
-    // UTFGrid Tiles can be cached on mouseover
-    var latLng = e.latLng,
-      me = this;
-
-      me._getTileGrid(latLng, null);
+  _handleMousemove: function (latLng) {
+    // UTFGrid Tiles can be cached on mousemove
+    this._getTileGrid(latLng, function(){return null;});
   },
   initialize: function(config) {
     var _;
