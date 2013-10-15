@@ -5,7 +5,6 @@
 'use strict';
 
 var util = require('../util/util'),
-tileMath = require('../util/tilemath'),
 utfGrid = require('../util/utfgrid');
 
 
@@ -78,13 +77,9 @@ var CartoDbLayer = L.TileLayer.extend({
   },
   _getTileGridUrl: function (latLng) {
     var me = this,
-    gridPoint = {
-      x: tileMath.long2tile(latLng.lng, me._map.getZoom()),
-      y: tileMath.lat2tile(latLng.lat, me._map.getZoom()),
-      z: me._map.getZoom()
-    },
+    gridTileCoords = utfGrid.getTileCoords(latLng),
     grids = me.options.grids;
-    return L.Util.template(grids, gridPoint);
+    return L.Util.template(grids, gridTileCoords) + '?sql=' + 'SELECT online,park,station_na,data_start,data_end,datewprese,station_id,network,lat,long,elevm,in_park,state,county,hcnm_num,gov_admin,note,for_data,icon,url,_order,field_22,the_geom,cartodb_id,created_at,updated_at,the_geom_webmercator,ST_ASGEOJSON(the_geom) as geometry FROM scpn_weather_stations&interactivity=online,park,station_na,data_start,data_end,datewprese,station_id,network,lat,long,elevm,in_park,state,county,hcnm_num,gov_admin,note,for_data,icon,url,_order,field_22,the_geom,cartodb_id,created_at,updated_at,the_geom_webmercator,geometry';
   },
   _isQueryable: function(latLng) {
     var returnValue = false,

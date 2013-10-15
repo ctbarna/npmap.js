@@ -7,7 +7,6 @@
 
 var reqwest = require('reqwest'),
 util = require('../util/util'),
-tileMath = require('../util/tilemath'),
 utfGrid = require('../util/utfgrid');
 
 var MapBoxLayer = L.TileLayer.extend({
@@ -36,13 +35,9 @@ var MapBoxLayer = L.TileLayer.extend({
   },
   _getTileGridUrl: function (latLng) {
     var me = this,
-    gridPoint = {
-      x: tileMath.long2tile(latLng.lng, me._map.getZoom()),
-      y: tileMath.lat2tile(latLng.lat, me._map.getZoom()),
-      z: me._map.getZoom()
-    },
+    gridTileCoords = utfGrid.getTileCoords(latLng),
     grids = me.options.grids;
-    return L.Util.template(grids[Math.floor(Math.abs(gridPoint.x + gridPoint.y) % grids.length)], gridPoint);
+    return L.Util.template(grids[Math.floor(Math.abs(gridTileCoords.x + gridTileCoords.y) % grids.length)], gridTileCoords);
   },
   _isQueryable: function(latLng) {
     var returnValue = false,
