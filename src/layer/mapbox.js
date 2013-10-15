@@ -5,9 +5,10 @@
 
 'use strict';
 
-var reqwest = require('../util/cachedReqwest')().cachedReqwest,
-    util = require('../util/util'),
-    tileMath = require('../util/tileMath');
+var reqwest = require('reqwest'),
+util = require('../util/util'),
+tileMath = require('../util/tilemath'),
+utfGrid = require('../util/utfgrid');
 
 var MapBoxLayer = L.TileLayer.extend({
   options: {
@@ -33,76 +34,40 @@ var MapBoxLayer = L.TileLayer.extend({
   _toLeafletBounds: function(_) {
     return new L.LatLngBounds([[_[1], _[0]], [_[3], _[2]]]);
   },
-  _getTileGridPoint: function _getTileGridPoint(latLng,result) {
-
-    // Forked from danzel/Leaflet.utfgrid
-    // https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js
-    var me = this,
-      point = me._map.project(latLng),
-      tileSize = me.options.tileSize || 256,
-      resolution = me.options.resolution || 4,
-      x = Math.floor(point.x / tileSize),
-      y = Math.floor(point.y / tileSize),
-      max = me._map.options.crs.scale(me._map.getZoom()) / tileSize,
-      returnValue;
-
-    x = (x + max) % max;
-    y = (y + max) % max;
-
-    var gridX = Math.floor((point.x - (x * tileSize))/ resolution),
-        gridY = Math.floor((point.y - (y * tileSize)) / resolution),
-        key = result.grid[gridY].charCodeAt(gridX);
-
-    // Return the data from the key
-    returnValue = (result.data[result.keys[me._utfDecode(key)]]);
-    returnValue = returnValue ? returnValue : {'Error': 'No Data Found'};
-    return returnValue;
-  },
-  _getTileGrid: function _getTileGrid(latLng, callback) {
+  _getTileGridUrl: function (latLng) {
     var me = this,
     gridPoint = {
       x: tileMath.long2tile(latLng.lng, me._map.getZoom()),
       y: tileMath.lat2tile(latLng.lat, me._map.getZoom()),
       z: me._map.getZoom()
     },
-    grids = me.options.grids,
-    tileUrl;
-    if (this._isQueryable(latLng)) {
-      tileUrl = L.Util.template(grids[Math.floor(Math.abs(gridPoint.x + gridPoint.y) % grids.length)], gridPoint);
-
-        reqwest({
-          url: tileUrl,
-          type: 'jsonp',
-          success: function (res) {
-            callback(res);
-          },
-          error: function (err) {
-            callback(err);
-          }
-        });
-    } else {
-      // Tile is not within range
-      callback(null);
-    }
+    grids = me.options.grids;
+    return L.Util.template(grids[Math.floor(Math.abs(gridPoint.x + gridPoint.y) % grids.length)], gridPoint);
   },
   _isQueryable: function(latLng) {
-      return this.options.grids && this.options.bounds.contains(latLng);
+    var returnValue = false,
+    me = this,
+    url;
+    if (me.options.grids && me.options.bounds.contains(latLng)) {
+      url = me._getTileGridUrl(latLng);
+      returnValue = utfGrid.hasUtfData(url, latLng, me);
+    }
+
+    return returnValue;
   },
   _handleClick: function(latLng, config, callback) {
     // Handles the click function
     var me = this;
 
-    me._getTileGrid(latLng, function drawPopup(resultData) {
-      if (resultData.error) {
-        callback({'Error': 'No Data Found'}, config);
-      } else {
-        callback(me._getTileGridPoint(latLng, resultData), config);
-      }
+    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, me, function (resultData) {
+      callback(resultData, config);
     });
   },
-  _handleMousemove: function (latLng) {
+  _handleMousemove: function (latLng, callback) {
     // UTFGrid Tiles can be cached on mousemove
-    this._getTileGrid(latLng, function(){return null;});
+    var me = this;
+
+    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, me, callback);
   },
   initialize: function(config) {
     var _;
@@ -227,7 +192,7 @@ var MapBoxLayer = L.TileLayer.extend({
   },
   getTileUrl: function(tilePoint) {
     var tiles = this.options.tiles,
-        templated = L.Util.template(tiles[Math.floor(Math.abs(tilePoint.x + tilePoint.y) % tiles.length)], tilePoint);
+    templated = L.Util.template(tiles[Math.floor(Math.abs(tilePoint.x + tilePoint.y) % tiles.length)], tilePoint);
 
     if (templated) {
       return templated.replace('.png', '.' + this.options.format);
