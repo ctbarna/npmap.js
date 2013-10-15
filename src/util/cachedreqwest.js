@@ -6,63 +6,64 @@ var reqwest = require('reqwest'),
   defaultTimeout = 3000;
 
 module.exports = function (options) {
-  var cachedCalls = {},
-  cachedCallbacks = {},
+  var cache = {},
+  promises = {},
   timeout = options && options.timeout ? options.timeout : defaultTimeout,
-  callCallbacks = function (url) {
-    var currCall = cachedCalls[url];
-    for (var cachedCallbackIndex in cachedCallbacks[url]) {
-      if (cachedCallbacks[url][cachedCallbackIndex][currCall.status]) {
-        cachedCallbacks[url][cachedCallbackIndex][currCall.status](currCall.resp);
+  fulfillPromises = function (url) {
+    // Loops through all the promises and fulfills them
+    var response = cache[url];
+    for (var promiseIndex in promises[url]) {
+      if (promises[url][promiseIndex][response.status]) {
+        promises[url][promiseIndex][response.status](response.resp);
       }
     }
-    delete cachedCallbacks[url];
+    delete promises[url];
   },
   checkTimeout = function (url) {
-    if ((new Date() - cachedCalls[url].startTime) > timeout) {
-      // If we have been waiting for longer than the timeout, then we should just give up
-      cachedCalls[url] = {'status': 'error', 'resp': {'error': 'timeout'}};
-      callCallbacks(url);
+    // Checks how long we're been waiting for a response, and if it's too long, we give up
+    if ((new Date() - cache[url].startTime) > timeout) {
+      console.log('timed out!', url);
+      cache[url] = {'status': 'error', 'resp': {'error': 'timeout'}};
+      fulfillPromises(url);
     }
   },
-  cachedReqwest = function(inOptions) {
-    var newOptions = inOptions;
-    // Cache these callbacks
+  cachedReqwest = function(options) {
+    // Acts similar to 'reqwest' but caches the data
+    var newOptions = options;
 
-    cachedCallbacks[inOptions.url] = cachedCallbacks[inOptions.url] ? cachedCallbacks[inOptions.url] : [];
-    cachedCallbacks[inOptions.url].push({'success': inOptions.success, 'error': inOptions.error});
+    // Store the callbacks as promises
+    promises[options.url] = promises[options.url] ? promises[options.url] : [];
+    promises[options.url].push({'success': options.success, 'error': options.error});
 
-    if (cachedCalls[inOptions.url]) {
+    if (cache[options.url]) {
       // We already called it once
-      if (cachedCalls[inOptions.url].status === 'waiting') {
-        checkTimeout(inOptions.url);
-     } else {
+      if (cache[options.url].status === 'waiting') {
+        checkTimeout(options.url);
+      } else {
         // We had a response, so we can return it
-        delete cachedCallbacks[inOptions.url];
-        inOptions[cachedCalls[inOptions.url].status](cachedCalls[inOptions.url].resp);
+        fulfillPromises(options.url);
       }
     } else {
-      cachedCalls[inOptions.url] = {'status': 'waiting', 'resp': null, 'startTime': new Date()};
+      cache[options.url] = {'status': 'waiting', 'resp': null, 'startTime': new Date()};
 
-      // Override these functions
+      // Change the response functions
       newOptions.success = function(resp) {
-        cachedCalls[inOptions.url] = {'status': 'success', 'resp': resp};
-        callCallbacks(inOptions.url);
+        cache[options.url] = {'status': 'success', 'resp': resp};
+        fulfillPromises(options.url);
       };
       newOptions.error = function(err) {
-        cachedCalls[inOptions.url] = {'status': 'error', 'resp': {'error': err}};
-        callCallbacks(inOptions.url);
+        cache[options.url] = {'status': 'error', 'resp': {'error': err}};
+        fulfillPromises(options.url);
       };
 
       reqwest(newOptions);
-      window.setTimeout(function(){checkTimeout(inOptions.url);}, timeout);
+      window.setTimeout(function(){checkTimeout(options.url);}, timeout);
     }
   };
 
-  
   return {
     cachedReqwest: cachedReqwest,
-    getCache: function(url) {return cachedCalls[url]}
+    getCache: function(url) {return cache[url];}
   };
 };
 
