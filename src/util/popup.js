@@ -20,7 +20,7 @@ module.exports = function (map) {
     var latLng = e.latlng.wrap();
     for (var layer in map._layers) {
       if (map._layers[layer]._handleClick && map._layers[layer]._isQueryable && map._layers[layer]._isQueryable(latLng)) {
-        callback(map._layers[layer], layer);
+        callback(map._layers[layer], layer, map._layers[layer]._isQueryable(latLng));
       }
     }
   },
@@ -36,7 +36,7 @@ module.exports = function (map) {
       outerDiv.appendChild(popupDiv);
       popup.setContent(outerDiv.innerHTML).setLatLng(e.latlng);
 
-      getQueryableLayers(e, function (layer, layerIndex) {
+      getQueryableLayers(e, function (layer, layerIndex, queryable) {
         var config = {};
         // Layer has the ability to handle a click
         if (!queryableLayers) {
@@ -57,10 +57,14 @@ module.exports = function (map) {
   },
   mousemoveHandler = function (e) {
     var latLng = e.latlng.wrap();
-    map._container.style.cursor = '';
-    getQueryableLayers(e, function(layer, layerIndex) {
-      map._container.style.cursor = (map._container.style.cursor === '') ?  'pointer' : '';
-      layer._handleMousemove(latLng);
+    map._container.style.cursor = 'default';
+    getQueryableLayers(e, function(layer, layerIndex, queryable) {
+      var setCursor = function (setting) {
+        setting = (setting && setting.Error) ? {'cursor': 'default'} : setting;
+        map._container.style.cursor = (setting && setting.cursor) ? setting.cursor : 'pointer';
+      };
+      setCursor(queryable);
+      layer._handleMousemove(latLng, setCursor);
     });
   },
   drawLayer =  function (layerData, config) {
