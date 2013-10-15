@@ -22,7 +22,6 @@ module.exports = function (options) {
   checkTimeout = function (url) {
     // Checks how long we're been waiting for a response, and if it's too long, we give up
     if ((new Date() - cache[url].startTime) > timeout) {
-      console.log('timed out!', url);
       cache[url] = {'status': 'error', 'resp': {'error': 'timeout'}};
       fulfillPromises(url);
     }
