@@ -1,4 +1,4 @@
-var reqwest = require('../util/cachedreqwest'),
+var reqwest = require('../util/cachedreqwest')(),
   tileMath = require('../util/tilemath');
 
 module.exports = {
@@ -54,11 +54,12 @@ module.exports = {
     return key - 32;
   },
   hasUtfData: function(url, latLng, layer) {
-    var returnValue = {'cursor': 'default'};
-    if (reqwest.getCache(url)) {
-      if (reqwest.getCache(url).status === 'success') {
-        returnValue = this.getTileGridPoint(latLng, reqwest.getCache(url).resp, layer).Error ? false : {'cursor': 'pointer'};
-      } else if (reqwest.getCache(url).status === 'error') {
+    var returnValue = {'cursor': 'default'},
+    cache = reqwest.getCache(url);
+    if (cache) {
+      if (cache.status === 'success') {
+        returnValue = this.getTileGridPoint(latLng, cache.resp, layer).Error ? false : {'cursor': 'pointer'};
+      } else if (cache.status === 'error') {
         returnValue = false;
       }
     }
