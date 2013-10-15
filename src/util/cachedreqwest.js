@@ -61,18 +61,8 @@ module.exports = function (options) {
 
   
   return {
-    cachedReqwest: cachedReqwest
+    cachedReqwest: cachedReqwest,
+    getCache: function(url) {return cachedCalls[url]}
   };
 };
-/*
-   reqwest({
-url: tileUrl,
-type: 'jsonp',
-success: function (res) {
-callback(res);
-},
-error: function (err) {
-callback(err);
-}
-});
-*/
+
