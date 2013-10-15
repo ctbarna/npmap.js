@@ -57,7 +57,9 @@ module.exports = function (map) {
   },
   mousemoveHandler = function (e) {
     var latLng = e.latlng.wrap();
+    map._container.style.cursor = '';
     getQueryableLayers(e, function(layer, layerIndex) {
+      map._container.style.cursor = (map._container.style.cursor === '') ?  'pointer' : '';
       layer._handleMousemove(latLng);
     });
   },
