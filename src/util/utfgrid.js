@@ -1,5 +1,5 @@
-var reqwest = require('../util/cachedreqwest');
-  tileMath = require('../util/tilemath'),
+var reqwest = require('../util/cachedreqwest'),
+  tileMath = require('../util/tilemath');
 
 module.exports = {
   getTileGridPoint: function _getTileGridPoint(latLng, result, layer) {
@@ -27,11 +27,11 @@ module.exports = {
     returnValue = returnValue ? returnValue : {'Error': 'No Data Found'};
     return returnValue;
   },
-  getTileCoords: function (latLng) {
+  getTileCoords: function (latLng, layer) {
     return {
-      x: tileMath.long2tile(latLng.lng, me._map.getZoom()),
-      y: tileMath.lat2tile(latLng.lat, me._map.getZoom()),
-      z: me._map.getZoom()
+      x: tileMath.long2tile(latLng.lng, layer._map.getZoom()),
+      y: tileMath.lat2tile(latLng.lat, layer._map.getZoom()),
+      z: layer._map.getZoom()
     };
   },
   getTileGrid: function (tileUrl, latLng, layer, callback) {

@@ -35,7 +35,7 @@ var MapBoxLayer = L.TileLayer.extend({
   },
   _getTileGridUrl: function (latLng) {
     var me = this,
-    gridTileCoords = utfGrid.getTileCoords(latLng),
+    gridTileCoords = utfGrid.getTileCoords(latLng, me),
     grids = me.options.grids;
     return L.Util.template(grids[Math.floor(Math.abs(gridTileCoords.x + gridTileCoords.y) % grids.length)], gridTileCoords);
   },
