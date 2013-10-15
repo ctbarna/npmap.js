@@ -5,7 +5,7 @@
 'use strict';
 
 var util = require('../util/util'),
-utfGrid = require('../util/utfgrid');
+utfGrid, UtfGrid = require('../util/utfgrid');
 
 
 var CartoDbLayer = L.TileLayer.extend({
@@ -73,11 +73,12 @@ var CartoDbLayer = L.TileLayer.extend({
     ].join('');
 
     L.TileLayer.prototype.initialize.call(this, this.options.url, this.options);
+    utfGrid = new UtfGrid(this);
     return this;
   },
   _getTileGridUrl: function (latLng) {
     var me = this,
-    gridTileCoords = utfGrid.getTileCoords(latLng, me),
+    gridTileCoords = utfGrid.getTileCoords(latLng),
     grids = me.options.grids;
     return L.Util.template(grids, gridTileCoords) + '?sql=' + 'SELECT online,park,station_na,data_start,data_end,datewprese,station_id,network,lat,long,elevm,in_park,state,county,hcnm_num,gov_admin,note,for_data,icon,url,_order,field_22,the_geom,cartodb_id,created_at,updated_at,the_geom_webmercator,ST_ASGEOJSON(the_geom) as geometry FROM scpn_weather_stations&interactivity=online,park,station_na,data_start,data_end,datewprese,station_id,network,lat,long,elevm,in_park,state,county,hcnm_num,gov_admin,note,for_data,icon,url,_order,field_22,the_geom,cartodb_id,created_at,updated_at,the_geom_webmercator,geometry';
   },
@@ -86,21 +87,21 @@ var CartoDbLayer = L.TileLayer.extend({
     me = this,
     url = me._getTileGridUrl(latLng);
     if (me.options.grids) {
-      returnValue = utfGrid.hasUtfData(url, latLng, me);
+      returnValue = utfGrid.hasUtfData(url, latLng);
     }
     return returnValue;
   },
   _handleClick: function(latLng, config, callback) {
     // Handles the click function
     var me = this;
-    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, me, function (resultData) {
+    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, function (resultData) {
       callback(resultData, config);
     });
   },
   _handleMousemove: function (latLng, callback) {
     // UTFGrid Tiles can be cached on mousemove
     var me = this;
-    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, me, callback);
+    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, callback);
   },
  onAdd: function onAdd(map) {
     L.TileLayer.prototype.onAdd.call(this, map);

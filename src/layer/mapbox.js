@@ -7,7 +7,7 @@
 
 var reqwest = require('reqwest'),
 util = require('../util/util'),
-utfGrid = require('../util/utfgrid');
+utfGrid, UtfGrid = require('../util/utfgrid');
 
 var MapBoxLayer = L.TileLayer.extend({
   options: {
@@ -35,7 +35,7 @@ var MapBoxLayer = L.TileLayer.extend({
   },
   _getTileGridUrl: function (latLng) {
     var me = this,
-    gridTileCoords = utfGrid.getTileCoords(latLng, me),
+    gridTileCoords = utfGrid.getTileCoords(latLng),
     grids = me.options.grids;
     return L.Util.template(grids[Math.floor(Math.abs(gridTileCoords.x + gridTileCoords.y) % grids.length)], gridTileCoords);
   },
@@ -45,7 +45,7 @@ var MapBoxLayer = L.TileLayer.extend({
     url;
     if (me.options.grids && me.options.bounds.contains(latLng)) {
       url = me._getTileGridUrl(latLng);
-      returnValue = utfGrid.hasUtfData(url, latLng, me);
+      returnValue = utfGrid.hasUtfData(url, latLng);
     }
 
     return returnValue;
@@ -54,7 +54,7 @@ var MapBoxLayer = L.TileLayer.extend({
     // Handles the click function
     var me = this;
 
-    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, me, function (resultData) {
+    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, function (resultData) {
       callback(resultData, config);
     });
   },
@@ -62,7 +62,7 @@ var MapBoxLayer = L.TileLayer.extend({
     // UTFGrid Tiles can be cached on mousemove
     var me = this;
 
-    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, me, callback);
+    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, callback);
   },
   initialize: function(config) {
     var _;
@@ -84,6 +84,7 @@ var MapBoxLayer = L.TileLayer.extend({
       _ = config.tileJson || config.id;
     }
 
+    utfGrid = new UtfGrid(this);
     this._loadTileJson(_);
   },
   onAdd: function onAdd(map) {
