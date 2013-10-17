@@ -69,36 +69,36 @@ module.exports = function (map) {
   },
   drawLayer =  function (layerData, config) {
     var layerDiv,
-    layerName = 'Layer: ' + config.layer;
+    layerName = 'Layer: ' + config.layer,
+    errorMessage = config.errorMessage ? config.errorMessage : {'Error': 'No data found'};
     layerName = config.layer.options ? config.layer.options.id || layerName : layerName;
+    layerData = layerData ? layerData : errorMessage;
 
-    if (layerData) {
-      var layerTitle = L.DomUtil.create('div'),
-      resultsTable = L.DomUtil.create('table'),
-      resultsTableBody = L.DomUtil.create('tbody');
-      layerDiv = L.DomUtil.create('div');
+    var layerTitle = L.DomUtil.create('div'),
+    resultsTable = L.DomUtil.create('table'),
+    resultsTableBody = L.DomUtil.create('tbody');
+    layerDiv = L.DomUtil.create('div');
 
-      layerTitle.setAttribute('class', 'title');
-      layerTitle.setAttribute('style', 'margin-top:10px;');
-      layerTitle.textContent = layerName;
+    layerTitle.setAttribute('class', 'title');
+    layerTitle.setAttribute('style', 'margin-top:10px;');
+    layerTitle.textContent = layerName;
 
-      for (var fieldName in layerData) {
-        var tableRow = L.DomUtil.create('tr');
-        tableRow.setAttribute('class', 'hoverable');
-        var tableField = L.DomUtil.create('td');
-        tableField.textContent = fieldName;
-        tableRow.appendChild(tableField);
-        var tableData = L.DomUtil.create('td');
-        tableData.textContent = layerData[fieldName];
-        tableRow.appendChild(tableData);
-        resultsTableBody.appendChild(tableRow);
-      }
-      resultsTable.appendChild(resultsTableBody);
-      layerDiv.appendChild(layerTitle);
-      layerDiv.appendChild(resultsTable);
-      L.DomUtil.get(config.divName).textContent = '';
-      L.DomUtil.get(config.divName).appendChild(layerDiv);
+    for (var fieldName in layerData) {
+      var tableRow = L.DomUtil.create('tr');
+      tableRow.setAttribute('class', 'hoverable');
+      var tableField = L.DomUtil.create('td');
+      tableField.textContent = fieldName;
+      tableRow.appendChild(tableField);
+      var tableData = L.DomUtil.create('td');
+      tableData.textContent = layerData[fieldName];
+      tableRow.appendChild(tableData);
+      resultsTableBody.appendChild(tableRow);
     }
+    resultsTable.appendChild(resultsTableBody);
+    layerDiv.appendChild(layerTitle);
+    layerDiv.appendChild(resultsTable);
+    L.DomUtil.get(config.divName).textContent = '';
+    L.DomUtil.get(config.divName).appendChild(layerDiv);
 
   };
   initialize();
