@@ -1,11 +1,13 @@
 /* global L */
+/* global console */
+/* global document */
+/*jslint node: true */
 
 'use strict';
 
 var reqwest = require('reqwest'),
-    util = require('../util/util'),
-    tileMath = require('../util/tileMath.js'),
-    Popup = require('../util/popup.js');
+util = require('../util/util'),
+utfGrid, UtfGrid = require('../util/utfgrid');
 
 var MapBoxLayer = L.TileLayer.extend({
   options: {
@@ -31,66 +33,36 @@ var MapBoxLayer = L.TileLayer.extend({
   _toLeafletBounds: function(_) {
     return new L.LatLngBounds([[_[1], _[0]], [_[3], _[2]]]);
   },
-  _getTileGridPoint: function _getTileGridPoint(latLng,result) {
-
-    // Forked from danzel/Leaflet.utfgrid
-    // https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js
+  _getTileGridUrl: function (latLng) {
     var me = this,
-      point = me._map.project(latLng),
-      tileSize = me.options.tileSize || 256,
-      resolution = me.options.resolution || 4,
-      x = Math.floor(point.x / tileSize),
-      y = Math.floor(point.y / tileSize),
-      max = me._map.options.crs.scale(me._map.getZoom()) / tileSize;
-
-    x = (x + max) % max;
-    y = (y + max) % max;
-
-    var gridX = Math.floor((point.x - (x * tileSize))/ resolution),
-        gridY = Math.floor((point.y - (y * tileSize)) / resolution),
-        key = result.grid[gridY].charCodeAt(gridX);
-
-    // Return the data from the key
-    return result.data[result.keys[me._utfDecode(key)]];
+    gridTileCoords = utfGrid.getTileCoords(latLng),
+    grids = me.options.grids;
+    return L.Util.template(grids[Math.floor(Math.abs(gridTileCoords.x + gridTileCoords.y) % grids.length)], gridTileCoords);
   },
-  _getTileGrid: function _getTileGrid(latLng, callback) {
-    var me = this,
-      tileCoords = {
-        x: tileMath.long2tile(latLng.lng, this._map.getZoom()),
-        y: tileMath.lat2tile(latLng.lat, this._map.getZoom()),
-        z: this._map.getZoom()
-      },
-      tileUrl = [
-        this.options.url,
-        this.options.id,
-        '/',
-        tileCoords.z,
-        '/',
-        tileCoords.x,
-        '/',
-        tileCoords.y,
-        '.grid.json'
-      ].join('');
+  _isQueryable: function(latLng) {
+    var returnValue = false,
+    me = this,
+    url;
+    if (me.options.grids && me.options.bounds.contains(latLng)) {
+      url = me._getTileGridUrl(latLng);
+      returnValue = utfGrid.hasUtfData(url, latLng);
+    }
 
-    reqwest({
-      url: tileUrl,
-      type: 'jsonp',
-      success: function (res) {
-        callback(me._getTileGridPoint(latLng, res));
-      },
-      error: function (err) {
-        callback({'Error': err});
-      }
+    return returnValue;
+  },
+  _handleClick: function(latLng, config, callback) {
+    // Handles the click function
+    var me = this;
+
+    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, function (resultData, gridData) {
+      callback(gridData, config);
     });
   },
-  _handleClick: function(e) {
-    var latLng = e.latlng,
-      me = this;
+  _handleMousemove: function (latLng, callback) {
+    // UTFGrid Tiles can be cached on mousemove
+    var me = this;
 
-    var clickPopup = new Popup(me._map, latLng);
-    me._getTileGrid(latLng, function drawPopup(resultData) {
-      clickPopup.addLayer(me, resultData);
-    });
+    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, callback);
   },
   initialize: function(config) {
     var _;
@@ -112,23 +84,13 @@ var MapBoxLayer = L.TileLayer.extend({
       _ = config.tileJson || config.id;
     }
 
+    utfGrid = new UtfGrid(this);
     this._loadTileJson(_);
   },
   onAdd: function onAdd(map) {
-    // TODO: Filter out if zIndex === 0.
-    if ((typeof this.options.popup === 'undefined' || this.options.popup !== false)) {
-      this._isIdentifiable = true;
-      map.on('click', this._handleClick, this);
-
-    } else {
-      this._isIdentifiable = false;
-    }
-
     L.TileLayer.prototype.onAdd.call(this, map);
   },
   onRemove: function onRemove() {
-    this._map
-      .off('click', this._handleClick, this);
     L.TileLayer.prototype.onRemove.call(this, this._map);
   },
   _loadTileJson: function(_) {
@@ -139,16 +101,14 @@ var MapBoxLayer = L.TileLayer.extend({
         _ = (function(hash) {
           var urls = (function() {
             var endpoints = [
-              'http://a.tiles.mapbox.com/v3/',
-              'http://b.tiles.mapbox.com/v3/',
-              'http://c.tiles.mapbox.com/v3/',
-              'http://d.tiles.mapbox.com/v3/'
+              'a.tiles.mapbox.com/v3/',
+              'b.tiles.mapbox.com/v3/',
+              'c.tiles.mapbox.com/v3/',
+              'd.tiles.mapbox.com/v3/'
             ];
 
-            if ('https:' === document.location.protocol) {
-              for (var i = 0; i < endpoints.length; i++) {
-                endpoints[i] = endpoints[i].replace('http', 'https');
-              }
+            for (var i = 0; i < endpoints.length; i++) {
+              endpoints[i] = [document.location.protocol, '//', endpoints[i]].join('');
             }
 
             return endpoints;
@@ -199,6 +159,7 @@ var MapBoxLayer = L.TileLayer.extend({
     var extend = {
       bounds: json.bounds && this._toLeafletBounds(json.bounds),
       tiles: json.tiles,
+      grids: json.grids,
       tms: json.scheme === 'tms'
     };
 
@@ -227,7 +188,7 @@ var MapBoxLayer = L.TileLayer.extend({
   },
   getTileUrl: function(tilePoint) {
     var tiles = this.options.tiles,
-        templated = L.Util.template(tiles[Math.floor(Math.abs(tilePoint.x + tilePoint.y) % tiles.length)], tilePoint);
+    templated = L.Util.template(tiles[Math.floor(Math.abs(tilePoint.x + tilePoint.y) % tiles.length)], tilePoint);
 
     if (templated) {
       return templated.replace('.png', '.' + this.options.format);
