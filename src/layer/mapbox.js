@@ -54,8 +54,8 @@ var MapBoxLayer = L.TileLayer.extend({
     // Handles the click function
     var me = this;
 
-    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, function (resultData) {
-      callback(resultData, config);
+    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, function (resultData, gridData) {
+      callback(gridData, config);
     });
   },
   _handleMousemove: function (latLng, callback) {
