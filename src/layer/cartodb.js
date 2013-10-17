@@ -73,7 +73,7 @@ var CartoDbLayer = L.TileLayer.extend({
     ].join('');
 
     L.TileLayer.prototype.initialize.call(this, this.options.url, this.options);
-    utfGrid = new UtfGrid(this);
+    utfGrid = new UtfGrid(this, {'crossOrigin': true, 'type': 'jsonp'});
     return this;
   },
   _getTileGridUrl: function (latLng) {
@@ -94,9 +94,11 @@ var CartoDbLayer = L.TileLayer.extend({
   _handleClick: function(latLng, config, callback) {
     // Handles the click function
     var me = this;
-    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, function (resultData) {
-      callback(resultData, config);
+
+    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, function (resultData, gridData) {
+      callback(gridData, config);
     });
+
   },
   _handleMousemove: function (latLng, callback) {
     // UTFGrid Tiles can be cached on mousemove
