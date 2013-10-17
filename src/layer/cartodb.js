@@ -58,38 +58,8 @@ var CartoDbLayer = L.TileLayer.extend({
     this.options.url = [this.options.urls.rootTile, '.', this.options.format].join('');
     this.options.grids = [this.options.urls.rootTile, '.', this.options.gridFormat].join('');
 
+    this.getQuery();
 
-    // Probably break these into their own functions
-    // Get the sql statement
-    //Sample: SELECT * FROM scpn_weather_stations LIMIT 1
-    //https://nps-scpn.cartodb.com/api/v2/sql?q=SELECT%20*%20FROM%20scpn_weather_stations%20LIMIT%201
-    var me = this;
-    this.options.urls.api = [this.options.urls.root.replace('http://', 'https://'), '/', 'api', '/', 'v2', '/', 'sql'].join('');
-    var sqlQuery = ['SELECT * FROM ', this.options.table, ' LIMIT 1;'].join(''),
-    apiUrl = this.buildUrl(this.options.urls.api, {'q': sqlQuery});
-    console.log(apiUrl);
-    reqwest({
-      url: apiUrl,
-      type: 'jsonp',
-      success: function(response) {
-        console.log('success', response);
-        // Parse out that SQL;
-        console.log(response.response);
-        var interactivity = [], sql=[];
-        for (var field in response.response.fields) {
-          if (response.response.fields[field].type === 'string' || response.response.fields[field].type === 'number') {
-            interactivity.push(field);
-          }
-        }
-        me.options.interactivity = me.options.interactivity ?  me.options.interactivity : interactivity.join(',');
-        var theGeom = response.response.fields.the_geom_webmercator ? 'the_geom_webmercator' : 'the_geom as the_geom_webmercator';
-        sql = ['SELECT ', me.options.interactivity, ',', theGeom, ' FROM ', me.options.table, ';'];
-        me.options.sql = me.options.sql ? me.options.sql : sql.join('');
-      },
-      error: function(response) {
-        console.log('error', response);
-      }
-    });
     L.TileLayer.prototype.initialize.call(this, this.options.url, this.options);
     utfGrid = new UtfGrid(this, {'crossOrigin': true, 'type': 'jsonp'});
     return this;
@@ -107,8 +77,10 @@ var CartoDbLayer = L.TileLayer.extend({
     var returnValue = false,
     me = this,
     url = me._getTileGridUrl(latLng);
-    if (me.options.grids) {
-      returnValue = utfGrid.hasUtfData(url, latLng);
+    if (me.options.isQueryable) {
+      if (me.options.grids) {
+        returnValue = utfGrid.hasUtfData(url, latLng);
+      }
     }
     return returnValue;
   },
@@ -131,6 +103,40 @@ var CartoDbLayer = L.TileLayer.extend({
   },
   onRemove: function onRemove() {
     L.TileLayer.prototype.onRemove.call(this, this._map);
+  },
+  getQuery: function () {
+    var me = this;
+    // For some reason, this only is supported with https
+    me.options.urls.api = [me.options.urls.root.replace('http://', 'https://'), '/', 'api', '/', 'v2', '/', 'sql'].join('');
+    var sqlQuery = ['SELECT * FROM ', me.options.table, ' LIMIT 1;'].join(''),
+    apiUrl = me.buildUrl(me.options.urls.api, {'q': sqlQuery});
+
+    // Send out the request
+    reqwest({
+      url: apiUrl,
+      type: 'jsonp',
+      success: function(response) {
+        me.parseApi(response, me);
+      }
+    });
+  },
+  parseApi: function (response, me) {
+    // Parse out that SQL;
+    var interactivity = [], sql=[];
+    if (response.response.fields) {
+      me.options.isQueryable = true;
+      for (var field in response.response.fields) {
+        if (response.response.fields[field].type === 'string' || response.response.fields[field].type === 'number') {
+          interactivity.push(field);
+        }
+      }
+    } else {
+      me.options.isQueryable = false;
+    }
+    me.options.interactivity = me.options.interactivity ?  me.options.interactivity : interactivity.join(',');
+    var theGeom = response.response.fields.the_geom_webmercator ? 'the_geom_webmercator' : 'the_geom as the_geom_webmercator';
+    sql = ['SELECT ', me.options.interactivity, ',', theGeom, ' FROM ', me.options.table, ';'];
+    me.options.sql = me.options.sql ? me.options.sql : sql.join('');
   },
   buildUrl: function (base, params) {
     // This should probably be moved elsewhere
