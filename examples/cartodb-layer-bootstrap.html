@@ -22,14 +22,13 @@
     <script>
       var NPMap = {
         div: 'map',
-        baseLayers: [{
+        maxZoom: 13,
+        overlays: [{
           name: 'National Park Boundaries',
           table: 'park_bounds',
           type: 'cartodb',
           user: 'nps'
-        }],
-        maxZoom: 13,
-        overlays: [{
+        },{
           name: 'National Park Center Points',
           table: 'park_points',
           type: 'cartodb',
