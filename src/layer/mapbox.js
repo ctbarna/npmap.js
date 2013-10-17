@@ -1,5 +1,4 @@
 /* global L */
-/* global console */
 /* global document */
 /*jslint node: true */
 

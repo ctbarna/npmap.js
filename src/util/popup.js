@@ -25,35 +25,35 @@ module.exports = function (map) {
     }
   },
   clickHandler = function(e) {
-      // Create a container for the popum
-      var popupDiv = L.DomUtil.create('div', 'content'),
-      newLayerDiv,
-      outerDiv,
-      queryableLayers = false,
-      latLng = e.latlng.wrap();
-      popupDiv.setAttribute('id', 'current_popup');
-      outerDiv = L.DomUtil.create('div');
-      outerDiv.appendChild(popupDiv);
-      popup.setContent(outerDiv.innerHTML).setLatLng(e.latlng);
+    // Create a container for the popum
+    var popupDiv = L.DomUtil.create('div', 'content'),
+    newLayerDiv,
+    outerDiv,
+    queryableLayers = false,
+    latLng = e.latlng.wrap();
+    popupDiv.setAttribute('id', 'current_popup');
+    outerDiv = L.DomUtil.create('div');
+    outerDiv.appendChild(popupDiv);
+    popup.setContent(outerDiv.innerHTML).setLatLng(e.latlng);
 
-      getQueryableLayers(e, function (layer, layerIndex, queryable) {
-        var config = {};
-        // Layer has the ability to handle a click
-        if (!queryableLayers) {
-          popup.openOn(map);
-          queryableLayers = true;
-        }
-        newLayerDiv = L.DomUtil.create('div', 'popup_content');
-        config.divName = 'layer_' + layerIndex;
-        config.layer = layer;
-        config.id = layerIndex;
-        newLayerDiv.setAttribute('id', config.divName);
-        newLayerDiv.textContent = "Waiting...";
-        L.DomUtil.get('current_popup').appendChild(newLayerDiv);
+    getQueryableLayers(e, function (layer, layerIndex, queryable) {
+      var config = {};
+      // Layer has the ability to handle a click
+      if (!queryableLayers && queryable) {
+        popup.openOn(map);
+        queryableLayers = true;
+      }
+      newLayerDiv = L.DomUtil.create('div', 'popup_content');
+      config.divName = 'layer_' + layerIndex;
+      config.layer = layer;
+      config.id = layerIndex;
+      newLayerDiv.setAttribute('id', config.divName);
+      newLayerDiv.textContent = 'Loading...';
+      L.DomUtil.get('current_popup').appendChild(newLayerDiv);
 
-        // Call the function
-        layer._handleClick(latLng, config, drawLayer);
-      });
+      // Call the function
+      layer._handleClick(latLng, config, drawLayer);
+    });
   },
   mousemoveHandler = function (e) {
     var latLng = e.latlng.wrap();
@@ -68,37 +68,37 @@ module.exports = function (map) {
     });
   },
   drawLayer =  function (layerData, config) {
-      var layerDiv,
-        layerName = 'Layer: ' + config.layer;
-      layerName = config.layer.options ? config.layer.options.id || layerName : layerName;
+    var layerDiv,
+    layerName = 'Layer: ' + config.layer;
+    layerName = config.layer.options ? config.layer.options.id || layerName : layerName;
 
-      if (layerData) {
-        var layerTitle = L.DomUtil.create('div'),
-        resultsTable = L.DomUtil.create('table'),
-        resultsTableBody = L.DomUtil.create('tbody');
-        layerDiv = L.DomUtil.create('div');
+    if (layerData) {
+      var layerTitle = L.DomUtil.create('div'),
+      resultsTable = L.DomUtil.create('table'),
+      resultsTableBody = L.DomUtil.create('tbody');
+      layerDiv = L.DomUtil.create('div');
 
-        layerTitle.setAttribute('class', 'title');
-        layerTitle.setAttribute('style', 'margin-top:10px;');
-        layerTitle.textContent = layerName;
+      layerTitle.setAttribute('class', 'title');
+      layerTitle.setAttribute('style', 'margin-top:10px;');
+      layerTitle.textContent = layerName;
 
-        for (var fieldName in layerData) {
-          var tableRow = L.DomUtil.create('tr');
-          tableRow.setAttribute('class', 'hoverable');
-          var tableField = L.DomUtil.create('td');
-          tableField.textContent = fieldName;
-          tableRow.appendChild(tableField);
-          var tableData = L.DomUtil.create('td');
-          tableData.textContent = layerData[fieldName];
-          tableRow.appendChild(tableData);
-          resultsTableBody.appendChild(tableRow);
-        }
-        resultsTable.appendChild(resultsTableBody);
-        layerDiv.appendChild(layerTitle);
-        layerDiv.appendChild(resultsTable);
-        L.DomUtil.get(config.divName).textContent = '';
-        L.DomUtil.get(config.divName).appendChild(layerDiv);
+      for (var fieldName in layerData) {
+        var tableRow = L.DomUtil.create('tr');
+        tableRow.setAttribute('class', 'hoverable');
+        var tableField = L.DomUtil.create('td');
+        tableField.textContent = fieldName;
+        tableRow.appendChild(tableField);
+        var tableData = L.DomUtil.create('td');
+        tableData.textContent = layerData[fieldName];
+        tableRow.appendChild(tableData);
+        resultsTableBody.appendChild(tableRow);
       }
+      resultsTable.appendChild(resultsTableBody);
+      layerDiv.appendChild(layerTitle);
+      layerDiv.appendChild(resultsTable);
+      L.DomUtil.get(config.divName).textContent = '';
+      L.DomUtil.get(config.divName).appendChild(layerDiv);
+    }
 
   };
   initialize();

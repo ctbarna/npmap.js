@@ -32,7 +32,8 @@ var CartoDbLayer = L.TileLayer.extend({
       'tileDirectory': 'tiles',
       'tileXYZ': '{z}/{x}/{y}',
       'format': 'png',
-      'gridFormat': 'grid.json'
+      'gridFormat': 'grid.json',
+      'id': (config && config.name) ? config.name : null
     },
     item;
 
@@ -40,8 +41,9 @@ var CartoDbLayer = L.TileLayer.extend({
     for (item in defaultOptions) {
       this.options[item] = this.options[item] ? this.options[item] : defaultOptions[item];
     }
+    // Read the items from the config
     for (item in config) {
-      this.options[item] = this.options[item] ? this.options[item] : config[item];
+      this.options[item] = config[item];
     }
 
     util.strict(this.options.name, 'string');
@@ -105,7 +107,7 @@ var CartoDbLayer = L.TileLayer.extend({
     var me = this;
     utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, callback);
   },
- onAdd: function onAdd(map) {
+  onAdd: function onAdd(map) {
     L.TileLayer.prototype.onAdd.call(this, map);
   },
   onRemove: function onRemove() {
