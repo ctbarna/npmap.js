@@ -90,9 +90,6 @@ var CartoDbLayer = L.TileLayer.extend({
         console.log('error', response);
       }
     });
-
-
-
     L.TileLayer.prototype.initialize.call(this, this.options.url, this.options);
     utfGrid = new UtfGrid(this, {'crossOrigin': true, 'type': 'jsonp'});
     return this;
@@ -103,6 +100,7 @@ var CartoDbLayer = L.TileLayer.extend({
     grids = me.options.grids,
     baseUrl = L.Util.template(grids, gridTileCoords),
     params = {'sql': me.options.sql, 'interactivity': me.options.interactivity};
+    if (me.options.style) {params.style = me.options.style;}
     return me.buildUrl (baseUrl, params);
   },
   _isQueryable: function(latLng) {
