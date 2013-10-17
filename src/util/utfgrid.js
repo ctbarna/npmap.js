@@ -1,9 +1,9 @@
 var reqwest = require('../util/cachedreqwest')(),
 tileMath = require('../util/tilemath');
 
-module.exports = function(layer) {
+module.exports = function(layer, options) {
   return {
-    getTileGridPoint: function _getTileGridPoint(latLng, result) {
+    getTileGridPoint: function _getTileGridPoint(latLng, response) {
 
       // Forked from danzel/Leaflet.utfgrid
       // https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js
@@ -21,12 +21,10 @@ module.exports = function(layer) {
 
       var gridX = Math.floor((point.x - (x * tileSize))/ resolution),
       gridY = Math.floor((point.y - (y * tileSize)) / resolution),
-      key = result.grid[gridY].charCodeAt(gridX);
+      key = response.grid[gridY].charCodeAt(gridX);
 
       // Return the data from the key
-      returnValue = (result.data[result.keys[me.utfDecode(key)]]);
-      returnValue = returnValue ? returnValue : {'Error': 'No Data Found'};
-      return returnValue;
+      return (response.data[response.keys[me.utfDecode(key)]]);
     },
     getTileCoords: function (latLng) {
       return {
@@ -37,16 +35,22 @@ module.exports = function(layer) {
     },
     getTileGrid: function (tileUrl, latLng, callback) {
       var me = this;
-      reqwest.cachedReqwest({
+      request = {
         url: tileUrl,
         type: 'jsonp',
-        success: function (res) {
-          callback(me.getTileGridPoint(latLng, res));
+        success: function (response) {
+          callback(response.response, me.getTileGridPoint(latLng, response.response));
         },
-        error: function (err) {
-          callback({'Error': 'No Data Found'});
+        error: function (response) {
+          callback(response.response, null);
         }
-      });
+      };
+      if (options) {
+        for (var option in options) {
+          request[option] = options[option];
+        }
+      }
+      reqwest.cachedReqwest(request);
     },
     utfDecode: function _utfDecode(key) {
       // https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js
@@ -58,9 +62,9 @@ module.exports = function(layer) {
       var returnValue = {'cursor': 'default'},
       cache = reqwest.getCache(url);
       if (cache) {
-        if (cache.status === 'success') {
-          returnValue = this.getTileGridPoint(latLng, cache.resp).Error ? false : {'cursor': 'pointer'};
-        } else if (cache.status === 'error') {
+        if (cache.cacheStatus === 'success' && cache.response) {
+          returnValue = this.getTileGridPoint(latLng, cache.response) ? {'cursor': 'pointer'} : false;
+        } else if (cache.cachdStatus === 'error') {
           returnValue = false;
         }
       }
