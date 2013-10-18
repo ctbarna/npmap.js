@@ -52,7 +52,7 @@ module.exports = function (map) {
       L.DomUtil.get('current_popup').appendChild(newLayerDiv);
 
       // Call the function
-      layer._handleClick(latLng, config, drawLayer);
+      layer._handleClick(latLng, config, createPopup);
     });
   },
   mousemoveHandler = function (e) {
@@ -67,12 +67,19 @@ module.exports = function (map) {
       layer._handleMousemove(latLng, setCursor);
     });
   },
-  drawLayer =  function (layerData, config) {
+  createPopup =  function (layerData, config) {
     var layerDiv,
     layerName = 'Layer: ' + config.layer,
-    errorMessage = config.errorMessage ? config.errorMessage : {'Error': 'No data found'};
-    layerName = config.layer.options ? config.layer.options.id || layerName : layerName;
-    layerData = layerData ? layerData : errorMessage;
+    defaultConfig = {
+      errorMessage: {'Error': 'No data found'},
+      layerName: config.layer.options && config.layer.options.name ? config.layer.options.name : 'Layer: ' + config.layer,
+      popup: drawPopup
+    };
+
+    // Assign defaults, or use defaults from the config object
+    for (var value in defaultConfig) {
+      config[value] = config[value] ? config[value] : defaults[value];
+    }
 
     var layerTitle = L.DomUtil.create('div'),
     resultsTable = L.DomUtil.create('table'),
