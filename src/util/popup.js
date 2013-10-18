@@ -4,6 +4,8 @@
 
 'use strict';
 
+var util = require('../util/util');
+
 module.exports = function (map) {
   var initialize = function () {
     // Add a click event to the map
@@ -47,12 +49,13 @@ module.exports = function (map) {
       config.divName = 'layer_' + layerIndex;
       config.layer = layer;
       config.id = layerIndex;
+      config.popup = drawTable;
       newLayerDiv.setAttribute('id', config.divName);
       newLayerDiv.textContent = 'Loading...';
       L.DomUtil.get('current_popup').appendChild(newLayerDiv);
 
       // Call the function
-      layer._handleClick(latLng, config, createPopup);
+      layer._handleClick(latLng, config, drawPopup);
     });
   },
   mousemoveHandler = function (e) {
@@ -67,46 +70,59 @@ module.exports = function (map) {
       layer._handleMousemove(latLng, setCursor);
     });
   },
-  createPopup =  function (layerData, config) {
-    var layerDiv,
-    layerName = 'Layer: ' + config.layer,
-    defaultConfig = {
+  drawPopup =  function (layerData, config) {
+    var defaultConfig = {
       errorMessage: {'Error': 'No data found'},
-      layerName: config.layer.options && config.layer.options.name ? config.layer.options.name : 'Layer: ' + config.layer,
-      popup: drawPopup
+      layerName: config.layer.options && config.layer.options.name ? config.layer.options.name : 'Layer: ' + config.layer
     };
 
     // Assign defaults, or use defaults from the config object
     for (var value in defaultConfig) {
-      config[value] = config[value] ? config[value] : defaults[value];
+      config[value] = config[value] ? config[value] : defaultConfig[value];
     }
 
-    var layerTitle = L.DomUtil.create('div'),
-    resultsTable = L.DomUtil.create('table'),
-    resultsTableBody = L.DomUtil.create('tbody');
-    layerDiv = L.DomUtil.create('div');
+    L.DomUtil.get(config.divName).innerHTML = util.getOuterHtml(config.popup(layerData, config));
 
-    layerTitle.setAttribute('class', 'title');
-    layerTitle.setAttribute('style', 'margin-top:10px;');
-    layerTitle.textContent = layerName;
 
-    for (var fieldName in layerData) {
-      var tableRow = L.DomUtil.create('tr');
-      tableRow.setAttribute('class', 'hoverable');
-      var tableField = L.DomUtil.create('td');
-      tableField.textContent = fieldName;
-      tableRow.appendChild(tableField);
-      var tableData = L.DomUtil.create('td');
-      tableData.textContent = layerData[fieldName];
-      tableRow.appendChild(tableData);
-      resultsTableBody.appendChild(tableRow);
+  },
+  drawTable = function (data, config) {
+    var layerTitle, resultsTable, resultsTableBody, layerDiv, layerData,
+    tableRow, tableField, tableData;
+
+    // Support an array of tables, or just one
+    if( Object.prototype.toString.call( data ) !== '[object Array]' ) {
+      data = [ data ];
     }
-    resultsTable.appendChild(resultsTableBody);
-    layerDiv.appendChild(layerTitle);
-    layerDiv.appendChild(resultsTable);
-    L.DomUtil.get(config.divName).textContent = '';
-    L.DomUtil.get(config.divName).appendChild(layerDiv);
 
+    for (var index in data) {
+      // Create the div for this layer  
+      layerData = data[index];
+      layerTitle = L.DomUtil.create('div');
+      resultsTable = L.DomUtil.create('table');
+      resultsTableBody = L.DomUtil.create('tbody');
+      layerDiv = L.DomUtil.create('div');
+
+      layerTitle.setAttribute('class', 'title');
+      layerTitle.setAttribute('style', 'margin-top:10px;');
+      layerTitle.textContent = config.layerName;
+
+      for (var fieldName in layerData) {
+        tableRow = L.DomUtil.create('tr');
+        tableRow.setAttribute('class', 'hoverable');
+        tableField = L.DomUtil.create('td');
+        tableField.textContent = fieldName;
+        tableRow.appendChild(tableField);
+        tableData = L.DomUtil.create('td');
+        tableData.textContent = layerData[fieldName];
+        tableRow.appendChild(tableData);
+        resultsTableBody.appendChild(tableRow);
+      }
+      resultsTable.appendChild(resultsTableBody);
+      layerDiv.appendChild(layerTitle);
+      layerDiv.appendChild(resultsTable);
+    }
+    return layerDiv;
   };
   initialize();
 };
+
