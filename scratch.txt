@@ -1,0 +1,25 @@
+// How to add mapbox layers that are queryable
+
+L.npmap.layer.mapbox({
+  "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a>, &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+  "icon": "street",
+  "id": "mapbox.geography-class",
+  "name": "MapBox Light",
+  "type": "mapbox"
+}).addTo(map);
+
+L.npmap.layer.mapbox({
+  "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a>, &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+  "icon": "street",
+  "id": "mapbox.va-quake-aug",
+  "name": "MapBox Light",
+  "type": "mapbox"
+}).addTo(map);
+
+// Add Cartodb layers
+L.npmap.layer.cartodb({
+  name: 'National Parks',
+  table: 'scpn_weather_stations',
+  type: 'CartoDb',
+  user: 'nps-scpn'
+}).addTo(map);

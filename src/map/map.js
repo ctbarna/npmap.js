@@ -30,6 +30,7 @@ var Map = L.Map.extend({
     mapWrapper.appendChild(map);
     config.div = map;
     L.Map.prototype.initialize.call(this, config.div, config);
+    L.npmap.util.popup(this);
 
     if (this.attributionControl) {
       this.attributionControl.setPrefix('');
