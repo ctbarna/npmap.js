@@ -19,17 +19,17 @@ The build process uses [node.js](http://nodejs.org/). After installing node.js:
 
 The [browserify](https://github.com/substack/node-browserify) package is used to combine dependencies. It, along with other required packages, are installed locally when you run `npm install`. Running `make` builds NPMap.js, using [UglifyJS](https://github.com/mishoo/UglifyJS) to create minified versions in `dist/`.
 
-If you are interested in development, the watcher tool [nodemon](https://github.com/remy/nodemon) is great for watching your code for changes and running a command when it detects a change.
+If you are interested in helping with the development of NPMap.js, you may want to use the watcher tool, [nodemon](https://github.com/remy/nodemon). It is great for watching your code for changes and running a command when it detects a change.
 
 Nodemon is not part of the package file, so if you'd like to use it, you will need to install it with npm:
 
     npm install -g nodemon
 
-You will also want to add the following line to the .nodemonignore file, otherwise it will rebuild a few times.
+You will also want to add the following line to the .nodemonignore file, otherwise it will rebuild multiple times:
 
     dist/*
 
-To set up nodemon watch your code and remake on every change run the command:
+To tell nodemon to watch your code and remake on every change, run the command:
 
     nodemon -x "make -f" Makefile
 
