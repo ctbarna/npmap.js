@@ -98,13 +98,18 @@ NPMap = {
   for (var i = 0; i < scripts.length; i++) {
     var src = scripts[i].src;
 
-    if (typeof src === 'string' && src.indexOf('npmap-bootstrap.js') !== -1) {
-      NPMap.path = src.replace('npmap-bootstrap.js', '');
-      break;
+    if (typeof src === 'string') {
+      if (src.indexOf('npmap-bootstrap.js') !== -1) {
+        NPMap.path = src.replace('npmap-bootstrap.js', '');
+        script.src = NPMap.path + 'npmap.js';
+        break;
+      } else if (src.indexOf('npmap-bootstrap.min.js') !== -1) {
+        NPMap.path = src.replace('npmap-bootstrap.min.js', '');
+        script.src = NPMap.path + 'npmap.min.js';
+        break;
+      }
     }
   }
-
-  script.src = NPMap.path + 'npmap.js';
 
   if (script.readyState) {
     script.onreadystatechange = function() {
