@@ -23,27 +23,26 @@
       var NPMap = {
         div: 'map',
         baseLayers: [{
-          "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a>, &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
-          "icon": "street",
-          "id": "mapbox.geography-class",
-          "name": "MapBox Light",
-          "type": "mapbox"
-          }],
-          maxZoom: 13,
-          overlays: [{
-          "attribution": "<a href='http://mapbox.com/about/maps' target='_blank'>MapBox</a>, &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
-          "icon": "street",
-          "id": "mapbox.va-quake-aug",
-          "name": "MapBox Light",
-          "type": "mapbox"
+          attribution: '<a href="http://mapbox.com/about/maps" target="_blank">MapBox</a>, &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          id: 'mapbox.geography-class',
+          name: 'Geography Class',
+          popup: '{{admin}}',
+          type: 'mapbox'
+        }],
+        maxZoom: 13,
+        overlays: [{
+          attribution: '<a href="http://mapbox.com/about/maps" target="_blank">MapBox</a>, &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          id: 'mapbox.va-quake-aug',
+          name: 'Virginia Earthquake',
+          type: 'mapbox'
         }]
-        };
+      };
 
-        (function() {
-          var s = document.createElement('script');
-          s.src = '../dist/npmap-bootstrap.js';
-          document.body.appendChild(s);
-          })();
-        </script>
-      </body>
-    </html>
+      (function() {
+        var s = document.createElement('script');
+        s.src = '../dist/npmap-bootstrap.js';
+        document.body.appendChild(s);
+      })();
+    </script>
+  </body>
+</html>
