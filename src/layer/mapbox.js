@@ -1,9 +1,12 @@
 /* global L */
+/* global document */
+/*jslint node: true */
 
 'use strict';
 
 var reqwest = require('reqwest'),
-    util = require('../util/util');
+util = require('../util/util'),
+utfGrid, UtfGrid = require('../util/utfgrid');
 
 var MapBoxLayer = L.TileLayer.extend({
   options: {
@@ -29,6 +32,37 @@ var MapBoxLayer = L.TileLayer.extend({
   _toLeafletBounds: function(_) {
     return new L.LatLngBounds([[_[1], _[0]], [_[3], _[2]]]);
   },
+  _getTileGridUrl: function (latLng) {
+    var me = this,
+    gridTileCoords = utfGrid.getTileCoords(latLng),
+    grids = me.options.grids;
+    return L.Util.template(grids[Math.floor(Math.abs(gridTileCoords.x + gridTileCoords.y) % grids.length)], gridTileCoords);
+  },
+  _isQueryable: function(latLng) {
+    var returnValue = false,
+    me = this,
+    url;
+    if (me.options.grids && me.options.bounds.contains(latLng)) {
+      url = me._getTileGridUrl(latLng);
+      returnValue = utfGrid.hasUtfData(url, latLng);
+    }
+
+    return returnValue;
+  },
+  _handleClick: function(latLng, config, callback) {
+    // Handles the click function
+    var me = this;
+
+    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, function (resultData, gridData) {
+      callback(gridData, config);
+    });
+  },
+  _handleMousemove: function (latLng, callback) {
+    // UTFGrid Tiles can be cached on mousemove
+    var me = this;
+
+    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, callback);
+  },
   initialize: function(config) {
     var _;
 
@@ -49,7 +83,14 @@ var MapBoxLayer = L.TileLayer.extend({
       _ = config.tileJson || config.id;
     }
 
+    utfGrid = new UtfGrid(this);
     this._loadTileJson(_);
+  },
+  onAdd: function onAdd(map) {
+    L.TileLayer.prototype.onAdd.call(this, map);
+  },
+  onRemove: function onRemove() {
+    L.TileLayer.prototype.onRemove.call(this, this._map);
   },
   _loadTileJson: function(_) {
     if (typeof _ === 'string') {
@@ -59,16 +100,14 @@ var MapBoxLayer = L.TileLayer.extend({
         _ = (function(hash) {
           var urls = (function() {
             var endpoints = [
-              'http://a.tiles.mapbox.com/v3/',
-              'http://b.tiles.mapbox.com/v3/',
-              'http://c.tiles.mapbox.com/v3/',
-              'http://d.tiles.mapbox.com/v3/'
+              'a.tiles.mapbox.com/v3/',
+              'b.tiles.mapbox.com/v3/',
+              'c.tiles.mapbox.com/v3/',
+              'd.tiles.mapbox.com/v3/'
             ];
 
-            if ('https:' === document.location.protocol) {
-              for (var i = 0; i < endpoints.length; i++) {
-                endpoints[i] = endpoints[i].replace('http', 'https');
-              }
+            for (var i = 0; i < endpoints.length; i++) {
+              endpoints[i] = [document.location.protocol, '//', endpoints[i]].join('');
             }
 
             return endpoints;
@@ -119,6 +158,7 @@ var MapBoxLayer = L.TileLayer.extend({
     var extend = {
       bounds: json.bounds && this._toLeafletBounds(json.bounds),
       tiles: json.tiles,
+      grids: json.grids,
       tms: json.scheme === 'tms'
     };
 
@@ -147,7 +187,7 @@ var MapBoxLayer = L.TileLayer.extend({
   },
   getTileUrl: function(tilePoint) {
     var tiles = this.options.tiles,
-        templated = L.Util.template(tiles[Math.floor(Math.abs(tilePoint.x + tilePoint.y) % tiles.length)], tilePoint);
+    templated = L.Util.template(tiles[Math.floor(Math.abs(tilePoint.x + tilePoint.y) % tiles.length)], tilePoint);
 
     if (templated) {
       return templated.replace('.png', '.' + this.options.format);
@@ -161,7 +201,13 @@ var MapBoxLayer = L.TileLayer.extend({
     this.redraw();
     return this;
   },
-  setUrl: null
+  setUrl: null,
+  _utfDecode: function _utfDecode(key) {
+    // https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js
+    if (key >= 93) key--;
+    if (key >= 35) key--;
+    return key - 32;
+  }
 });
 
 module.exports = function(config) {
