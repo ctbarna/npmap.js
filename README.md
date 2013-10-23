@@ -67,6 +67,6 @@ Most of the examples have two versions: a version with `-api` at the end of the 
 
 ##Support
 
-You can get in touch with the NPMap team by contacting us via Twitter ([@npmap](http://twitter.com/npmap)) or email ([mailto:npmap@nps.gov](npmap@nps.gov)).
+You can get in touch with the NPMap team by contacting us via Twitter ([@npmap](http://twitter.com/npmap)) or email ([npmap@nps.gov](mailto:npmap@nps.gov)).
 
 [![Build Status](https://travis-ci.org/nationalparkservice/npmap.js.png)](https://travis-ci.org/nationalparkservice/npmap.js)
