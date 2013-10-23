@@ -14,7 +14,7 @@ Heavily inspired (cough cough) by [MapBox.js](https://github.com/mapbox/mapbox.j
 
 ##Versioning
 
-NPMap.js is versioned using [semantic versioining](http://semver.org). This means that releases are numbered: `<major>.<minor>.<patch>` and follow these guidelines:
+NPMap.js is versioned using [semantic versioining](http://semver.org). This means that releases are numbered: `major.minor.patch` and follow these guidelines:
 
 - Breaking backward compatibility bumps the major (and resets the minor and patch)
 - New additions that don't break backward compatibility bumps the minor (and resets the patch)
@@ -25,7 +25,7 @@ NPMap.js is versioned using [semantic versioining](http://semver.org). This mean
 
 ##Hosted Version
 
-NPMap.js is hosted on the National Park Service's content delivery network. Feel free to load the library directly from there. You can access hosted versions at http://www.nps.gov/npmap/dev/tools/npmap.js/<major>.<minor>.<patch>/. You should replace "<major>.<minor>.<patch>" with the number of the version you want to access.
+NPMap.js is hosted on the National Park Service's content delivery network. Feel free to load the library directly from there. You can access hosted versions at http://www.nps.gov/npmap/dev/tools/npmap.js/major.minor.patch/. You should replace "major.minor.patch" with the number of the version you want to access.
 
 ##Building
 
