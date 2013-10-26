@@ -20,23 +20,24 @@
   <body>
     <div id="map"></div>
     <script>
-      var NPMap = {
-        div: 'map',
-        baseLayers: [{
-          attribution: '<a href="http://mapbox.com/about/maps" target="_blank">MapBox</a>, &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-          id: 'mapbox.geography-class',
-          name: 'Geography Class',
-          popup: '{{admin}}',
-          type: 'mapbox'
-        }],
-        maxZoom: 13,
-        overlays: [{
-          attribution: '<a href="http://mapbox.com/about/maps" target="_blank">MapBox</a>, &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-          id: 'mapbox.va-quake-aug',
-          name: 'Virginia Earthquake',
-          type: 'mapbox'
-        }]
-      };
+      var attribution = '<a href="http://mapbox.com/about/maps" target="_blank">MapBox</a>, &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+          NPMap = {
+            div: 'map',
+            baseLayers: [{
+              attribution: attribution,
+              id: 'mapbox.geography-class',
+              popup: '<div class="title">{{admin}}</div><div class="content" style="text-align:center;"><img src="data:image/png;base64,{{flag_png}}"></div>',
+              tooltip: '<div class="content">{{admin}}</div>',
+              type: 'mapbox'
+            }],
+            maxZoom: 8,
+            overlays: [{
+              attribution: attribution,
+              id: 'mapbox.va-quake-aug',
+              popup: false,
+              type: 'mapbox'
+            }]
+          };
 
       (function() {
         var s = document.createElement('script');
