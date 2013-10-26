@@ -16,8 +16,8 @@ Heavily inspired (cough cough) by [MapBox.js](https://github.com/mapbox/mapbox.j
 
 NPMap.js is versioned using [semantic versioining](http://semver.org). This means that releases are numbered: `major.minor.patch` and follow these guidelines:
 
-- Breaking backward compatibility bumps the major (and resets the minor and patch)
-- New additions that don't break backward compatibility bumps the minor (and resets the patch)
+- Breaking backward compatibility bumps the major (and resets the minor and patch to zero)
+- New additions that don't break backward compatibility bumps the minor (and resets the patch to zero)
 - Bug fixes and miscellaneous changes bumps the patch
 
 ##Changelog
@@ -29,16 +29,16 @@ NPMap.js is hosted on the National Park Service's content delivery network. Feel
 
 ##Building
 
-The build process uses [node.js](http://nodejs.org/). After installing node.js:
+You must have [node.js](http://nodejs.org/) installed to run the build. After installing node.js:
 
     git clone https://github.com/nationalparkservice/npmap.js.git
     cd npmap.js
     npm install
     make
 
-The [browserify](https://github.com/substack/node-browserify) package is used to combine dependencies. It, along with other required packages, are installed locally when you run `npm install`. Running `make` builds NPMap.js, using [UglifyJS](https://github.com/mishoo/UglifyJS) to create minified versions in `dist/`.
+The [browserify](https://github.com/substack/node-browserify) package is used to combine dependencies. It is installed locally, along with other required packages, when you run `npm install`. Running `make` builds NPMap.js, using [UglifyJS](https://github.com/mishoo/UglifyJS) to create minified versions in `dist/`.
 
-If you are interested in extending or helping with the development of NPMap.js, you may want to use the watcher tool, [nodemon](https://github.com/remy/nodemon). It is great for watching your code for changes and running a command when it detects a change.
+If you are interested in extending or helping with the development of NPMap.js, you may want to use the watcher tool, [nodemon](https://github.com/remy/nodemon). It watches your code and runs a command when it detects a change.
 
 Nodemon is not part of the package file, so if you'd like to use it, you will need to install it with npm:
 
