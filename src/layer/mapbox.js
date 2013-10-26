@@ -4,9 +4,8 @@
 'use strict';
 
 var reqwest = require('reqwest'),
-    util = require('../util/util'),
-    utfGrid,
-    UtfGrid = require('../util/utfgrid');
+    utfGrid = require('../util/utfgrid'),
+    util = require('../util/util');
 
 var MapBoxLayer = L.TileLayer.extend({
   options: {
@@ -19,6 +18,7 @@ var MapBoxLayer = L.TileLayer.extend({
       'd'
     ]
   },
+  _grid: null,
   formats: [
     'jpg70',
     'jpg80',
@@ -49,30 +49,31 @@ var MapBoxLayer = L.TileLayer.extend({
       _ = config.tileJson || config.id;
     }
 
-    utfGrid = new UtfGrid(this);
+    this._grid = new utfGrid(this);
     this._loadTileJson(_);
+  },
+  _getGrid: function(latLng, layer, callback) {
+    this._grid.getTileGrid(this._getTileGridUrl(latLng), latLng, function(resultData, gridData) {
+      callback(layer, gridData);
+    });
   },
   _getTileGridUrl: function(latLng) {
     var grids = this.options.grids,
-        gridTileCoords = utfGrid.getTileCoords(latLng);
+        gridTileCoords = this._grid.getTileCoords(latLng);
 
     return L.Util.template(grids[Math.floor(Math.abs(gridTileCoords.x + gridTileCoords.y) % grids.length)], gridTileCoords);
   },
   _handleClick: function(latLng, layer, callback) {
-    utfGrid.getTileGrid(this._getTileGridUrl(latLng), latLng, function(resultData, gridData) {
-      callback(layer, gridData);
-    });
+    this._getGrid(latLng, layer, callback);
   },
   _handleMousemove: function (latLng, layer, callback) {
-    utfGrid.getTileGrid(this._getTileGridUrl(latLng), latLng, function(resultData, gridData) {
-      callback(layer, gridData);
-    });
+    this._getGrid(latLng, layer, callback);
   },
   _isQueryable: function(latLng) {
     var returnValue = false;
 
     if (this.options.grids && this.options.bounds.contains(latLng)) {
-      returnValue = utfGrid.hasUtfData(this._getTileGridUrl(latLng), latLng);
+      returnValue = this._grid.hasUtfData(this._getTileGridUrl(latLng), latLng);
     }
 
     return returnValue;
