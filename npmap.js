@@ -20,10 +20,11 @@ L.npmap = module.exports = {
     tiled: require('./src/layer/tiled')
   },
   map: require('./src/map/map'),
+  popup: require('./src/map/popup'),
+  tooltip: require('./src/map/tooltip'),
   util: {
     _: require('./src/util/util'),
     geojson: require('./src/util/geojson'),
-    topojson: require('./src/util/topojson'),
-    popup: require('./src/util/popup.js')
+    topojson: require('./src/util/topojson')
   }
 };

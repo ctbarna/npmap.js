@@ -30,7 +30,8 @@ var Map = L.Map.extend({
     mapWrapper.appendChild(map);
     config.div = map;
     L.Map.prototype.initialize.call(this, config.div, config);
-    L.npmap.util.popup(this);
+    L.npmap.popup(this);
+    L.npmap.tooltip(this);
 
     if (this.attributionControl) {
       this.attributionControl.setPrefix('');
@@ -170,10 +171,6 @@ var Map = L.Map.extend({
   L.Path.mergeOptions(style);
   L.Polygon.mergeOptions(style);
   L.Polyline.mergeOptions(style);
-  L.Popup.mergeOptions({
-    autoPanPadding: L.point(48, 20), // autoPanPadding: L.bounds(L.point(45, 20), L.point(20, 20)) https://github.com/Leaflet/Leaflet/issues/1588
-    offset: L.point(0, -2)
-  });
 })();
 
 module.exports = function(config) {

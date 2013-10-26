@@ -1,12 +1,12 @@
-/* global L */
-/* global document */
-/*jslint node: true */
+/* global document, L */
+/* jslint node: true */
 
 'use strict';
 
 var reqwest = require('reqwest'),
-util = require('../util/util'),
-utfGrid, UtfGrid = require('../util/utfgrid');
+    util = require('../util/util'),
+    utfGrid,
+    UtfGrid = require('../util/utfgrid');
 
 var MapBoxLayer = L.TileLayer.extend({
   options: {
@@ -29,40 +29,6 @@ var MapBoxLayer = L.TileLayer.extend({
     'png128',
     'png256'
   ],
-  _toLeafletBounds: function(_) {
-    return new L.LatLngBounds([[_[1], _[0]], [_[3], _[2]]]);
-  },
-  _getTileGridUrl: function (latLng) {
-    var me = this,
-    gridTileCoords = utfGrid.getTileCoords(latLng),
-    grids = me.options.grids;
-    return L.Util.template(grids[Math.floor(Math.abs(gridTileCoords.x + gridTileCoords.y) % grids.length)], gridTileCoords);
-  },
-  _isQueryable: function(latLng) {
-    var returnValue = false,
-    me = this,
-    url;
-    if (me.options.grids && me.options.bounds.contains(latLng)) {
-      url = me._getTileGridUrl(latLng);
-      returnValue = utfGrid.hasUtfData(url, latLng);
-    }
-
-    return returnValue;
-  },
-  _handleClick: function(latLng, config, callback) {
-    // Handles the click function
-    var me = this;
-
-    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, function (resultData, gridData) {
-      callback(gridData, config);
-    });
-  },
-  _handleMousemove: function (latLng, callback) {
-    // UTFGrid Tiles can be cached on mousemove
-    var me = this;
-
-    utfGrid.getTileGrid(me._getTileGridUrl(latLng), latLng, callback);
-  },
   initialize: function(config) {
     var _;
 
@@ -86,11 +52,30 @@ var MapBoxLayer = L.TileLayer.extend({
     utfGrid = new UtfGrid(this);
     this._loadTileJson(_);
   },
-  onAdd: function onAdd(map) {
-    L.TileLayer.prototype.onAdd.call(this, map);
+  _getTileGridUrl: function(latLng) {
+    var grids = this.options.grids,
+        gridTileCoords = utfGrid.getTileCoords(latLng);
+
+    return L.Util.template(grids[Math.floor(Math.abs(gridTileCoords.x + gridTileCoords.y) % grids.length)], gridTileCoords);
   },
-  onRemove: function onRemove() {
-    L.TileLayer.prototype.onRemove.call(this, this._map);
+  _handleClick: function(latLng, layer, callback) {
+    utfGrid.getTileGrid(this._getTileGridUrl(latLng), latLng, function(resultData, gridData) {
+      callback(layer, gridData);
+    });
+  },
+  _handleMousemove: function (latLng, layer, callback) {
+    utfGrid.getTileGrid(this._getTileGridUrl(latLng), latLng, function(resultData, gridData) {
+      callback(layer, gridData);
+    });
+  },
+  _isQueryable: function(latLng) {
+    var returnValue = false;
+
+    if (this.options.grids && this.options.bounds.contains(latLng)) {
+      returnValue = utfGrid.hasUtfData(this._getTileGridUrl(latLng), latLng);
+    }
+
+    return returnValue;
   },
   _loadTileJson: function(_) {
     if (typeof _ === 'string') {
@@ -180,10 +165,19 @@ var MapBoxLayer = L.TileLayer.extend({
     this.redraw();
     return this;
   },
+  _toLeafletBounds: function(_) {
+    return new L.LatLngBounds([[_[1], _[0]], [_[3], _[2]]]);
+  },
   _update: function() {
     if (this.options.tiles) {
       L.TileLayer.prototype._update.call(this);
     }
+  },
+  _utfDecode: function _utfDecode(key) {
+    // https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js
+    if (key >= 93) key--;
+    if (key >= 35) key--;
+    return key - 32;
   },
   getTileUrl: function(tilePoint) {
     var tiles = this.options.tiles,
@@ -195,19 +189,19 @@ var MapBoxLayer = L.TileLayer.extend({
       return templated;
     }
   },
+  onAdd: function onAdd(map) {
+    L.TileLayer.prototype.onAdd.call(this, map);
+  },
+  onRemove: function onRemove() {
+    L.TileLayer.prototype.onRemove.call(this, this._map);
+  },
   setFormat: function(_) {
     util.strict(_, 'string');
     this.options.format = _;
     this.redraw();
     return this;
   },
-  setUrl: null,
-  _utfDecode: function _utfDecode(key) {
-    // https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js
-    if (key >= 93) key--;
-    if (key >= 35) key--;
-    return key - 32;
-  }
+  setUrl: null
 });
 
 module.exports = function(config) {

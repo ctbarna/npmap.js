@@ -44,6 +44,28 @@ module.exports = {
   /**
    *
    */
+  buildUrl: function(base, params) {
+    var returnArray = [];
+
+    if (params) {
+      returnArray.push(base + '?');
+    } else {
+      return base;
+    }
+
+    for (var param in params) {
+      returnArray.push(encodeURIComponent(param));
+      returnArray.push('=');
+      returnArray.push(encodeURIComponent(params[param]));
+      returnArray.push('&');
+    }
+
+    returnArray.pop();
+    return returnArray.join('');
+  },
+  /**
+   *
+   */
   getChildElementsByClassName: function(parentNode, className) {
     var children = parentNode.childNodes,
         matches = [];
@@ -152,7 +174,7 @@ module.exports = {
    * http://stackoverflow.com/a/2474742/27540
    */
   getOuterHtml: function(el) {
-    if(!el || !el.tagName) {
+    if (!el || !el.tagName) {
       return '';
     }
 
