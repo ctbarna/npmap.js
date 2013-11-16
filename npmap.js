@@ -14,14 +14,16 @@ L.npmap = module.exports = {
   },
   layer: {
     arcgisserver: require('./src/layer/arcgisserver'),
+    geojson: require('./src/layer/geojson'),
     github: require('./src/layer/github'),
     mapbox: require('./src/layer/mapbox'),
     cartodb: require('./src/layer/cartodb'),
     tiled: require('./src/layer/tiled')
   },
   map: require('./src/map/map'),
-  popup: require('./src/map/popup'),
-  tooltip: require('./src/map/tooltip'),
+  preset: {
+    layers: require('./src/presets/layers.json')
+  },
   util: {
     _: require('./src/util/util'),
     geojson: require('./src/util/geojson'),

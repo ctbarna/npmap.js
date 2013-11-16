@@ -116,6 +116,29 @@
       "type": "mapbox"
     }
   },
+  "nps": {
+    "lightStreets": {
+      "attribution": "&copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+      "icon": "street",
+      "id": "nps.g9ndno9j",
+      "name": "Light Streets",
+      "type": "mapbox"
+    },
+    "neutralTerrain": {
+      "attribution": "&copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+      "icon": "street",
+      "id": "nps.g9nccg3d",
+      "name": "Neutral Terrain",
+      "type": "mapbox"
+    },
+    "satelliteNight": {
+      "attribution": "&copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+      "icon": "street",
+      "id": "nps.g9o0im10",
+      "name": "Satellite at Night",
+      "type": "mapbox"
+    }
+  },
   "openstreetmap": {
     "attribution": "&copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
     "icon": "street",
