@@ -15,11 +15,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
     TILED_TEMPLATE: '{{url}}/tile/{z}/{y}/{x}'
   },
   _dataToHtml: function(data) {
-    var div = L.DomUtil.create('div', 'layer');
-
-    console.log(this);
-
-    return  util.getOuterHtml(util._buildAttributeTable(div, data.layerName, data.attributes));
+    return  util.getOuterHtml(util._buildAttributeTable(L.DomUtil.create('div', 'layer'), data.layerName, data.attributes));
   },
   /**
    * Handles a  click operation for this layer.
@@ -58,8 +54,6 @@ var ArcGisServerLayer = L.TileLayer.extend({
               html += me._dataToHtml(results[i]);
             }
           }
-
-          console.log(html);
 
           callback(layer, html);
         }
@@ -227,8 +221,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
       success: function(response) {
         me._metadata = response;
         me.fire('metadata', response);
-
-        // TODO: If not identifiable, set _hasInteractivity to false
+        // TODO: If not identifiable, set _hasInteractivity to false. Not sure how to get this information from service, or if it is even supported.
       },
       type: 'jsonp',
       url: config.url + '?f=json'
