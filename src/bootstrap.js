@@ -1,4 +1,4 @@
-/* global L, NPMap */
+/* global L */
 
 if (!NPMap) {
   throw new Error('The NPMap object is required');
@@ -46,7 +46,7 @@ NPMap = {
     var mask = document.createElement('div');
 
     mask.className = 'npmap-loading';
-    mask.style.cssText = 'background-color:#f9f7f1;height:100%;position:absolute;width:100%;z-index:99999;';
+    mask.style.cssText = 'background-color:#f9f7f1;height:100%;left:0;position:absolute;top:0;width:100%;z-index:99999;';
 
     if (typeof div === 'string') {
       div = document.getElementById(div);
