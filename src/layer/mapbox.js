@@ -18,7 +18,6 @@ var MapBoxLayer = L.TileLayer.extend({
       'd'
     ]
   },
-  _grid: null,
   formats: [
     'jpg70',
     'jpg80',
@@ -29,30 +28,7 @@ var MapBoxLayer = L.TileLayer.extend({
     'png128',
     'png256'
   ],
-  initialize: function(config) {
-    var _;
-
-    // Overwrites this.options with options passed in via config.
-    L.TileLayer.prototype.initialize.call(this, undefined, config);
-
-    if (config.format) {
-      util.strictOneOf(config.format, this.formats);
-    }
-
-    if (L.Browser.retina && config.retinaVersion) {
-      if (typeof config.detectRetina === 'undefined' || config.detectRetina === true) {
-        config.detectRetina = true;
-        _ = config.retinaVersion;
-      }
-    } else {
-      config.detectRetina = false;
-      _ = config.tileJson || config.id;
-    }
-
-    this._grid = new utfGrid(this);
-    this._loadTileJson(_);
-  },
-  _getGrid: function(latLng, layer, callback) {
+  _getGridData: function(latLng, layer, callback) {
     this._grid.getTileGrid(this._getTileGridUrl(latLng), latLng, function(resultData, gridData) {
       callback(layer, gridData);
     });
@@ -64,10 +40,10 @@ var MapBoxLayer = L.TileLayer.extend({
     return L.Util.template(grids[Math.floor(Math.abs(gridTileCoords.x + gridTileCoords.y) % grids.length)], gridTileCoords);
   },
   _handleClick: function(latLng, layer, callback) {
-    this._getGrid(latLng, layer, callback);
+    this._getGridData(latLng, layer, callback);
   },
   _handleMousemove: function (latLng, layer, callback) {
-    this._getGrid(latLng, layer, callback);
+    this._getGridData(latLng, layer, callback);
   },
   _isQueryable: function(latLng) {
     var returnValue = false;
@@ -174,15 +150,9 @@ var MapBoxLayer = L.TileLayer.extend({
       L.TileLayer.prototype._update.call(this);
     }
   },
-  _utfDecode: function _utfDecode(key) {
-    // https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js
-    if (key >= 93) key--;
-    if (key >= 35) key--;
-    return key - 32;
-  },
   getTileUrl: function(tilePoint) {
     var tiles = this.options.tiles,
-    templated = L.Util.template(tiles[Math.floor(Math.abs(tilePoint.x + tilePoint.y) % tiles.length)], tilePoint);
+        templated = L.Util.template(tiles[Math.floor(Math.abs(tilePoint.x + tilePoint.y) % tiles.length)], tilePoint);
 
     if (templated) {
       return templated.replace('.png', '.' + this.options.format);
@@ -190,21 +160,36 @@ var MapBoxLayer = L.TileLayer.extend({
       return templated;
     }
   },
+  initialize: function(options) {
+    var _;
+
+    L.TileLayer.prototype.initialize.call(this, undefined, options);
+
+    if (options.format) {
+      util.strictOneOf(options.format, this.formats);
+    }
+
+    if (L.Browser.retina && options.retinaVersion) {
+      if (typeof options.detectRetina === 'undefined' || options.detectRetina === true) {
+        options.detectRetina = true;
+        _ = options.retinaVersion;
+      }
+    } else {
+      options.detectRetina = false;
+      _ = options.tileJson || options.id;
+    }
+
+    this._grid = new utfGrid(this);
+    this._loadTileJson(_);
+  },
   onAdd: function onAdd(map) {
     L.TileLayer.prototype.onAdd.call(this, map);
   },
   onRemove: function onRemove() {
     L.TileLayer.prototype.onRemove.call(this, this._map);
-  },
-  setFormat: function(_) {
-    util.strict(_, 'string');
-    this.options.format = _;
-    this.redraw();
-    return this;
-  },
-  setUrl: null
+  }
 });
 
-module.exports = function(config) {
-  return new MapBoxLayer(config);
+module.exports = function(options) {
+  return new MapBoxLayer(options);
 };

@@ -4,49 +4,31 @@
 
 'use strict';
 
-var UtfGrid = require('../util/utfgrid'),
-    reqwest = require('../util/cachedreqwest')().cachedReqwest,
+var reqwest = require('../util/cachedreqwest')().cachedReqwest,
+    utfGrid = require('../util/utfgrid'),
     util = require('../util/util');
 
 var CartoDbLayer = L.TileLayer.extend({
   options: {
-    errorTileUrl: L.Util.emptyImageUrl
+    errorTileUrl: L.Util.emptyImageUrl,
+    format: 'png'
   },
-  _grid: null,
-  initialize: function(config) {
-    var defaultOptions = {
-          domain: 'cartodb.com',
-          format: 'png',
-          gridFormat: 'grid.json',
-          id: (config && config.name) ? config.name : null,
-          protocol: document.location.protocol,
-          tileDirectory: 'tiles',
-          tileXYZ: '{z}/{x}/{y}'
-        },
-        item;
+  _getQuery: function() {
+    var me = this;
 
-    for (item in config) {
-      this.options[item] = config[item];
-    }
+    me.options.urls.api = [me.options.urls.root.replace('http://', 'https://'), '/', 'api', '/', 'v2', '/', 'sql'].join('');
 
-    for (item in defaultOptions) {
-      this.options[item] = this.options[item] ? this.options[item] : defaultOptions[item];
-    }
-
-    util.strict(this.options.name, 'string');
-    util.strict(this.options.table, 'string');
-    util.strict(this.options.user, 'string');
-    this.options.urls = {};
-    this.options.urls.root = [this.options.protocol, '//', this.options.user, '.', this.options.domain].join('');
-    this.options.urls.rootTile = [this.options.urls.root, '/', this.options.tileDirectory, '/', this.options.table, '/', this.options.tileXYZ].join('');
-    this.options.url = [this.options.urls.rootTile, '.', this.options.format].join('');
-    this.options.grids = [this.options.urls.rootTile, '.', this.options.gridFormat].join('');
-    this.getQuery();
-    L.TileLayer.prototype.initialize.call(this, this.options.url, this.options);
-    this._grid = new UtfGrid(this, {'crossOrigin': true, 'type': 'jsonp'});
-    return this;
+    reqwest({
+      success: function(response) {
+        me.parseApi(response, me);
+      },
+      type: 'jsonp',
+      url: util.buildUrl(me.options.urls.api, {
+        q: ['SELECT * FROM ', me.options.table, ' LIMIT 1;'].join('')
+      })
+    });
   },
-  _getGrid: function(latLng, layer, callback) {
+  _getGridData: function(latLng, layer, callback) {
     this._grid.getTileGrid(this._getTileGridUrl(latLng), latLng, function(resultData, gridData) {
       callback(layer, gridData);
     });
@@ -64,38 +46,40 @@ var CartoDbLayer = L.TileLayer.extend({
     return util.buildUrl(L.Util.template(this.options.grids, this._grid.getTileCoords(latLng)), params);
   },
   _handleClick: function(latLng, layer, callback) {
-    this._getGrid(latLng, layer, callback);
+    this._getGridData(latLng, layer, callback);
   },
   _handleMousemove: function(latLng, layer, callback) {
-    this._getGrid(latLng, layer, callback);
+    this._getGridData(latLng, layer, callback);
   },
   _isQueryable: function(latLng) {
-    var returnValue = false,
-        url = this._getTileGridUrl(latLng);
+    var returnValue = false;
 
-    if (this.options.isQueryable) {
-      if (this.options.grids) {
-        returnValue = this._grid.hasUtfData(url, latLng);
-      }
+    if (this.options.grids) {
+      returnValue = this._grid.hasUtfData(this._getTileGridUrl(latLng), latLng);
     }
 
     return returnValue;
   },
-  getQuery: function () {
-    var me = this;
-    // For some reason, this only is supported with https
-    me.options.urls.api = [me.options.urls.root.replace('http://', 'https://'), '/', 'api', '/', 'v2', '/', 'sql'].join('');
-    var sqlQuery = ['SELECT * FROM ', me.options.table, ' LIMIT 1;'].join(''),
-    apiUrl = util.buildUrl(me.options.urls.api, {'q': sqlQuery});
+  initialize: function(options) {
+    L.Util.setOptions(this, options);
+    util.strict(this.options.table, 'string');
+    util.strict(this.options.user, 'string');
 
-    // Send out the request
-    reqwest({
-      url: apiUrl,
-      type: 'jsonp',
-      success: function(response) {
-        me.parseApi(response, me);
-      }
+    var root = [document.location.protocol, '//', this.options.user, '.', 'cartodb.com'].join(''),
+        rootTile = [root, '/', 'tiles', '/', this.options.table, '/', '{z}/{x}/{y}'].join('');
+
+    this.options.grids = [rootTile, '.', 'grid.json'].join('');
+    this.options.url = [rootTile, '.', this.options.format].join('');
+    this.options.urls = {
+      root: root
+    };
+    this._getQuery();
+    L.TileLayer.prototype.initialize.call(this, this.options.url, this.options);
+    this._grid = new utfGrid(this, {
+      crossOrigin: true,
+      type: 'jsonp'
     });
+    return this;
   },
   onAdd: function onAdd(map) {
     L.TileLayer.prototype.onAdd.call(this, map);

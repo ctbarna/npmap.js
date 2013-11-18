@@ -22,7 +22,9 @@ L.npmap = module.exports = {
   },
   map: require('./src/map/map'),
   preset: {
-    layers: require('./src/presets/layers.json')
+    colors: require('./src/preset/colors.json'),
+    icons: require('./src/preset/icons.json'),
+    layers: require('./src/preset/layers.json')
   },
   util: {
     _: require('./src/util/util'),

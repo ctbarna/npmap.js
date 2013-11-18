@@ -5,6 +5,7 @@
 var base64,
     json3 = require('json3'),
     lazyLoader,
+    mustache = require('mustache'),
     reqwest = require('reqwest');
 
 //
@@ -13,6 +14,47 @@ base64=(function(){return{encode:function(a){var b="",c,d,f,g,h,e,k=0;do c=a.cha
 lazyLoader=function(i,j){function k(a){var a=a.toLowerCase(),b=a.indexOf("js"),a=a.indexOf("css");return-1==b&&-1==a?!1:b>a?"js":"css"}function m(a){var b=document.createElement("link");b.href=a;b.rel="stylesheet";b.type="text/css";b.onload=c;b.onreadystatechange=function(){("loaded"==this.readyState||"complete"==this.readyState)&&c()};document.getElementsByTagName("head")[0].appendChild(b)}function f(a){try{document.styleSheets[a].cssRules?c():document.styleSheets[a].rules&&document.styleSheets[a].rules.length?c():setTimeout(function(){f(a)},250)}catch(b){setTimeout(function(){f(a)},250)}}function c(){g--;0==g&&j&&j()}for(var g=0,d,l=document.styleSheets.length-1,h=0;h<i.length;h++)if(g++,d=i[h],"css"==k(d)&&(m(d),l++,!window.opera&&-1==navigator.userAgent.indexOf("MSIE")&&f(l)),"js"==k(d)){var e=document.createElement("script");e.type="text/javascript";e.src=d;e.onload=c;document.getElementsByTagName("head")[0].appendChild(e)}};
 
 module.exports = {
+  /**
+   *
+   */
+  _buildAttributeTable: function(div, name, data, hoverable) {
+    if (!L.Util.isArray(data)) {
+      data = [data];
+    }
+
+    for (var index in data) {
+      var dataLayer = data[index],
+          divTitle = L.DomUtil.create('div', null),
+          tableResults = L.DomUtil.create('table', null),
+          tableResultsBody = L.DomUtil.create('tbody', null);
+
+      divTitle.setAttribute('class', 'title');
+      divTitle.setAttribute('style', 'margin-top:10px;');
+      divTitle.textContent = name;
+
+      for (var fieldName in dataLayer) {
+        var tableData = L.DomUtil.create('td', null),
+            tableField = L.DomUtil.create('td', null),
+            tableRow = L.DomUtil.create('tr');
+
+        if (hoverable) {
+          tableRow.setAttribute('class', 'hoverable');
+        }
+
+        tableField.textContent = fieldName;
+        tableRow.appendChild(tableField);
+        tableData.textContent = dataLayer[fieldName];
+        tableRow.appendChild(tableData);
+        tableResultsBody.appendChild(tableRow);
+      }
+
+      tableResults.appendChild(tableResultsBody);
+      div.appendChild(divTitle);
+      div.appendChild(tableResults);
+    }
+
+    return div;
+  },
   /**
    *
    */
@@ -62,6 +104,33 @@ module.exports = {
 
     returnArray.pop();
     return returnArray.join('');
+  },
+  /**
+   *
+   */
+  dataToHtml: function(config, data, type) {
+    var div = L.DomUtil.create('div', 'layer'),
+        html;
+
+    type = type || 'popup';
+
+    // TODO: Shouldn't NPMap.js move the layer popup config to layer._popup?
+    if (config[type]) {
+      if (typeof config[type] === 'function') {
+        html = config[type](data);
+      } else if (typeof config[type] === 'string') {
+        html = mustache.render(config[type], data);
+      }
+    } else if (type === 'popup') {
+      // TODO: Shouldn't NPMap.js move the layer name config to layer._name? Also... hoverable needs to be cleaner.
+      var hoverable = config.type === 'arcgisserver',
+          name = config.name || 'Layer';
+
+      html = this.getOuterHtml(this._buildAttributeTable(div, name, data, hoverable));
+    }
+
+    div.innerHTML = html;
+    return div;
   },
   /**
    *

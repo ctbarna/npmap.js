@@ -25,15 +25,10 @@ var ArcGisServerLayer = L.TileLayer.extend({
     }
   },
   /**
-   * Determines if a click operation for this layer can return a result.
-   * @param {Object} e
-   */
-  _isQueryable: function(e) {
-    return me._map.arcGisServerIdentifiable;
-  },
-  /**
    * Handles a  click operation for this layer.
    * @param {Object} e
+   * @param {Object} config
+   * @param {Function} callback
    */
   _handleClick: function(e, config, callback) {
     var latLng = e.latlng,
@@ -46,7 +41,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
       me._map.arcGisServerResults = [];
     }
 
-    this.indetify(latLng, function(response) {
+    this.identify(latLng, function(response) {
       if (response.results && response.results.length) {
         callback(response.result, config);
       } else {
@@ -104,6 +99,13 @@ var ArcGisServerLayer = L.TileLayer.extend({
         me._addRowClickEvents();
       }
     });*/
+  },
+  /**
+   * Determines if a click operation for this layer can return a result.
+   * @return {Number}
+   */
+  _isQueryable: function() {
+    return this._map.arcGisServerIdentifiable;
   },
   /**
    * Handles a click operation on a table row.

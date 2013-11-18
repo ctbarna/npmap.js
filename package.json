@@ -2,9 +2,10 @@
   "name": "npmap",
   "description": "A JavaScript library, built as a Leaflet plugin, for the National Park Service.",
   "homepage": "http://www.nps.gov/npmap",
-  "keywords": ["Map", "US Government", "Department of Interior","Leaflet"],
+  "keywords": ["Leaflet", "Map", "JavaScript", "US Government", "Department of Interior", "National Park Service", "NPMap"],
   "version": "0.0.0",
   "author": {
+    "email": "nate_irwin@nps.gov",
     "name": "Nate Irwin",
     "url": "http://www.nps.gov/npmap/team/nate-irwin.html"
   },
@@ -12,9 +13,14 @@
     "email": "npmap@nps.gov",
     "url": "https://github.com/nationalparkservice/npmap.js/issues"
   },
+  "contributors": [{
+    "email": "james_mcandrew@partner.nps.gov",
+    "name": "Jim McAndrew",
+    "url": "http://www.nps.gov/npmap/team/jim-mcandrew.html"
+  }],
   "dependencies": {
     "json3": "3.2.5",
-    "leaflet": "0.6.4",
+    "leaflet": "0.7.0",
     "mustache": "0.7.2",
     "reqwest": "0.9.0"
   },

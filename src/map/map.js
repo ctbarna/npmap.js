@@ -4,7 +4,8 @@
 
 var colorPresets = require('../presets/colors.json'),
     iconPresets = require('../presets/icons.json'),
-    layerPresets = require('../presets/layers.json');
+    layerPresets = require('../presets/layers.json'),
+    util = require('../util/util');
 
 var Map = L.Map.extend({
   options: {
@@ -30,8 +31,6 @@ var Map = L.Map.extend({
     mapWrapper.appendChild(map);
     config.div = map;
     L.Map.prototype.initialize.call(this, config.div, config);
-    L.npmap.popup(this);
-    L.npmap.tooltip(this);
 
     if (this.attributionControl) {
       this.attributionControl.setPrefix('');
@@ -41,7 +40,133 @@ var Map = L.Map.extend({
       this.setView(config.center, config.zoom);
     }
 
+    this._setupPopup();
+    this._setupTooltip();
+
     return this;
+  },
+  /**
+   *
+   */
+  _setCursor: function(type) {
+    this._container.style.cursor = type;
+  },
+  /**
+   *
+   */
+  _setupPopup: function() {
+    var me = this,
+        popup = me._popup = L.popup({
+          autoPanPadding: [45, 20], // L.bounds(L.point(45, 20), L.point(20, 20)) https://github.com/Leaflet/Leaflet/issues/1588
+          maxHeight: 300, // maxHeight: (map.getContainer().offsetHeight - 86),
+          maxWidth: 221, // maxWidth: (map.getContainer().offsetWidth - 95),
+          minWidth: 221,
+          offset: [0, -2]
+        });
+
+    me.on('click', function(e) {
+      var latLng = e.latlng.wrap(),
+          layer,
+          queryable = [];
+
+      for (var layerId in me._layers) {
+        layer = me._layers[layerId];
+
+        if ((typeof layer.options.popup === 'undefined' || layer.options.popup !== false) && typeof layer._handleClick === 'function' && typeof layer._isQueryable === 'function' && layer._isQueryable(latLng)) {
+          queryable.push(layer);
+        }
+      }
+
+      if (queryable.length) {
+        var completed = 0,
+            interval,
+            results = [];
+
+        for (var i = 0; i < queryable.length; i++) {
+          layer = queryable[i];
+          layer._handleClick(latLng, layer, function(layer, data) {
+            if (data) {
+              var result = util.dataToHtml(layer.options, data);
+
+              if (result) {
+                results.push(result);
+              }
+            }
+
+            completed++;
+          });
+        }
+
+        // TODO: Add support for a timeout so the infobox displays even if one or more operations fail.
+        interval = setInterval(function() {
+          if (queryable.length === completed) {
+            clearInterval(interval);
+
+            if (results.length) {
+              var html = '';
+
+              for (var i = 0; i < results.length; i++) {
+                html += util.getOuterHtml(results[i]);
+              }
+
+              popup.setContent(html).setLatLng(latLng).openOn(me);
+            }
+          }
+        }, 10);
+      }
+    });
+  },
+  /**
+   *
+   */
+  _setupTooltip: function() {
+    var me = this;
+
+    me.on('click', function() {
+      // TODO: Hide tooltip
+    });
+    me.on('mousemove', function(e) {
+      var latLng = e.latlng.wrap();
+          //,
+          //results = [];
+
+      me._setCursor('default');
+
+      for (var layerId in me._layers) {
+        var layer = me._layers[layerId];
+
+        if (typeof layer._handleMousemove === 'function' && typeof layer._isQueryable === 'function' && layer._isQueryable(latLng)) {
+          me._setCursor('pointer');
+
+          /*
+          if (layer.options.tooltip) {
+            layer._handleMousemove(latLng, layer, function(layer, data) {
+              if (data) {
+                var result = util.dataToHtml(layer.options, data, 'tooltip');
+
+                if (result) {
+                  results.push(result);
+                }
+              }
+            });
+          }
+          */
+        }
+      }
+
+      /*
+      if (results.length) {
+        var html = '';
+
+        for (var j = 0; j < results.length; j++) {
+          html += util.getOuterHtml(results[j]);
+        }
+
+        //console.log(html);
+        //tooltip.setContent(html).setLatLng(latLng).openOn(me);
+      }
+      */
+    });
   },
   /**
    * Converts an NPMap.js map config object to a Leaflet map config object.
@@ -98,7 +223,7 @@ var Map = L.Map.extend({
       if (visible) {
         return config.baseLayers;
       } else {
-        var active = layerPresets.mapbox.terrain;
+        var active = layerPresets.nps.lightStreets;
         active.visible = true;
         active.zIndex = 0;
         return [active];
@@ -154,7 +279,6 @@ var Map = L.Map.extend({
     stroke: true,
     weight: 3
   };
-
   L.CircleMarker.mergeOptions({
     color: '#000',
     fillColor: '#7a4810',
