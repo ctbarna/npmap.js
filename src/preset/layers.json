@@ -121,21 +121,21 @@
       "attribution": "&copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
       "icon": "street",
       "id": "nps.g9ndno9j",
-      "name": "Light Streets",
+      "name": "NPS Light Streets",
       "type": "mapbox"
     },
     "neutralTerrain": {
       "attribution": "&copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
       "icon": "street",
       "id": "nps.g9nccg3d",
-      "name": "Neutral Terrain",
+      "name": "NPS Neutral Terrain",
       "type": "mapbox"
     },
     "satelliteNight": {
       "attribution": "&copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
       "icon": "street",
       "id": "nps.g9o0im10",
-      "name": "Satellite at Night",
+      "name": "NPS Satellite at Night",
       "type": "mapbox"
     }
   },
