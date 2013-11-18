@@ -3,9 +3,9 @@
 'use strict';
 
 var colorPresets = require('../preset/colors.json'),
-    iconPresets = require('../preset/icons.json'),
-    layerPresets = require('../preset/layers.json'),
-    util = require('../util/util');
+  iconPresets = require('../preset/icons.json'),
+  layerPresets = require('../preset/layers.json'),
+  util = require('../util/util');
 
 var Map = L.Map.extend({
   options: {
@@ -16,11 +16,11 @@ var Map = L.Map.extend({
    */
   initialize: function(config) {
     var container = L.DomUtil.create('div', 'npmap-container'),
-        map = L.DomUtil.create('div', 'npmap-map'),
-        mapWrapper = L.DomUtil.create('div', 'npmap-map-wrapper'),
-        modules = L.DomUtil.create('div', 'npmap-modules'),
-        npmap = L.DomUtil.create('div', 'npmap'),
-        toolbar = L.DomUtil.create('div', 'npmap-toolbar');
+      map = L.DomUtil.create('div', 'npmap-map'),
+      mapWrapper = L.DomUtil.create('div', 'npmap-map-wrapper'),
+      modules = L.DomUtil.create('div', 'npmap-modules'),
+      npmap = L.DomUtil.create('div', 'npmap'),
+      toolbar = L.DomUtil.create('div', 'npmap-toolbar');
 
     config = this._toLeaflet(config);
     config.div.insertBefore(npmap, config.div.childNodes[0]);
@@ -57,17 +57,18 @@ var Map = L.Map.extend({
   _setupPopup: function() {
     var me = this,
       popup = me._popup = L.popup({
-        autoPanPadding: L.bounds(L.point(45, 20), L.point(20, 20)),
-        maxHeight: 300, // maxHeight: (map.getContainer().offsetHeight - 86),
-        maxWidth: 221, // maxWidth: (map.getContainer().offsetWidth - 95),
+        autoPanPaddingBottomRight: [20, 20],
+        autoPanPaddingTopLeft: [55, 20],
+        maxHeight: 300,
+        maxWidth: 221,
         minWidth: 221,
         offset: [0, -2]
       });
 
     me.on('click', function(e) {
       var latLng = e.latlng.wrap(),
-          layer,
-          queryable = [];
+        queryable = [],
+        layer;
 
       for (var layerId in me._layers) {
         layer = me._layers[layerId];
@@ -79,8 +80,8 @@ var Map = L.Map.extend({
 
       if (queryable.length) {
         var completed = 0,
-            interval,
-            results = [];
+          results = [],
+          interval;
 
         for (var i = 0; i < queryable.length; i++) {
           layer = queryable[i];
@@ -269,7 +270,7 @@ var Map = L.Map.extend({
 });
 
 (function() {
-  // TODO: Setup "shortcuts" for pre-defined styles, taken from Mamata's work on colors.
+  // TODO: Setup "shortcuts" for pre-defined styles, taken from Mamata's color palettes.
   var style = {
     color: '#d9bd38',
     fill: true,
