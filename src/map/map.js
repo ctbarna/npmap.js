@@ -73,8 +73,14 @@ var Map = L.Map.extend({
       for (var layerId in me._layers) {
         layer = me._layers[layerId];
 
-        if ((typeof layer.options.popup === 'undefined' || layer.options.popup !== false) && typeof layer._handleClick === 'function' && typeof layer._isQueryable === 'function' && layer._isQueryable(latLng)) {
-          queryable.push(layer);
+        if ((typeof layer.options.popup === 'undefined' || layer.options.popup !== false) && typeof layer._handleClick === 'function') {
+          if (typeof layer._isQueryable === 'function') {
+            if (layer._isQueryable(latLng)) {
+              queryable.push(layer);
+            }
+          } else {
+            queryable.push(layer);
+          }
         }
       }
 
@@ -85,9 +91,9 @@ var Map = L.Map.extend({
 
         for (var i = 0; i < queryable.length; i++) {
           layer = queryable[i];
-          layer._handleClick(latLng, layer, function(layer, data) {
+          layer._handleClick(latLng, layer, function(l, data) {
             if (data) {
-              var result = util.dataToHtml(layer.options, data);
+              var result = util.dataToHtml(l.options, data);
 
               if (result) {
                 results.push(result);
@@ -113,7 +119,7 @@ var Map = L.Map.extend({
               popup.setContent(html).setLatLng(latLng).openOn(me);
             }
           }
-        }, 10);
+        }, 100);
       }
     });
   },
