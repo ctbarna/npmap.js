@@ -302,8 +302,9 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   background: #d29700;
   border-radius: 90%;
   color: #fff;
+  font-family: Arial;
   height: 21px;
-  line-height: 19px;
+  line-height: 21px;
   padding: 0;
   pointer-events: auto;
   position: absolute;
