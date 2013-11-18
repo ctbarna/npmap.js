@@ -92,7 +92,13 @@ var Map = L.Map.extend({
           layer = queryable[i];
           layer._handleClick(latLng, layer, function(l, data) {
             if (data) {
-              var result = util.dataToHtml(l.options, data);
+              var result;
+
+              if (typeof data === 'string') {
+                result = data;
+              } else {
+                result = util.dataToHtml(l.options, data);
+              }
 
               if (result) {
                 results.push(result);
@@ -112,7 +118,13 @@ var Map = L.Map.extend({
               var html = '';
 
               for (var i = 0; i < results.length; i++) {
-                html += util.getOuterHtml(results[i]);
+                var result = results[i];
+
+                if (typeof result === 'string') {
+                  html += results[i];
+                } else {
+                  html += util.getOuterHtml(results[i]);
+                }
               }
 
               popup.setContent(html).setLatLng(latLng).openOn(me);

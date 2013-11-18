@@ -3,6 +3,7 @@
 'use strict';
 
 var json3 = require('json3'),
+  mustache = require('mustache'),
   reqwest = require('reqwest'),
   util = require('../util/util');
 
@@ -13,19 +14,13 @@ var ArcGisServerLayer = L.TileLayer.extend({
   statics: {
     TILED_TEMPLATE: '{{url}}/tile/{z}/{y}/{x}'
   },
-  /**
-   * Adds click events to all the tr elements in the popup.
-   */
-  /*
-  _addRowClickEvents: function() {
-    var me = this,
-      rows = util.getChildElementsByNodeName(me._popup._contentNode, 'tr');
+  _dataToHtml: function(data) {
+    var div = L.DomUtil.create('div', 'layer');
 
-    for (var j = 0; j < rows.length; j++) {
-      L.DomEvent.addListener(rows[j], 'click', me._moreClick, me);
-    }
+    console.log(this);
+
+    return  util.getOuterHtml(util._buildAttributeTable(div, data.layerName, data.attributes));
   },
-  */
   /**
    * Handles a  click operation for this layer.
    * @param {Object} latLng
@@ -36,61 +31,43 @@ var ArcGisServerLayer = L.TileLayer.extend({
     var me = this;
 
     me.identify(latLng, function(response) {
-      if (response && response.results && response.results.length) {
-        callback(layer, response.results);
+      if (response) {
+        var results = response.results;
+
+        if (results && results.length) {
+          var i = 0,
+            html = '';
+
+          if (me.options.popup) {
+            switch (typeof me.options.popup) {
+            case 'function':
+              for (i = 0; i < results.length; i++) {
+                html += me.options.popup(results[i]);
+              }
+
+              break;
+            case 'string':
+              for (i = 0; i < results.length; i++) {
+                html += mustache.render(me.options.popup, results[i]);
+              }
+
+              break;
+            }
+          } else {
+            for (i = 0; i < results.length; i++) {
+              html += me._dataToHtml(results[i]);
+            }
+          }
+
+          console.log(html);
+
+          callback(layer, html);
+        }
       } else {
         callback(layer, null);
       }
     });
   },
-  /**
-   * Handles a click operation on a table row.
-   * @param {Object} e
-   */
-  /*
-  _moreClick: function(e) {
-    var html = '',
-      me = this,
-      oldHtml = this._popup._contentNode.innerHTML,
-      attributes, name, target, value;
-
-    e = util.getEventObject(e);
-    target = util.getEventObjectTarget(e);
-    name = target.parentNode.parentNode.parentNode.previousSibling.innerHTML;
-    name = name.slice(0, name.indexOf(' ('));
-    value = target.innerHTML;
-    attributes = (function() {
-      var attrs;
-
-      for (var i = 0; i < me._map.arcGisServerResults.length; i++) {
-        var result = me._map.arcGisServerResults[i];
-
-        for (var layerName in result) {
-          if (layerName === name) {
-            attrs = result[layerName];
-            break;
-          }
-        }
-
-        if (attrs) {
-          return attrs[value];
-        }
-      }
-    })();
-
-    html += '<div class="title">' + value + '</div><table><tbody>';
-
-    for (var prop in attributes) {
-      html += '<tr><td>' + prop + '</td><td style="text-align:right;">' + attributes[prop] + '</td></tr>';
-    }
-
-    me._popup.setContent(html + '</tbody></table><div class="footer"><button class="btn btn-sm">&lt; Back to Results</button></div>');
-    L.DomEvent.addListener(me._popup._contentNode.childNodes[2].childNodes[0], 'click', function() {
-      me._popup.setContent(oldHtml);
-      me._addRowClickEvents();
-    });
-  },
-  */
   /**
    * Removes the layer's attribution string from the attribution control.
    */
