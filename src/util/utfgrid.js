@@ -1,4 +1,6 @@
-// Forked from danzel/Leaflet.utfgrid - https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js
+/**
+ * Forked from danzel/Leaflet.utfgrid - https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js
+ */
 
 var reqwest = require('../util/cachedreqwest')(),
     tileMath = require('../util/tilemath');
@@ -16,7 +18,7 @@ module.exports = function(layer, options) {
     },
     getTileGrid: function (tileUrl, latLng, callback) {
       var me = this,
-          request;
+        request;
 
       request = {
         error: function(response) {
@@ -39,11 +41,11 @@ module.exports = function(layer, options) {
     },
     getTileGridPoint: function(latLng, response) {
       var point = layer._map.project(latLng),
-          resolution = layer.options.resolution || 4,
-          tileSize = layer.options.tileSize || 256,
-          max = layer._map.options.crs.scale(layer._map.getZoom()) / tileSize,
-          x = Math.floor(point.x / tileSize),
-          y = Math.floor(point.y / tileSize);
+        resolution = layer.options.resolution || 4,
+        tileSize = layer.options.tileSize || 256,
+        max = layer._map.options.crs.scale(layer._map.getZoom()) / tileSize,
+        x = Math.floor(point.x / tileSize),
+        y = Math.floor(point.y / tileSize);
 
       x = (x + max) % max;
       y = (y + max) % max;
@@ -52,7 +54,7 @@ module.exports = function(layer, options) {
     },
     hasUtfData: function(url, latLng) {
       var cache = reqwest.getCache(url),
-          returnValue = {'cursor': 'default'};
+        returnValue = {'cursor': 'default'};
 
       if (cache) {
         if (cache.cacheStatus === 'success' && cache.response) {

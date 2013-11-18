@@ -24,11 +24,13 @@
         div: 'map',
         maxZoom: 13,
         overlays: [{
+          attribution: 'NPMap Team',
           name: 'National Park Bounding Boxes',
           table: 'park_bounds',
           type: 'cartodb',
           user: 'nps'
         },{
+          attribution: 'NPMap Team',
           name: 'National Park Centroids',
           table: 'park_points',
           type: 'cartodb',
@@ -36,10 +38,10 @@
         }]
       };
 
-    (function() {
-      var s = document.createElement('script');
-      s.src = '../dist/npmap-bootstrap.js';
-      document.body.appendChild(s);
+      (function() {
+        var s = document.createElement('script');
+        s.src = '../dist/npmap-bootstrap.js';
+        document.body.appendChild(s);
       })();
     </script>
   </body>

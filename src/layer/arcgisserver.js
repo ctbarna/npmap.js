@@ -3,8 +3,8 @@
 'use strict';
 
 var json3 = require('json3'),
-    reqwest = require('reqwest'),
-    util = require('../util/util');
+  reqwest = require('reqwest'),
+  util = require('../util/util');
 
 var ArcGisServerLayer = L.TileLayer.extend({
   options: {
@@ -16,106 +16,43 @@ var ArcGisServerLayer = L.TileLayer.extend({
   /**
    * Adds click events to all the tr elements in the popup.
    */
+  /*
   _addRowClickEvents: function() {
     var me = this,
-        rows = util.getChildElementsByNodeName(me._popup._contentNode, 'tr');
+      rows = util.getChildElementsByNodeName(me._popup._contentNode, 'tr');
 
     for (var j = 0; j < rows.length; j++) {
       L.DomEvent.addListener(rows[j], 'click', me._moreClick, me);
     }
   },
+  */
   /**
    * Handles a  click operation for this layer.
-   * @param {Object} e
+   * @param {Object} latLng
    * @param {Object} config
    * @param {Function} callback
    */
-  _handleClick: function(e, config, callback) {
-    var latLng = e.latlng,
-        me = this;
+  _handleClick: function(latLng, layer, callback) {
+    var me = this;
 
-    me._map.arcGisServerPending++;
-
-    if (me._map.arcGisServerIdentifiable === me._map.arcGisServerPending) {
-      me._map.arcGisServerHtml = '';
-      me._map.arcGisServerResults = [];
-    }
-
-    this.identify(latLng, function(response) {
-      if (response.results && response.results.length) {
-        callback(response.result, config);
+    me.identify(latLng, function(response) {
+      if (response && response.results && response.results.length) {
+        callback(layer, response.results);
       } else {
-        callback(null, config);
+        callback(layer, null);
       }
     });
-
-    /*this.identify(latLng, function(response) {
-      if (response.results && response.results.length) {
-        var html = '',
-            layerResults = {};
-
-        me._popup = L.popup({
-          maxHeight: (me._map.getContainer().offsetHeight - 86),
-          maxWidth: (me._map.getContainer().offsetWidth - 95),
-          minWidth: 221
-        });
-
-        for (var i = 0; i < response.results.length; i++) {
-          var result = response.results[i];
-
-          if (!layerResults[result.layerName]) {
-            layerResults[result.layerName] = {};
-          }
-
-          layerResults[result.layerName][result.value] = result.attributes;
-        }
-
-        for (var layerName in layerResults) {
-          var results = layerResults[layerName];
-
-          html += '<div class="title"';
-
-          if (me._map.arcGisServerHtml.length) {
-            html += ' style="margin-top:10px;"';
-          }
-
-          html += '>' + layerName + ' (' + util.getPropertyCount(results) + ')</div><table><tbody>';
-
-          for (var value in results) {
-            html += '<tr class="hoverable"><td>' + value + '</td></tr>';
-          }
-
-          html += '</tbody></table>';
-        }
-
-        me._map.arcGisServerResults.push(layerResults);
-        me._map.arcGisServerHtml += html;
-      }
-
-      me._map.arcGisServerPending--;
-
-      if (me._map.arcGisServerPending === 0) {
-        me._popup.setContent(me._map.arcGisServerHtml).setLatLng(latLng).openOn(me._map);
-        me._addRowClickEvents();
-      }
-    });*/
-  },
-  /**
-   * Determines if a click operation for this layer can return a result.
-   * @return {Number}
-   */
-  _isQueryable: function() {
-    return this._map.arcGisServerIdentifiable;
   },
   /**
    * Handles a click operation on a table row.
    * @param {Object} e
    */
+  /*
   _moreClick: function(e) {
     var html = '',
-        me = this,
-        oldHtml = this._popup._contentNode.innerHTML,
-        attributes, name, target, value;
+      me = this,
+      oldHtml = this._popup._contentNode.innerHTML,
+      attributes, name, target, value;
 
     e = util.getEventObject(e);
     target = util.getEventObjectTarget(e);
@@ -153,6 +90,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
       me._addRowClickEvents();
     });
   },
+  */
   /**
    * Removes the layer's attribution string from the attribution control.
    */
@@ -182,9 +120,9 @@ var ArcGisServerLayer = L.TileLayer.extend({
    */
   _updateAttribution: function() {
     var map = this._map,
-        bounds = map.getBounds(),
-        include = [],
-        zoom = map.getZoom();
+      bounds = map.getBounds(),
+      include = [],
+      zoom = map.getZoom();
 
     this._removeAttribution();
 
@@ -282,10 +220,10 @@ var ArcGisServerLayer = L.TileLayer.extend({
     } else {
       this.getTileUrl = function(tilePoint) {
         var hW = 256,
-            x = tilePoint.x,
-            y = tilePoint.y,
-            z = tilePoint.z,
-            u = config.url + '/export?dpi=96&transparent=true&format=png8&bbox=' + ((x * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - ((y + 1) * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - ((y + 1) * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + ',' + (((x + 1) * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - (y * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - (y * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + '&bboxSR=4326&imageSR=102100&size=256,256&f=image';
+          x = tilePoint.x,
+          y = tilePoint.y,
+          z = tilePoint.z,
+          u = config.url + '/export?dpi=96&transparent=true&format=png8&bbox=' + ((x * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - ((y + 1) * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - ((y + 1) * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + ',' + (((x + 1) * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - (y * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - (y * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + '&bboxSR=4326&imageSR=102100&size=256,256&f=image';
 
         if (this._layers) {
           u += '&layers=show:' + this._layers;
@@ -296,7 +234,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
       L.TileLayer.prototype.initialize.call(this, undefined, config);
     }
 
-    if (this.options.dynamicAttribution && this.options.dynamicAttribution.indexOf('http') === 0) {
+    if (this.options.dynamicAttribution && this.options.dynamicAttribution.indexOf('http://') === 0) {
       reqwest({
         success: function(response) {
           me._dynamicAttributionData = response.contributors;
@@ -313,35 +251,13 @@ var ArcGisServerLayer = L.TileLayer.extend({
         me._metadata = response;
         me.fire('metadata', response);
 
-        // If not identifiable, take it out of identifiable queue.
+        // TODO: If not identifiable, set _hasInteractivity to false
       },
       type: 'jsonp',
       url: config.url + '?f=json'
     });
 
     return this;
-  },
-  /**
-   * Called when the layer is added to the map.
-   * @param {Object} map
-   */
-  onAdd: function(map) {
-    // TODO: Filter out if zIndex === 0.
-    if ((typeof this.options.popup === 'undefined' || this.options.popup !== false)) {
-      this._isIdentifiable = true;
-      map.on('click', this._handleClick, this);
-
-      if (typeof map.arcGisIdentifiable !== 'number') {
-        map.arcGisServerIdentifiable = 1;
-        map.arcGisServerPending = 0;
-      } else {
-        map.arcGisServerIdentifiable++;
-      }
-    } else {
-      this._isIdentifiable = false;
-    }
-
-    L.TileLayer.prototype.onAdd.call(this, map);
   },
   /**
    * Called when the layer is removed from the map.
@@ -352,18 +268,6 @@ var ArcGisServerLayer = L.TileLayer.extend({
       this._removeAttribution();
       this.off('load', this._updateAttribution, this);
       this._map.off('viewreset zoomend dragend', this._updateAttribution, this);
-    }
-
-    if (this._isIdentifiable) {
-      map.off('click', this._identify);
-      map.arcGisServerIdentifiable--;
-
-      if (map.arcGisServerIdentifiable === 0) {
-        delete map.arcGisServerHtml;
-        delete map.arcGisServerIdentifiable;
-        delete map.arcGisServerPending;
-        delete map.arcGisServerResults;
-      }
     }
 
     L.TileLayer.prototype.onRemove.call(this, map);

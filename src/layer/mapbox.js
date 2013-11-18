@@ -35,7 +35,7 @@ var MapBoxLayer = L.TileLayer.extend({
   },
   _getTileGridUrl: function(latLng) {
     var grids = this.options.grids,
-        gridTileCoords = this._grid.getTileCoords(latLng);
+      gridTileCoords = this._grid.getTileCoords(latLng);
 
     return L.Util.template(grids[Math.floor(Math.abs(gridTileCoords.x + gridTileCoords.y) % grids.length)], gridTileCoords);
   },
@@ -44,15 +44,6 @@ var MapBoxLayer = L.TileLayer.extend({
   },
   _handleMousemove: function (latLng, layer, callback) {
     this._getGridData(latLng, layer, callback);
-  },
-  _isQueryable: function(latLng) {
-    var returnValue = false;
-
-    if (this.options.grids && this.options.bounds.contains(latLng)) {
-      returnValue = this._grid.hasUtfData(this._getTileGridUrl(latLng), latLng);
-    }
-
-    return returnValue;
   },
   _loadTileJson: function(_) {
     if (typeof _ === 'string') {
@@ -118,11 +109,17 @@ var MapBoxLayer = L.TileLayer.extend({
     util.strict(json, 'object');
 
     var extend = {
-      bounds: json.bounds && this._toLeafletBounds(json.bounds),
+      bounds: json.bounds ? this._toLeafletBounds(json.bounds) : null,
       tiles: json.tiles,
-      grids: json.grids,
+      grids: json.grids ? json.grids : null,
       tms: json.scheme === 'tms'
     };
+
+    this._hasInteractivity = typeof json.grids === 'object';
+
+    if (this._hasInteractivity) {
+      this._grid = new utfGrid(this);
+    }
 
     if (typeof this.options.attribution === 'undefined') {
       extend.attribution = json.attribution;
@@ -179,7 +176,6 @@ var MapBoxLayer = L.TileLayer.extend({
       _ = options.tileJson || options.id;
     }
 
-    this._grid = new utfGrid(this);
     this._loadTileJson(_);
   },
   onAdd: function onAdd(map) {

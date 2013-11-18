@@ -5,8 +5,8 @@
 'use strict';
 
 var reqwest = require('../util/cachedreqwest')().cachedReqwest,
-    utfGrid = require('../util/utfgrid'),
-    util = require('../util/util');
+  utfGrid = require('../util/utfgrid'),
+  util = require('../util/util');
 
 var CartoDbLayer = L.TileLayer.extend({
   options: {
@@ -51,22 +51,13 @@ var CartoDbLayer = L.TileLayer.extend({
   _handleMousemove: function(latLng, layer, callback) {
     this._getGridData(latLng, layer, callback);
   },
-  _isQueryable: function(latLng) {
-    var returnValue = false;
-
-    if (this.options.grids) {
-      returnValue = this._grid.hasUtfData(this._getTileGridUrl(latLng), latLng);
-    }
-
-    return returnValue;
-  },
   initialize: function(options) {
     L.Util.setOptions(this, options);
     util.strict(this.options.table, 'string');
     util.strict(this.options.user, 'string');
 
     var root = [document.location.protocol, '//', this.options.user, '.', 'cartodb.com'].join(''),
-        rootTile = [root, '/', 'tiles', '/', this.options.table, '/', '{z}/{x}/{y}'].join('');
+      rootTile = [root, '/', 'tiles', '/', this.options.table, '/', '{z}/{x}/{y}'].join('');
 
     this.options.grids = [rootTile, '.', 'grid.json'].join('');
     this.options.url = [rootTile, '.', this.options.format].join('');
@@ -93,7 +84,7 @@ var CartoDbLayer = L.TileLayer.extend({
         theGeom;
 
     if (response.response.fields) {
-      me.options.isQueryable = true;
+      me._hasInteractivity = true;
 
       for (var field in response.response.fields) {
         if (response.response.fields[field].type === 'string' || response.response.fields[field].type === 'number') {
@@ -101,7 +92,7 @@ var CartoDbLayer = L.TileLayer.extend({
         }
       }
     } else {
-      me.options.isQueryable = false;
+      me._hasInteractivity = false;
     }
 
     me.options.interactivity = me.options.interactivity ?  me.options.interactivity : interactivity.join(',');
