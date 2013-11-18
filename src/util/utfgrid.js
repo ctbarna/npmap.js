@@ -56,7 +56,6 @@ module.exports = function(layer, options) {
 
       if (cache) {
         if (cache.cacheStatus === 'success' && cache.response) {
-          console.log(this.getTileGridPoint(latLng, cache.response));
           returnValue = this.getTileGridPoint(latLng, cache.response) ? {'cursor': 'pointer'} : false;
         } else if (cache.cacheStatus === 'error') {
           returnValue = false;

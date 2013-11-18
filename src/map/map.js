@@ -2,9 +2,9 @@
 
 'use strict';
 
-var colorPresets = require('../presets/colors.json'),
-    iconPresets = require('../presets/icons.json'),
-    layerPresets = require('../presets/layers.json'),
+var colorPresets = require('../preset/colors.json'),
+    iconPresets = require('../preset/icons.json'),
+    layerPresets = require('../preset/layers.json'),
     util = require('../util/util');
 
 var Map = L.Map.extend({
@@ -56,13 +56,13 @@ var Map = L.Map.extend({
    */
   _setupPopup: function() {
     var me = this,
-        popup = me._popup = L.popup({
-          autoPanPadding: [45, 20], // L.bounds(L.point(45, 20), L.point(20, 20)) https://github.com/Leaflet/Leaflet/issues/1588
-          maxHeight: 300, // maxHeight: (map.getContainer().offsetHeight - 86),
-          maxWidth: 221, // maxWidth: (map.getContainer().offsetWidth - 95),
-          minWidth: 221,
-          offset: [0, -2]
-        });
+      popup = me._popup = L.popup({
+        autoPanPadding: L.bounds(L.point(45, 20), L.point(20, 20)),
+        maxHeight: 300, // maxHeight: (map.getContainer().offsetHeight - 86),
+        maxWidth: 221, // maxWidth: (map.getContainer().offsetWidth - 95),
+        minWidth: 221,
+        offset: [0, -2]
+      });
 
     me.on('click', function(e) {
       var latLng = e.latlng.wrap(),

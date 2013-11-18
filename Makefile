@@ -6,7 +6,6 @@ all: \
 				dist/npmap-bootstrap.min.js \
 				dist/npmap-standalone.css \
 				dist/npmap.css \
-				dist/npmap.ie.css \
 				dist/npmap.min.js \
 				dist/npmap-standalone.min.js
 
@@ -35,9 +34,6 @@ dist/npmap-standalone.css: theme/nps.css
 
 dist/npmap.css: node_modules/leaflet/dist/leaflet.css theme/nps.css
 				cat node_modules/leaflet/dist/leaflet.css theme/nps.css > dist/npmap.css
-
-dist/npmap.ie.css: node_modules/leaflet/dist/leaflet.ie.css
-				cp node_modules/leaflet/dist/leaflet.ie.css dist/npmap.ie.css
 
 dist/npmap.js: node_modules/.install dist $(shell $(BROWSERIFY) --list main.js)
 				$(BROWSERIFY) --debug main.js > $@

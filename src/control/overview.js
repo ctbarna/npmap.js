@@ -2,7 +2,7 @@
 
 'use strict';
 
-var layerPresets = require('../presets/layers.json'),
+var layerPresets = require('../preset/layers.json'),
     util = require('../util/util');
 
 var OverviewControl = L.Control.extend({
