@@ -34,9 +34,19 @@ module.exports = {
       config.onEachFeature = function(feature, layer) {
         layer.on({
           click: function(e) {
-            var map = e.target._map;
+            var count = 0,
+                properties = e.target.feature.properties;
 
-            map['_npmap-popup'].setContent(util.dataToHtml(config, e.target.feature.properties)).setLatLng(e.latlng.wrap()).openOn(map);
+            for (var prop in properties) {
+              count++;
+              break;
+            }
+
+            if (count) {
+              var map = e.target._map;
+
+              map['_npmap-popup'].setContent(util.dataToHtml(config, properties)).setLatLng(e.latlng.wrap()).openOn(map);
+            }
           }
         });
       };
