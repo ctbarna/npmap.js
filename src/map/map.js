@@ -71,9 +71,19 @@ var Map = L.Map.extend({
       });
 
     me.on('click', function(e) {
-      var latLng = e.latlng.wrap(),
+      var changed = false,
+        latLng = e.latlng.wrap(),
         queryable = [],
         layer;
+
+      function mapChanged() {
+        changed = true;
+      }
+
+      me
+        .on('dragstart', mapChanged)
+        .on('movestart', mapChanged)
+        .on('zoomstart', mapChanged);
 
       for (var layerId in me._layers) {
         layer = me._layers[layerId];
@@ -111,23 +121,35 @@ var Map = L.Map.extend({
 
         // TODO: Add support for a timeout so the infobox displays even if one or more operations fail.
         interval = setInterval(function() {
-          if (queryable.length === completed) {
+          if (changed) {
             clearInterval(interval);
+            me
+              .off('dragstart', mapChanged)
+              .off('movestart', mapChanged)
+              .off('zoomstart', mapChanged);
+          } else {
+            if (queryable.length === completed) {
+              clearInterval(interval);
+              me
+                .off('dragstart', mapChanged)
+                .off('movestart', mapChanged)
+                .off('zoomstart', mapChanged);
 
-            if (results.length) {
-              var html = '';
+              if (results.length) {
+                var html = '';
 
-              for (var i = 0; i < results.length; i++) {
-                var result = results[i];
+                for (var i = 0; i < results.length; i++) {
+                  var result = results[i];
 
-                if (typeof result === 'string') {
-                  html += results[i];
-                } else {
-                  html += util.getOuterHtml(results[i]);
+                  if (typeof result === 'string') {
+                    html += results[i];
+                  } else {
+                    html += util.getOuterHtml(results[i]);
+                  }
                 }
-              }
 
-              popup.setContent(html).setLatLng(latLng).openOn(me);
+                popup.setContent(html).setLatLng(latLng).openOn(me);
+              }
             }
           }
         }, 100);
