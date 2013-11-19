@@ -18,7 +18,7 @@ var SwitcherControl = L.Control.extend({
   },
   _initLayout: function() {
     var active,
-        container = this._container = L.DomUtil.create('div', 'npmap-control-switcher');
+      container = L.DomUtil.create('div', 'npmap-control-switcher');
 
     container.setAttribute('aria-haspopup', true);
 
@@ -40,7 +40,7 @@ var SwitcherControl = L.Control.extend({
   },
   _onLayerChange: function(e) {
     var obj = this._baseLayers[L.stamp(e.layer)],
-        type;
+      type;
 
     if (!obj) {
       return;
@@ -59,9 +59,9 @@ var SwitcherControl = L.Control.extend({
 
     if (!L.DomUtil.hasClass(target, 'selected')) {
       var added = false,
-          children = util.getChildElementsByNodeName(this._list, 'li'),
-          i,
-          removed = false;
+        children = util.getChildElementsByNodeName(this._list, 'li'),
+        removed = false,
+        i;
 
       for (i = 0; i < children.length; i++) {
         var li = children[i];
@@ -104,10 +104,8 @@ var SwitcherControl = L.Control.extend({
       icon = 'generic';
     }
 
+    // TODO: Fix up.
     icon = 'nps';
-
-    console.log(this._activeIcon);
-
     L.DomUtil.addClass(this._activeIcon.childNodes[0], 'ico-' + icon + '-small');
     this._activeText.innerHTML = baseLayer.name;
   },
