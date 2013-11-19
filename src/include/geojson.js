@@ -3,7 +3,7 @@
 'use strict';
 
 var colorPresets = require('../preset/colors.json'),
-  topojson = require('./topojson'),
+  topojson = require('../util/topojson'),
   util = require('../util/util');
 
 module.exports = {

@@ -3,11 +3,11 @@
 'use strict';
 
 var reqwest = require('reqwest'),
-    util = require('../util/util');
+  util = require('../util/util');
 
 var GeoJsonLayer = L.GeoJSON.extend({
   includes: [
-    require('../util/geojson')
+    require('../include/geojson')
   ],
   initialize: function(config) {
     this._config = this._toLeaflet(config);

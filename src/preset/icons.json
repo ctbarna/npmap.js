@@ -16,9 +16,9 @@
   "blackteardrop": {
     "12": {
       "iconAnchor": [6, 12],
-      "iconRetinaUrl": "marker-12@2x.png",
+      "iconRetinaUrl": "markers/marker-12@2x.png",
       "iconSize": [12, 12],
-      "iconUrl": "marker-12.png",
+      "iconUrl": "markers/marker-12.png",
       "popupAnchor": [-3, -10],
       "shadowAnchor": [],
       "shadowRetinaUrl": "",
