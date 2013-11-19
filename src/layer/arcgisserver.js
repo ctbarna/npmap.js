@@ -15,6 +15,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
     TILED_TEMPLATE: '{{url}}/tile/{z}/{y}/{x}'
   },
   _dataToHtml: function(data) {
+    // TODO: Also need to display the name of the layer, if defined.
     return  util.getOuterHtml(util._buildAttributeTable(L.DomUtil.create('div', 'layer'), data.layerName, data.attributes));
   },
   /**
