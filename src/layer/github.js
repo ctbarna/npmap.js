@@ -3,7 +3,7 @@
 'use strict';
 
 var reqwest = require('reqwest'),
-    util = require('../util/util');
+  util = require('../util/util');
 
 var GitHubLayer = L.GeoJSON.extend({
   includes: [

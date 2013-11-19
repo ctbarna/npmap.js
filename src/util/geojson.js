@@ -2,22 +2,11 @@
 
 'use strict';
 
-var topojson = require('./topojson');
+var colorPresets = require('../preset/colors.json'),
+  topojson = require('./topojson'),
+  util = require('../util/util');
 
 module.exports = {
-  /**
-   * Override L.GeoJSON.addData to support TopoJSON format.
-   * @param {Object} feature
-   */
-  addData: function(feature) {
-    if (/\btopology\b/i.test(feature.type)) {
-      for (var prop in feature.objects) {
-        L.GeoJSON.prototype.addData.call(this, topojson.feature(feature, feature.objects[prop]));
-      }
-    } else {
-      L.GeoJSON.prototype.addData.call(this, feature);
-    }
-  },
   /**
    * Adds an attribution string for a GeoJSON "layer".
    */
@@ -40,7 +29,6 @@ module.exports = {
    * @return {Object} config
    */
   _toLeaflet: function(config) {
-    // TODO: Create a GeoJSON layer
     // TODO: This isn't really working. Clicks are turned off, but mouseover still changes to pointer. GitHub issue: https://github.com/Leaflet/Leaflet/pull/1107.
     if (typeof config.clickable === 'undefined' || config.clickable === true) {
       config.onEachFeature = function(feature, layer) {
@@ -48,7 +36,7 @@ module.exports = {
           click: function(e) {
             var map = e.target._map;
 
-            map._popup.setContent(map._popup._dataToHtml(config, e.target.feature.properties)).setLatLng(e.latlng.wrap()).openOn(map);
+            map['_npmap-popup'].setContent(util.dataToHtml(config, e.target.feature.properties)).setLatLng(e.latlng.wrap()).openOn(map);
           }
         });
       };
@@ -60,6 +48,27 @@ module.exports = {
       };
     }
 
+    if (typeof config.style === 'string') {
+      var color = colorPresets[config.style];
+
+      config.style = function() {
+        return color;
+      };
+    }
+
     return config;
+  },
+  /**
+   * Override L.GeoJSON.addData to support TopoJSON format.
+   * @param {Object} feature
+   */
+  addData: function(feature) {
+    if (/\btopology\b/i.test(feature.type)) {
+      for (var prop in feature.objects) {
+        L.GeoJSON.prototype.addData.call(this, topojson.feature(feature, feature.objects[prop]));
+      }
+    } else {
+      L.GeoJSON.prototype.addData.call(this, feature);
+    }
   }
 };

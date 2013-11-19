@@ -47,6 +47,30 @@ var Map = L.Map.extend({
       me._setCursor('default');
     });
 
+    for (var i = 0; i < config.baseLayers.length; i++) {
+      var baseLayer = config.baseLayers[i];
+
+      if (baseLayer.visible === true) {
+        baseLayer.L = L.npmap.layer[baseLayer.type](baseLayer);
+        me.addLayer(baseLayer.L);
+        break;
+      }
+    }
+
+    if (config.overlays.length) {
+      for (var j = 0; j < config.overlays.length; j++) {
+        var layer = config.overlays[j];
+
+        if (layer.visible || typeof layer.visible === 'undefined') {
+          layer.visible = true;
+          layer.L = L.npmap.layer[layer.type](layer);
+          me.addLayer(layer.L);
+        } else {
+          layer.visible = false;
+        }
+      }
+    }
+
     return this;
   },
   /**
@@ -61,7 +85,7 @@ var Map = L.Map.extend({
   _setupPopup: function() {
     var defaultPadding = 20,
       me = this,
-      popup = me._popup = L.popup({
+      popup = me['_npmap-popup'] = L.popup({
         autoPanPaddingBottomRight: [defaultPadding, defaultPadding],
         autoPanPaddingTopLeft: [55, defaultPadding],
         maxHeight: 300,
@@ -185,16 +209,6 @@ var Map = L.Map.extend({
 
       if (results.length) {
         me._setCursor('pointer');
-
-        /*
-        var html = '';
-
-        for (var i = 0; i < results.length; i++) {
-          html += util.getOuterHtml(results[i]);
-        }
-
-        tooltip.setContent(html).setLatLng(latLng).openOn(me);
-        */
       }
     });
   },
@@ -214,13 +228,11 @@ var Map = L.Map.extend({
 
     if (config.layers && L.Util.isArray(config.layers) && config.layers.length) {
       config.overlays = config.layers;
-      config.layers = [];
-    } else if (config.overlays && L.Util.isArray(config.overlays) && config.overlays.length) {
-      config.layers = [];
-    } else {
-      config.layers = [];
+    } else if (!config.overlays && !L.Util.isArray(config.overlays)) {
       config.overlays = [];
     }
+
+    config.layers = [];
 
     if (config.baseLayers !== false) {
       config.baseLayers = (function() {
@@ -260,16 +272,6 @@ var Map = L.Map.extend({
           return [active];
         }
       })();
-
-      for (var i = 0; i < config.baseLayers.length; i++) {
-        var baseLayer = config.baseLayers[i];
-
-        if (baseLayer.visible === true) {
-          baseLayer.L = L.npmap.layer[baseLayer.type](baseLayer);
-          config.layers.push(baseLayer.L);
-          break;
-        }
-      }
     }
 
     config.center = (function() {
@@ -283,43 +285,13 @@ var Map = L.Map.extend({
     })();
     config.zoom = typeof config.zoom === 'number' ? config.zoom : 4;
 
-    if (config.overlays.length) {
-      for (var j = 0; j < config.overlays.length; j++) {
-        var layer = config.overlays[j];
-
-        if (layer.visible || typeof layer.visible === 'undefined') {
-          layer.visible = true;
-          config.overlays[j].L = L.npmap.layer[layer.type](layer);
-          config.layers.push(config.overlays[j].L);
-        } else {
-          layer.visible = false;
-        }
-      }
-    }
-
     return config;
   }
 });
 
 (function() {
-  // TODO: Setup "shortcuts" for pre-defined styles, taken from Mamata's color palettes.
-  var style = {
-    color: '#d9bd38',
-    fill: true,
-    fillColor: '#d9bd38',
-    fillOpacity: 0.2,
-    opacity: 0.8,
-    stroke: true,
-    weight: 3
-  };
-  L.CircleMarker.mergeOptions({
-    color: '#000',
-    fillColor: '#7a4810',
-    fillOpacity: 0.8,
-    opacity: 1,
-    radius: 8,
-    weight: 1
-  });
+  var style = colorPresets.gold;
+  L.CircleMarker.mergeOptions(style);
   // TODO: Update these with default NPS icon.
   L.Marker.mergeOptions({
     icon: new L.Icon.Default(),
