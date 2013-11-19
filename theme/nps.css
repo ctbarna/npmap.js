@@ -321,6 +321,9 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 .leaflet-popup-content {
   margin: 15px;
 }
+  .leaflet-popup-content p {
+    margin: 10px 0 18px 0;
+  }
 .leaflet-popup-content .title {
   font-size: 13px;
   font-weight: bold;

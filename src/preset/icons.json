@@ -13,17 +13,50 @@
 */
 
 {
-  "blackteardrop": {
+  "marker": {
     "12": {
       "iconAnchor": [6, 12],
-      "iconRetinaUrl": "markers/marker-12@2x.png",
+      "iconRetinaUrl": "http://www.nps.gov/npmap/npmap.js/0.0.0/images/markers/marker-12@2x.png",
       "iconSize": [12, 12],
-      "iconUrl": "markers/marker-12.png",
-      "popupAnchor": [-3, -10],
-      "shadowAnchor": [],
-      "shadowRetinaUrl": "",
-      "shadowSize": [],
-      "shadowUrl": ""
+      "iconUrl": "http://www.nps.gov/npmap/npmap.js/0.0.0/images/markers/marker-12.png",
+      "popupAnchor": [2, -19]
+    },
+    "18": {
+      "iconAnchor": [6, 18],
+      "iconRetinaUrl": "http://www.nps.gov/npmap/npmap.js/0.0.0/images/markers/marker-18@2x.png",
+      "iconSize": [18, 18],
+      "iconUrl": "http://www.nps.gov/npmap/npmap.js/0.0.0/images/markers/marker-18.png",
+      "popupAnchor": [5, -24]
+    },
+    "24": {
+      "iconAnchor": [6, 24],
+      "iconRetinaUrl": "http://www.nps.gov/npmap/npmap.js/0.0.0/images/markers/marker-24@2x.png",
+      "iconSize": [24, 24],
+      "iconUrl": "http://www.nps.gov/npmap/npmap.js/0.0.0/images/markers/marker-24.png",
+      "popupAnchor": [8, -28]
+    }
+  },
+  "marker-stroked": {
+    "12": {
+      "iconAnchor": [6, 12],
+      "iconRetinaUrl": "http://www.nps.gov/npmap/npmap.js/0.0.0/images/markers/marker-stroked-12@2x.png",
+      "iconSize": [12, 12],
+      "iconUrl": "http://www.nps.gov/npmap/npmap.js/0.0.0/images/markers/marker-stroked-12.png",
+      "popupAnchor": [-3, -10]
+    },
+    "18": {
+      "iconAnchor": [6, 18],
+      "iconRetinaUrl": "http://www.nps.gov/npmap/npmap.js/0.0.0/images/markers/marker-stroked-18@2x.png",
+      "iconSize": [18, 18],
+      "iconUrl": "http://www.nps.gov/npmap/npmap.js/0.0.0/images/markers/marker-stroked-18.png",
+      "popupAnchor": [-3, -10]
+    },
+    "24": {
+      "iconAnchor": [6, 24],
+      "iconRetinaUrl": "http://www.nps.gov/npmap/npmap.js/0.0.0/images/markers/marker-stroked-24@2x.png",
+      "iconSize": [24, 24],
+      "iconUrl": "http://www.nps.gov/npmap/npmap.js/0.0.0/images/markers/marker-stroked-24.png",
+      "popupAnchor": [-3, -10]
     }
   }
 }

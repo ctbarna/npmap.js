@@ -23,9 +23,26 @@
     <div id="map"></div>
     <script>
       var map = L.npmap.map({
-        div: 'map'
+        baseLayers: ['nps-neutralTerrain'],
+        center: {
+          lat: 35.574682600980914,
+          lng: -83.54690551757812
+        },
+        div: 'map',
+        overlays: [{
+          attribution: 'Land Resources Division',
+          clickable: false,
+          path: 'base_data/boundaries/parks/grsm.topojson',
+          repo: 'data',
+          style: 'parks',
+          type: 'github',
+          user: 'nationalparkservice'
+        }],
+        zoom: 10
       });
-      var marker = L.marker([50.5, 30.5]).addTo(map);
+
+      L.marker(map.getCenter()).addTo(map)
+        .bindPopup('<div class="title">Great Smoky Mountains National Park</div><img src="img/grsm.jpg" alt="Autumn at Bull Head" style="height:201px;"><p>Ridge upon ridge of forest straddles the border between North Carolina and Tennessee in Great Smoky Mountains National Park. World renowned for its diversity of plant and animal life, the beauty of its ancient mountains, and the quality of its remnants of Southern Appalachian mountain culture, this is America\'s most visited national park.</p>');
     </script>
   </body>
 </html>

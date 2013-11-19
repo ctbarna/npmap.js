@@ -303,10 +303,8 @@ var Map = L.Map.extend({
 (function() {
   var style = colorPresets.gold;
   L.CircleMarker.mergeOptions(style);
-  // TODO: Update these with default NPS icon.
   L.Marker.mergeOptions({
-    icon: iconPresets.blackteardrop['12'],
-    opacity: 1.0
+    icon: L.icon(iconPresets.marker['24'])
   });
   L.Path.mergeOptions(style);
   L.Polygon.mergeOptions(style);
