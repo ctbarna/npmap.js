@@ -2,9 +2,10 @@
 
 'use strict';
 
-var colorPresets = require('../preset/colors.json'),
+var baselayerPresets = require('../preset/baselayers.json'),
+  colorPresets = require('../preset/colors.json'),
   iconPresets = require('../preset/icons.json'),
-  layerPresets = require('../preset/layers.json'),
+  overlayPresets = require('../preset/overlays.json'),
   util = require('../util/util');
 
 var Map = L.Map.extend({
@@ -245,7 +246,7 @@ var Map = L.Map.extend({
             if (typeof baseLayer === 'string') {
               var name = baseLayer.split('-');
 
-              baseLayer = config.baseLayers[i] = layerPresets[name[0]][name[1]];
+              baseLayer = config.baseLayers[i] = baselayerPresets[name[0]][name[1]];
             }
 
             baseLayer.zIndex = 0;
@@ -266,12 +267,22 @@ var Map = L.Map.extend({
         if (visible) {
           return config.baseLayers;
         } else {
-          var active = layerPresets.nps.lightStreets;
+          var active = baselayerPresets.nps.lightStreets;
           active.visible = true;
           active.zIndex = 0;
           return [active];
         }
       })();
+    }
+
+    if (config.overlays && L.Util.isArray(config.overlays) && config.overlays.length) {
+      for (var j = 0; j < config.overlays.length; j++) {
+        var overlay = config.overlays[j];
+
+        if (typeof overlay === 'string') {
+          overlay = config.overlays[j] = overlayPresets[overlay];
+        }
+      }
     }
 
     config.center = (function() {
@@ -294,7 +305,7 @@ var Map = L.Map.extend({
   L.CircleMarker.mergeOptions(style);
   // TODO: Update these with default NPS icon.
   L.Marker.mergeOptions({
-    icon: new L.Icon.Default(),
+    icon: iconPresets.blackteardrop['12'],
     opacity: 1.0
   });
   L.Path.mergeOptions(style);

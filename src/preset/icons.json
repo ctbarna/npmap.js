@@ -12,11 +12,18 @@
     - className (will this allow you to use sprites? Look at the Leaflet font icon plugin)
 */
 
-
-
 {
-  "camping": {
-    "base64": "",
-    "url": ""
+  "blackteardrop": {
+    "12": {
+      "iconAnchor": [6, 12],
+      "iconRetinaUrl": "marker-12@2x.png",
+      "iconSize": [12, 12],
+      "iconUrl": "marker-12.png",
+      "popupAnchor": [-3, -10],
+      "shadowAnchor": [],
+      "shadowRetinaUrl": "",
+      "shadowSize": [],
+      "shadowUrl": ""
+    }
   }
 }
