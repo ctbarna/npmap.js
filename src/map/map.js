@@ -304,7 +304,7 @@ var Map = L.Map.extend({
   var style = colorPresets.gold;
   L.CircleMarker.mergeOptions(style);
   L.Marker.mergeOptions({
-    icon: L.icon(iconPresets.marker['24'])
+    icon: L.icon(iconPresets.maki.marker['24'])
   });
   L.Path.mergeOptions(style);
   L.Polygon.mergeOptions(style);
