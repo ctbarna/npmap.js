@@ -7,7 +7,7 @@ var reqwest = require('reqwest'),
 
 var GeoJsonLayer = L.GeoJSON.extend({
   includes: [
-    require('../include/geojson')
+    require('../mixin/geojson')
   ],
   initialize: function(config) {
     this._config = this._toLeaflet(config);
