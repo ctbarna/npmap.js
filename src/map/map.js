@@ -41,11 +41,11 @@ var Map = L.Map.extend({
       me.setView(config.center, config.zoom);
     }
 
+    me._setupPopup();
+    me._setupTooltip();
     me.on('autopanstart', function() {
       me._setCursor('default');
     });
-    me._setupPopup();
-    me._setupTooltip();
 
     return this;
   },

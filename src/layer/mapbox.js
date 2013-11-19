@@ -4,8 +4,8 @@
 'use strict';
 
 var reqwest = require('reqwest'),
-    utfGrid = require('../util/utfgrid'),
-    util = require('../util/util');
+  utfGrid = require('../util/utfgrid'),
+  util = require('../util/util');
 
 var MapBoxLayer = L.TileLayer.extend({
   options: {
@@ -176,6 +176,7 @@ var MapBoxLayer = L.TileLayer.extend({
       _ = options.tileJson || options.id;
     }
 
+    this._hasInteractivity = false;
     this._loadTileJson(_);
   },
   onAdd: function onAdd(map) {
