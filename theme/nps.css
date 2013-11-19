@@ -414,6 +414,13 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   border-bottom: solid 1px #1a2423;
   border-top: none;
 }
+.leaflet-bar a.leaflet-bar-single {
+  border-top: solid 1px #1a2423;
+}
+/* Home Control */
+.leaflet-control-home a {
+  background-image: url('images/icon-fa-home.png');
+}
 /* Overview Control */
 .leaflet-control-overview {
   -webkit-box-shadow: -1px 0 5px rgba(0,0,0,.28);

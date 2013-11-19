@@ -7,13 +7,13 @@ var SmallZoomControl = L.Control.extend({
     position: 'topleft'
   },
   initialize: function(options) {
+    L.Util.extend(this.options, options);
     return this;
   },
   onAdd: function(map) {
     var clsName = 'leaflet-control-zoom',
         container = L.DomUtil.create('div', clsName + ' leaflet-bar');
 
-    this._map = map;
     this._zoomInButton = this._createButton('+', 'Zoom in', clsName + '-in', container, this._zoomIn, this);
     this._zoomOutButton = this._createButton('-', 'Zoom out', clsName + '-out', container, this._zoomOut, this);
 
