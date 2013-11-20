@@ -22,7 +22,8 @@
     "json3": "3.2.5",
     "leaflet": "0.7.0",
     "mustache": "0.7.2",
-    "reqwest": "0.9.0"
+    "reqwest": "0.9.0",
+    "togeojson": "0.4.1"
   },
   "devDependencies": {
     "uglify-js": "~2.2.5",
