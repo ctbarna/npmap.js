@@ -117,6 +117,13 @@
     }
   },
   "nps": {
+    "darkStreets": {
+      "attribution": "&copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
+      "icon": "street",
+      "id": "nps.gajjemg7",
+      "name": "NPS Dark Streets",
+      "type": "mapbox"
+    },
     "lightStreets": {
       "attribution": "&copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
       "icon": "street",
