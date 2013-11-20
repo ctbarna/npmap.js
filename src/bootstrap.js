@@ -22,14 +22,32 @@ NPMap = {
       scripts = document.getElementsByTagName('script');
 
   function build(config) {
-    if (typeof config.div === 'string') {
-      config.div = document.getElementById(config.div);
-    }
+    function step() {
+      function step2(c) {
+        c.spinner.stop();
+        c.div.removeChild(L.npmap.util._.getChildElementsByClassName(c.div, 'npmap-loading')[0]);
+        c.L = L.npmap.map(c);
+        delete c.spinner;
+      }
 
-    config.spinner.stop();
-    config.div.removeChild(L.npmap.util._.getChildElementsByClassName(config.div, 'npmap-loading')[0]);
-    config.L = L.npmap.map(config);
-    delete config.spinner;
+      if (typeof config.div === 'string') {
+        config.div = document.getElementById(config.div);
+      }
+
+      if (config.hooks && config.hooks.init) {
+        config.hooks.init(function() {
+          step2(config);
+        });
+      } else {
+        step2(config);
+      }
+    };
+
+    if (config.hooks && config.hooks.preinit) {
+      config.hooks.preinit(step);
+    } else {
+      step();
+    }
   }
   function callback() {
     L.npmap.util._.appendCssFile(NPMap.path + 'npmap.css', function() {
