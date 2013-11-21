@@ -98,6 +98,7 @@ var SwitcherControl = L.Control.extend({
     this._toggleList();
   },
   _setActive: function(baseLayer) {
+    /*
     var icon = baseLayer.icon;
 
     if (!icon) {
@@ -107,6 +108,7 @@ var SwitcherControl = L.Control.extend({
     // TODO: Fix up.
     icon = 'nps';
     L.DomUtil.addClass(this._activeIcon.childNodes[0], 'ico-' + icon + '-small');
+    */
     this._activeText.innerHTML = baseLayer.name;
   },
   _toggleList: function() {
@@ -130,7 +132,7 @@ var SwitcherControl = L.Control.extend({
 
       this._addLi(baseLayer);
 
-      if (baseLayer.L) {
+      if (baseLayer.visible) {
         this._setActive(baseLayer);
       }
     }
