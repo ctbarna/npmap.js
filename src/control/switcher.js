@@ -18,7 +18,7 @@ var SwitcherControl = L.Control.extend({
   },
   _initLayout: function() {
     var active,
-      container = L.DomUtil.create('div', 'npmap-control-switcher');
+      container = this._container = L.DomUtil.create('div', 'npmap-control-switcher');
 
     container.setAttribute('aria-haspopup', true);
 
