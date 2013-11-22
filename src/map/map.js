@@ -35,7 +35,7 @@ var Map = L.Map.extend({
     L.Map.prototype.initialize.call(me, config.div, config);
 
     if (me.attributionControl) {
-      me.attributionControl.setPrefix('');
+      me.attributionControl.setPrefix('<a href="http://www.nps.gov/npmap/disclaimer.html" target="_blank">Disclaimer</a>');
     }
 
     if (!me._loaded) {
