@@ -16,7 +16,7 @@ var HomeControl = L.Control.extend({
       stop = L.DomEvent.stopPropagation;
 
     link.href = '#';
-    link.title = 'Go to initial extent...';
+    link.title = 'Pan/zoom to initial extent';
 
     L.DomEvent
       .on(link, 'click', stop)

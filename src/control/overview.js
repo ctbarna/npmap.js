@@ -6,7 +6,7 @@ var layerPresets = require('../preset/baselayers.json'),
     util = require('../util/util');
 
 var OverviewControl = L.Control.extend({
-  hideText: 'Hide Overview',
+  hideText: 'Hide overview',
   options: {
     autoToggleDisplay: false,
     height: 150,
@@ -17,7 +17,7 @@ var OverviewControl = L.Control.extend({
     zoomLevelFixed: false,
     zoomLevelOffset: -5
   },
-  showText: 'Show Overview',
+  showText: 'Show overview',
   _addToggleButton: function() {
     this._toggleDisplayButton = this._createButton('', this.hideText, null, this._container, this._toggleDisplayButtonClicked, this);
     this._toggleDisplayButtonImage = L.DomUtil.create('span', null, this._toggleDisplayButton);

@@ -63,7 +63,7 @@ var FullscreenControl = L.Control.extend({
     this._button.className = 'npmap-toolbar-button last-child pull-right';
     // TODO: Also add ARIA attributes.
     this._button.innerHTML = '<span class="ico-fullscreen"></span>';
-    this._button.title = 'Toggle Fullscreen';
+    this._button.title = 'Toggle fullscreen';
     L.DomEvent.addListener(this._button, 'click', this.fullscreen, this);
 
     return this;
