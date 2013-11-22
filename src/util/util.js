@@ -229,6 +229,73 @@ module.exports = {
     return target;
   },
   /**
+   * Gets the next sibling of an HTML element.
+   * @param {Object} el
+   * @return {Object}
+   */
+  getNextSibling: function(el) {
+    do {
+      el = el.nextSibling;
+    } while (el && el.nodeType != 1);
+
+    return el;
+  },
+  /**
+   * Gets the offset, in pixels, of an element.
+   * @param {Object} el
+   * @return {Object}
+   */
+  getOffset: function(el) {
+    for (var lx = 0, ly = 0; el !== null; lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
+
+    return {left: lx, top: ly};
+  },
+  _checkDisplay: function(node, changed) {
+    if (node.style && node.style.display === 'none') {
+      changed.push(node);
+      node.style.display = 'block';
+    }
+  },
+  /**
+   * Gets the outer dimensions, in pixels, of an HTML element.
+   * @param {Object} el
+   * @return {Object}
+   */
+  getOuterDimensions: function(el) {
+    var height = 0,
+      width = 0;
+
+    if (el) {
+      var changed = [],
+        parentNode = el.parentNode;
+
+      this._checkDisplay(el, changed);
+
+      if (el.id !== 'npmap' && parentNode) {
+        this._checkDisplay(parentNode, changed);
+
+        while (parentNode.id && parentNode.id !== 'npmap' && parentNode.id !== 'npmap-map') {
+          parentNode = parentNode.parentNode;
+
+          if (parentNode) {
+            this._checkDisplay(parentNode, changed);
+          }
+        }
+      }
+
+      height = el.offsetHeight;
+      width = el.offsetWidth;
+
+      changed.reverse();
+
+      for (var i = 0; i < changed.length; i++) {
+        changed[i].style.display = 'none';
+      }
+    }
+
+    return {height: height, width: width};
+  },
+  /**
    * http://stackoverflow.com/a/2474742/27540
    */
   getOuterHtml: function(el) {
@@ -237,7 +304,7 @@ module.exports = {
     }
 
     var div = document.createElement('div'),
-        ax, txt;
+      ax, txt;
 
     div.appendChild(el.cloneNode(false));
     txt = div.innerHTML;
@@ -245,6 +312,31 @@ module.exports = {
     txt = txt.substring(0, ax) + el.innerHTML + txt.substring(ax);
     div = null;
     return txt;
+  },
+  /**
+   * UNDOCUMENTED
+   */
+  getPosition: function(el) {
+    var obj = {left: 0, top: 0},
+      offset = this.getOffset(el),
+      offsetParent = this.getOffset(el.parentNode);
+
+    obj.left = offset.left - offsetParent.left;
+    obj.top = offset.top - offsetParent.top;
+
+    return obj;
+  },
+  /**
+   * Gets the previous sibling of an HTML element.
+   * @param {Object} el
+   * @return {Object}
+   */
+  getPreviousSibling: function(el) {
+    do {
+      el = el.previousSibling;
+    } while (el && el.nodeType != 1);
+
+    return el;
   },
   /**
    * http://stackoverflow.com/a/5675579/27540
@@ -263,6 +355,17 @@ module.exports = {
       return keys.length;
     } else {
       return Object.keys(obj).length;
+    }
+  },
+  /**
+   *
+   */
+  putCursorAtEndOfInput: function(input) {
+    if (input.setSelectionRange) {
+      var length = input.value.length * 2;
+      input.setSelectionRange(length, length);
+    } else {
+      input.value = input.value;
     }
   },
   /**

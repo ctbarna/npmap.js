@@ -221,6 +221,29 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   color: #d39700;
   text-decoration: underline;
 }
+/* Icons */
+.npmap [class^="icon-"], [class*=" icon-"] {
+  background-image: url(images/icons/sprite.png);
+  background-repeat: no-repeat;
+  display: inline-block;
+  height: 14px;
+  line-height: 14px;
+  margin-top: 1px;
+  vertical-align: text-top;
+  width: 14px;
+}
+.npmap .icon-search {
+  background-position: 0 0;
+  height: 15px;
+  width: 16px;
+}
+.npmap .icon-working-black {
+  background-image: url('images/loading.gif');
+  height: 16px;
+  margin-left: -2px;
+  margin-top: -3px;
+  width: 16px;
+}
 /* Controls */
 .leaflet-control {
   -webkit-box-shadow: 0 0 15px #888;
@@ -416,6 +439,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 }
 .leaflet-bar a.leaflet-bar-single {
   border-top: solid 1px #1a2423;
+  border-radius: 4px;
 }
 /* Home Control */
 .leaflet-control-home a {
@@ -462,6 +486,75 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
          -o-transform: rotate(180deg);
             transform: rotate(180deg);
   }
+/* Geocoder Control */
+.leaflet-control-geocoder button {
+  -webkit-background-clip: padding-box;
+     -moz-background-clip: padding;
+          background-clip: padding-box;
+  -webkit-border-radius: 1px;
+     -moz-border-radius: 1px;
+          border-radius: 1px;
+  -webkit-box-shadow: 0 0 5px rgba(0,0,0,.16);
+     -moz-box-shadow: 0 0 5px rgba(0,0,0,.16);
+          box-shadow: 0 0 5px rgba(0,0,0,.16);
+  background-color: #cb9733;
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJod…IwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0idXJsKCNoYXQwKSIgLz4KPC9zdmc+);
+  background-image: -moz-linear-gradient(bottom, rgba(0,0,0,.12) 0%, rgba(255,255,255,.12) 100%);
+  background-image: -o-linear-gradient(bottom, rgba(0,0,0,.12) 0%, rgba(255,255,255,.12) 100%);
+  background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,.12) 0%, rgba(255,255,255,.12) 100%);
+  background-image: linear-gradient(bottom, rgba(0,0,0,.12) 0%, rgba(255,255,255,.12) 100%);
+  border: none;
+  height: 24px;
+  line-height: 24px;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+  vertical-align: text-top;
+  width: 24px;
+}
+  .leaflet-control-geocoder button.working {
+    background-color: #000;
+    cursor: wait;
+  }
+.leaflet-control-geocoder input {
+  border: 1px solid #cbcbcb;
+  height: 12px;
+  padding: 7px 30px 7px 10px;
+  width: 158px;
+}
+.leaflet-control-geocoder ul {
+  background-color: #fff;
+  border-left: 1px solid #cbcbcb;
+  border-right: 1px solid #cbcbcb;
+  display: none;
+  margin: 0;
+  max-height: 300px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0;
+  width: 198px;
+}
+  .leaflet-control-geocoder ul li {
+    border-top: 1px solid #f2f1ef;
+    cursor: pointer;
+    list-style-type: none;
+    padding: 7px 10px;
+  }
+  .leaflet-control-geocoder ul li:first-child {
+    border-top: none;
+  }
+  .leaflet-control-geocoder ul li:hover {
+    background-color: #f1f1ef;
+  }
+  .leaflet-control-geocoder ul li.selected {
+    background-color: #ddd;
+    border-color: #ddd;
+  }
+.leaflet-control-geocoder .icon-search {
+  left: 4px;
+  position: absolute;
+  top: 3px;
+}
 /* Switcher Control */
 .npmap-control-switcher {
   -webkit-box-shadow: none;

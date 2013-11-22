@@ -7,6 +7,7 @@ L.npmap = module.exports = {
   VERSION: require('./package.json').version,
   control: {
     fullscreen: require('./src/control/fullscreen'),
+    geocoder: require('./src/control/geocoder'),
     home: require('./src/control/home'),
     overview: require('./src/control/overview'),
     scale: require('./src/control/scale'),
