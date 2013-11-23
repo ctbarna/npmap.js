@@ -3,7 +3,6 @@
 'use strict';
 
 var SmallZoomControl = L.Control.extend({
-  _order: 0,
   options: {
     position: 'topleft'
   },

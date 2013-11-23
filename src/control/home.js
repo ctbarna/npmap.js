@@ -3,7 +3,6 @@
 'use strict';
 
 var HomeControl = L.Control.extend({
-  _order: 1,
   options: {
     position: 'topleft'
   },
