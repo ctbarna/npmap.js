@@ -5,11 +5,17 @@
 var util = require('../util/util');
 
 var SwitcherControl = L.Control.extend({
+  _selectedId: 'basemap_listbox_selected',
   options: {
     position: 'topright'
   },
   _addLi: function(baseLayer) {
     var li = L.DomUtil.create('li', (baseLayer.visible ? 'selected' : null));
+
+    if (baseLayer.visible) {
+      li.setAttribute('id', this._selectedId);
+      this._active.setAttribute('aria-activedescendant', this._selectedId);
+    }
 
     li.innerHTML = baseLayer.name;
     li.layerId = L.stamp(baseLayer);
@@ -17,10 +23,7 @@ var SwitcherControl = L.Control.extend({
     this._list.appendChild(li);
   },
   _initLayout: function() {
-    var active,
-      container = this._container = L.DomUtil.create('div', 'npmap-control-switcher');
-
-    container.setAttribute('aria-haspopup', true);
+    var container = this._container = L.DomUtil.create('div', 'npmap-control-switcher');
 
     if (!L.Browser.touch) {
       L.DomEvent.disableClickPropagation(container);
@@ -29,14 +32,21 @@ var SwitcherControl = L.Control.extend({
       L.DomEvent.on(container, 'click', L.DomEvent.stopPropagation);
     }
 
-    active = L.DomUtil.create('div', null, container);
+    this._active = L.DomUtil.create('div', null, container);
+    this._active.setAttribute('aria-expanded', false);
+    this._active.setAttribute('aria-haspopup', true);
+    this._active.setAttribute('aria-label', 'Switch base maps');
+    this._active.setAttribute('aria-owns', 'basemap_listbox');
+    this._active.setAttribute('role', 'combobox');
     this._list = L.DomUtil.create('ul', null, container);
+    this._list.setAttribute('id', 'basemap_listbox');
+    this._list.setAttribute('role', 'listbox');
     this._list.style.display = 'none';
-    this._activeIcon = L.DomUtil.create('span', null, active);
+    this._activeIcon = L.DomUtil.create('span', null, this._active);
     L.DomUtil.create('ico', null, this._activeIcon);
-    this._activeText = L.DomUtil.create('div', null, active);
-    this._activeDropdown = L.DomUtil.create('span', null, active);
-    L.DomEvent.addListener(active, 'click', this._toggleList, this);
+    this._activeText = L.DomUtil.create('div', null, this._active);
+    this._activeDropdown = L.DomUtil.create('span', null, this._active);
+    L.DomEvent.addListener(this._active, 'click', this._toggleList, this);
   },
   _onLayerChange: function(e) {
     var obj = this._baseLayers[L.stamp(e.layer)],
@@ -67,10 +77,14 @@ var SwitcherControl = L.Control.extend({
         var li = children[i];
 
         if (L.DomUtil.hasClass(li, 'selected')) {
+          li.removeAttribute('id');
           L.DomUtil.removeClass(li, 'selected');
           break;
         }
       }
+
+      target.setAttribute('id', this._selectedId);
+      this._active.setAttribute('aria-activedescendant', this._selectedId);
 
       for (i = 0; i < this._baseLayers.length; i++) {
         var baseLayer = this._baseLayers[i];

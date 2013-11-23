@@ -154,16 +154,6 @@
     "url": "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
   },
   "stamen": {
-    "terrain": {
-      "attribution": "Map tiles by <a href='http://stamen.com'>Stamen Design</a>, under <a href='http://creativecommons.org/licenses/by/3.0'>CC BY 3.0</a>. Data &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors.",
-      "icon": "topo",
-      "maxZoom": 18,
-      "minZoom": 4,
-      "name": "Stamen Terrain",
-      "subdomains": "abcd",
-      "type": "tiled",
-      "url": "http://{s}.tile.stamen.com/terrain/{z}/{x}/{y}.jpg"
-    },
     "toner": {
       "attribution": "Map tiles by <a href='http://stamen.com'>Stamen Design</a>, under <a href='http://creativecommons.org/licenses/by/3.0'>CC BY 3.0</a>. Data &copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors.",
       "icon": "street",

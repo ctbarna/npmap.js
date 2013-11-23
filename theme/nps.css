@@ -525,18 +525,20 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
     padding: 7px 30px 7px 10px;
     width: 158px;
   }
-  .leaflet-control-geocoder ul {
+  .leaflet-control-geocoder ul.leaflet-control {
     background-color: #fff;
     border-left: 1px solid #cbcbcb;
     border-right: 1px solid #cbcbcb;
     display: none;
     margin: 0;
+    margin-top: 0;
     max-height: 300px;
     overflow-x: hidden;
     overflow-y: auto;
     padding: 0;
     position: absolute;
     width: 198px;
+    z-index: -1;
   }
     .leaflet-control-geocoder ul li {
       border-top: 1px solid #f2f1ef;

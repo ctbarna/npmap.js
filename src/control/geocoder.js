@@ -39,6 +39,8 @@ var GeocoderControl = L.Control.extend({
     this._ul.innerHTML = '';
     this._ul.scrollTop = 0;
     this._ul.style.display = 'none';
+    this._input.setAttribute('aria-activedescendant', null);
+    this._input.setAttribute('aria-expanded', false);
     this._selected = null;
     this._oldValue = '';
   },
@@ -87,6 +89,7 @@ var GeocoderControl = L.Control.extend({
     this._input.value = this._oldValue = id;
     this._input.focus();
     this._map.fitBounds(this._bounds[id]);
+    this._input.setAttribute('aria-activedescendant', id);
   },
   _inputOnFocus: function() {
     var me = this;
@@ -147,6 +150,7 @@ var GeocoderControl = L.Control.extend({
                     }
 
                     me._ul.style.display = 'block';
+                    me._input.setAttribute('aria-expanded', true);
                   } else {
                     me._clearResults();
                   }
@@ -225,7 +229,7 @@ var GeocoderControl = L.Control.extend({
       input = this._input = L.DomUtil.create('input', null, container),
       stop = L.DomEvent.stop,
       stopPropagation = L.DomEvent.stopPropagation,
-      ul = this._ul = L.DomUtil.create('ul', null, container);
+      ul = this._ul = L.DomUtil.create('ul', 'leaflet-control', container);
 
     L.DomEvent
       .on(button, 'click', stop)
@@ -247,8 +251,17 @@ var GeocoderControl = L.Control.extend({
 
     button.innerHTML = '<i class="icon-search"></i>';
     button.title = 'Search';
-    input.placeholder = 'Find a location';
+    input.setAttribute('aria-activedescendant', null);
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-expanded', false);
+    input.setAttribute('aria-label', 'Geocode');
+    input.setAttribute('aria-owns', 'geocoder_listbox');
+    input.setAttribute('placeholder', 'Find a location');
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('type', 'text');
     map.attributionControl.addAttribution(this._attribution.esri);
+    ul.setAttribute('id', 'geocoder_listbox');
+    ul.setAttribute('role', 'listbox');
 
     return container;
   },
