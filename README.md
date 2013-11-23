@@ -2,17 +2,19 @@
   <img src="http://www.nps.gov/npmap/img/nps-arrowhead-medium.png" alt="NPS Arrowhead">
 </p>
 
-#NPMap.js
+# NPMap.js
 
-Extends [Leaflet](http://leafletjs.com) to include functionality and a look-and-feel that fits into the graphic tradition of the National Park Service.
+Extends [Leaflet](http://leafletjs.com) to include functionality and a look-and-feel that the National Park Service needs in its maps.
 
-This is alpha software that is **not yet production ready**. Feel free to play around, but keep this in mind. NPMap.js will eventually take the place of the [NPMap JavaScript library](https://github.com/nationalparkservice/npmap).
+This is beta software. Feel free to play around, but keep this in mind (and please help test and [report issues](https://github.com/nationalparkservice/npmap.js/issues)).
 
-##Thanks
+NPMap.js will eventually take the place of the [NPMap JavaScript library](https://github.com/nationalparkservice/npmap).
+
+## Thanks
 
 Heavily inspired (cough cough) by [MapBox.js](https://github.com/mapbox/mapbox.js), and, of course, built on the great [Leaflet](http://leafletjs.com) library. Standing on the shoulders of giants.
 
-##Versioning
+## Versioning
 
 NPMap.js is versioned using [semantic versioining](http://semver.org). This means that releases are numbered: `major.minor.patch` and follow these guidelines:
 
@@ -20,14 +22,14 @@ NPMap.js is versioned using [semantic versioining](http://semver.org). This mean
 - New additions that don't break backward compatibility bumps the minor (and resets the patch to zero)
 - Bug fixes and miscellaneous changes bumps the patch
 
-##Changelog
+## Changelog
 - [v1.1.0](https://github.com/nationalparkservice/npmap.js/issues?milestone=1&page=1&state=closed): Under Development
 
-##Hosted Version
+## Hosted Version
 
 NPMap.js is hosted on the National Park Service's content delivery network. Feel free to load the library directly from there. You can access hosted versions at http://www.nps.gov/npmap/dev/tools/npmap.js/major.minor.patch/. You should replace "major.minor.patch" with the number of the version you want to access.
 
-##Building
+## Building
 
 You must have [node.js](http://nodejs.org/) installed to run the build. After installing node.js:
 
@@ -52,20 +54,20 @@ To tell nodemon to watch your code and remake on every change, run the command:
 
     nodemon -x "make -f" Makefile
 
-##Documentation
+## Documentation
 
 Take a look at [API.md](https://github.com/nationalparkservice/npmap.js/blob/master/API.md). Ignore the random notes at the bottom; they will be cleaned up and turned into complete thoughts soon.
 
-##Examples
+## Examples
 
-Take a look in the `examples` directory. Again, there isn't much there at the moment, but more examples are coming soon.
+Targeted examples reside in the `examples` directory.
 
 Most of the examples have two versions: a version with `-api` at the end of the file name and a version with `-bootstrap` at the end of the file name. This reflects the two different ways NPMap.js can be used:
 
 1. Like "traditional" mapping APIs. This works well if you are familiar with JavaScript *and* have access to include JavaScript and CSS files in the web page your map is going to be included in. These examples use `npmap.js` directly, and utilize the [API](https://github.com/nationalparkservice/npmap.js/blob/master/API.md) to build the map.
 2. Indirectly, through the use of `bootstrap.js`. This allows you to configure your map using the `NPMap` variable. This is the recommended approach for non-technical users or those who don't have access to the web page the map is going to be included in (which is the case if you are using the National Park Service content management system). This is also the approach used by the [NPMap Builder](https://github.com/nationalparkservice/npmap-builder).
 
-##Support
+## Support
 
 You can get in touch with the NPMap team by contacting us via Twitter ([@npmap](http://twitter.com/npmap)) or email ([npmap@nps.gov](mailto:npmap@nps.gov)).
 
