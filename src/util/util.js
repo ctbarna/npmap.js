@@ -17,9 +17,9 @@ module.exports = {
 
     for (var index in data) {
       var dataLayer = data[index],
-          divTitle = L.DomUtil.create('div', null),
-          tableResults = L.DomUtil.create('table', null),
-          tableResultsBody = L.DomUtil.create('tbody', null);
+        divTitle = L.DomUtil.create('div', null),
+        tableResults = L.DomUtil.create('table', null),
+        tableResultsBody = L.DomUtil.create('tbody', null);
 
       divTitle.setAttribute('class', 'title');
       divTitle.setAttribute('style', 'margin-top:10px;');
@@ -27,8 +27,8 @@ module.exports = {
 
       for (var fieldName in dataLayer) {
         var tableData = L.DomUtil.create('td', null),
-            tableField = L.DomUtil.create('td', null),
-            tableRow = L.DomUtil.create('tr', null);
+          tableField = L.DomUtil.create('td', null),
+          tableRow = L.DomUtil.create('tr', null);
 
         tableField.textContent = fieldName;
         tableRow.appendChild(tableField);
@@ -100,7 +100,7 @@ module.exports = {
    */
   dataToHtml: function(config, data, type) {
     var div = L.DomUtil.create('div', 'layer'),
-        html;
+      html;
 
     type = type || 'popup';
 
@@ -126,7 +126,7 @@ module.exports = {
    */
   getChildElementsByClassName: function(parentNode, className) {
     var children = parentNode.childNodes,
-        matches = [];
+      matches = [];
 
     function recurse(el) {
       var grandChildren = el.children;
@@ -160,7 +160,7 @@ module.exports = {
    */
   getChildElementsByNodeName: function(parentNode, nodeName) {
     var children = parentNode.childNodes,
-        matches = [];
+      matches = [];
 
     nodeName = nodeName.toLowerCase();
 
@@ -189,8 +189,8 @@ module.exports = {
    */
   getElementsByClassName: function(className) {
     var matches = [],
-        regex = new RegExp('(^|\\s)' + className + '(\\s|$)'),
-        tmp = document.getElementsByTagName('*');
+      regex = new RegExp('(^|\\s)' + className + '(\\s|$)'),
+      tmp = document.getElementsByTagName('*');
     
     for (var i = 0; i < tmp.length; i++) {
       if (regex.test(tmp[i].className)) {

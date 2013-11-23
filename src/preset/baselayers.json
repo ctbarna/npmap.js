@@ -4,7 +4,7 @@
       "attribution": "Copyright: &copy;2013 Esri, DeLorme, NAVTEQ",
       "maxZoom": 16,
       "minZoom": 1,
-      "name": "Esri World Light Gray",
+      "name": "Esri Light Gray",
       "tiled": true,
       "type": "arcgisserver",
       "url": "http://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer"
@@ -13,7 +13,7 @@
       "attribution": "Copyright: &copy;2013 Esri, DeLorme, NAVTEQ",
       "maxZoom": 16,
       "minZoom": 1,
-      "name": "Esri World Light Gray Reference",
+      "name": "Esri Light Gray Labels",
       "tiled": true,
       "type": "arcgisserver",
       "url": "http://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer"
@@ -23,7 +23,7 @@
       "icon": "aerial",
       "maxZoom": 19,
       "minZoom": 1,
-      "name": "Esri World Imagery",
+      "name": "Esri Imagery",
       "tiled": true,
       "type": "arcgisserver",
       "url": "http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer"
@@ -32,7 +32,7 @@
       "attribution": "Esri, DigitalGlobe, GeoEye, i-cubed, USDA, USGS, AEX, Getmapping, Aerogrid, IGN, IGP, swisstopo, and the GIS User Community",
       "maxZoom": 19,
       "minZoom": 1,
-      "name": "Esri World Boundaries & Places",
+      "name": "Esri Boundaries & Places",
       "tiled": true,
       "type": "arcgisserver",
       "url": "http://services.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer"
@@ -51,7 +51,7 @@
       "dynamicAttribution": "http://static.arcgis.com/attribution/World_Street_Map?f=json",
       "maxZoom": 16,
       "minZoom": 1,
-      "name": "Esri Ocean Basemap",
+      "name": "Esri Oceans",
       "tiled": true,
       "type": "arcgisserver",
       "url": "http://server.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer"
@@ -62,7 +62,7 @@
       "icon": "street",
       "maxZoom": 19,
       "minZoom": 1,
-      "name": "Esri World Street Map",
+      "name": "Esri Streets",
       "tiled": true,
       "type": "arcgisserver",
       "url": "http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer"
@@ -71,9 +71,9 @@
       "attribution": "Esri",
       "dynamicAttribution": "http://static.arcgis.com/attribution/World_Street_Map?f=json",
       "icon": "topo",
-      "maxZoom": 19,
+      "maxZoom": 17,
       "minZoom": 1,
-      "name": "Esri World Topo",
+      "name": "Esri Topo",
       "tiled": true,
       "type": "arcgisserver",
       "url": "http://services.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer"
@@ -119,28 +119,28 @@
   "nps": {
     "darkStreets": {
       "attribution": "&copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
-      "icon": "street",
+      "icon": "nps",
       "id": "nps.gajjemg7",
-      "name": "NPS Dark Streets",
+      "name": "NPS Dark",
       "type": "mapbox"
     },
     "lightStreets": {
       "attribution": "&copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
-      "icon": "street",
+      "icon": "nps",
       "id": "nps.g9ndno9j",
-      "name": "NPS Light Streets",
+      "name": "NPS Light",
       "type": "mapbox"
     },
     "neutralTerrain": {
       "attribution": "&copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
-      "icon": "street",
+      "icon": "nps",
       "id": "nps.g9nccg3d",
       "name": "NPS Neutral Terrain",
       "type": "mapbox"
     },
     "satelliteNight": {
       "attribution": "&copy; <a href='http://openstreetmap.org/copyright'>OpenStreetMap</a> contributors",
-      "icon": "street",
+      "icon": "nps",
       "id": "nps.g9o0im10",
       "name": "NPS Satellite at Night",
       "type": "mapbox"

@@ -487,111 +487,110 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
             transform: rotate(180deg);
   }
 /* Geocoder Control */
-.leaflet-control-geocoder button {
-  -webkit-background-clip: padding-box;
-     -moz-background-clip: padding;
-          background-clip: padding-box;
-  -webkit-border-radius: 1px;
-     -moz-border-radius: 1px;
-          border-radius: 1px;
-  -webkit-box-shadow: 0 0 5px rgba(0,0,0,.16);
-     -moz-box-shadow: 0 0 5px rgba(0,0,0,.16);
-          box-shadow: 0 0 5px rgba(0,0,0,.16);
-  background-color: #cb9733;
-  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJod…IwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0idXJsKCNoYXQwKSIgLz4KPC9zdmc+);
-  background-image: -moz-linear-gradient(bottom, rgba(0,0,0,.12) 0%, rgba(255,255,255,.12) 100%);
-  background-image: -o-linear-gradient(bottom, rgba(0,0,0,.12) 0%, rgba(255,255,255,.12) 100%);
-  background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,.12) 0%, rgba(255,255,255,.12) 100%);
-  background-image: linear-gradient(bottom, rgba(0,0,0,.12) 0%, rgba(255,255,255,.12) 100%);
-  border: none;
-  height: 24px;
-  line-height: 24px;
-  position: absolute;
-  right: 2px;
-  top: 2px;
-  vertical-align: text-top;
-  width: 24px;
+.leaflet-control-geocoder {
+  z-index: 8;
 }
-  .leaflet-control-geocoder button.working {
-    background-color: #000;
-    cursor: wait;
+  .leaflet-control-geocoder button {
+    -webkit-background-clip: padding-box;
+       -moz-background-clip: padding;
+            background-clip: padding-box;
+    -webkit-border-radius: 1px;
+       -moz-border-radius: 1px;
+            border-radius: 1px;
+    -webkit-box-shadow: 0 0 5px rgba(0,0,0,.16);
+       -moz-box-shadow: 0 0 5px rgba(0,0,0,.16);
+            box-shadow: 0 0 5px rgba(0,0,0,.16);
+    background-color: #cb9733;
+    background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJod…IwIiB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0idXJsKCNoYXQwKSIgLz4KPC9zdmc+);
+    background-image: -moz-linear-gradient(bottom, rgba(0,0,0,.12) 0%, rgba(255,255,255,.12) 100%);
+    background-image: -o-linear-gradient(bottom, rgba(0,0,0,.12) 0%, rgba(255,255,255,.12) 100%);
+    background-image: -webkit-linear-gradient(bottom, rgba(0,0,0,.12) 0%, rgba(255,255,255,.12) 100%);
+    background-image: linear-gradient(bottom, rgba(0,0,0,.12) 0%, rgba(255,255,255,.12) 100%);
+    border: none;
+    height: 24px;
+    line-height: 24px;
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    vertical-align: text-top;
+    width: 24px;
   }
-.leaflet-control-geocoder input {
-  border: 1px solid #cbcbcb;
-  height: 12px;
-  padding: 7px 30px 7px 10px;
-  width: 158px;
-}
-.leaflet-control-geocoder ul {
-  background-color: #fff;
-  border-left: 1px solid #cbcbcb;
-  border-right: 1px solid #cbcbcb;
-  display: none;
-  margin: 0;
-  max-height: 300px;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding: 0;
-  width: 198px;
-}
-  .leaflet-control-geocoder ul li {
-    border-top: 1px solid #f2f1ef;
-    cursor: pointer;
-    list-style-type: none;
-    padding: 7px 10px;
+    .leaflet-control-geocoder button.working {
+      background-color: #000;
+      cursor: wait;
+    }
+  .leaflet-control-geocoder input {
+    border: 1px solid #cbcbcb;
+    height: 12px;
+    padding: 7px 30px 7px 10px;
+    width: 158px;
   }
-  .leaflet-control-geocoder ul li:first-child {
-    border-top: none;
+  .leaflet-control-geocoder ul {
+    background-color: #fff;
+    border-left: 1px solid #cbcbcb;
+    border-right: 1px solid #cbcbcb;
+    display: none;
+    margin: 0;
+    max-height: 300px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    padding: 0;
+    position: absolute;
+    width: 198px;
   }
-  .leaflet-control-geocoder ul li:hover {
-    background-color: #f1f1ef;
+    .leaflet-control-geocoder ul li {
+      border-top: 1px solid #f2f1ef;
+      cursor: pointer;
+      list-style-type: none;
+      padding: 7px 10px;
+    }
+    .leaflet-control-geocoder ul li:first-child {
+      border-top: none;
+    }
+    .leaflet-control-geocoder ul li:hover {
+      background-color: #f1f1ef;
+    }
+    .leaflet-control-geocoder ul li.selected {
+      background-color: #ddd;
+      border-color: #ddd;
+    }
+  .leaflet-control-geocoder .icon-search {
+    left: 4px;
+    position: absolute;
+    top: 3px;
   }
-  .leaflet-control-geocoder ul li.selected {
-    background-color: #ddd;
-    border-color: #ddd;
-  }
-.leaflet-control-geocoder .icon-search {
-  left: 4px;
-  position: absolute;
-  top: 3px;
-}
 /* Switcher Control */
 .npmap-control-switcher {
-  -webkit-box-shadow: none;
-     -moz-box-shadow: none;
-      -ms-box-shadow: none;
-       -o-box-shadow: none;
-          box-shadow: none;
+  -webkit-border-radius: 4px;
+     -moz-border-radius: 4px;
+          border-radius: 4px;
   color: #6e6c5f;
   font-size: 10px;
   font-weight: bold;
-  min-width: 213px;
+  min-width: 200px;
 }
   .npmap-control-switcher div:first-child {
     -webkit-border-radius: 4px;
        -moz-border-radius: 4px;
             border-radius: 4px;
-    -webkit-box-shadow: 0 0 15px #888;
-       -moz-box-shadow: 0 0 15px #888;
-        -ms-box-shadow: 0 0 15px #888;
-         -o-box-shadow: 0 0 15px #888;
-            box-shadow: 0 0 15px #888;
     background-color: #fff;
     background-image: -moz-linear-gradient(top, #e1e1e1 0%, #fdfdfd 100%);
     background-image: -o-linear-gradient(top, #e1e1e1 0%, #fdfdfd 100%);
     background-image: -webkit-linear-gradient(top, #e1e1e1 0%, #fdfdfd 100%);
     background-image: linear-gradient(top, #e1e1e1 0%, #fdfdfd 100%);
-    border: solid 1px #1a2423;
+    border: solid 1px #bdbbb1;
     cursor: pointer;
-    margin-left: 13px;
     min-height: 29px;
     position: relative;
-    width: 200px;
+    width: 198px;
   }
   .npmap-control-switcher div:first-child div {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+            user-select: none;
     border-right: solid 1px #908e7d;
     margin-left: 25px;
-    padding: 7px 8px 7px 0;
+    padding: 7px 8px 7px 8px;
     margin-right: 25px;
     position: relative;
   }
@@ -602,10 +601,6 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
     position: absolute;
     top: 0;
     width: 25px;
-  }
-  .npmap-control-switcher div:first-child span:first-child .ico-nps-small {
-    left: 8px;
-    top: 7px;
   }
   .npmap-control-switcher div:first-child span:last-child {
     background-image: url('images/switcher-toggle.png');
@@ -639,13 +634,17 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
     background-image: -webkit-linear-gradient(right, #f3f7e9 0%, rgba(243,247,233,0) 100%);
     background-image: linear-gradient(right, #f3f7e9 0%, rgba(243,247,233,0) 100%);
     */
+    border-left: 1px solid #bdbbb1;
+    border-right: 1px solid #bdbbb1;
+    left: -15px;
     list-style-type: none;
     margin: 1px 0 0 0;
     max-height: 300px;
     overflow-x: hidden;
     overflow-y: auto;
     padding-left: 0;
-    width: 213px;
+    position: absolute;
+    width: 215px;
   }
   .npmap-control-switcher li {
     border-bottom: solid 1px #f2f1ef;
@@ -663,11 +662,39 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
     border-bottom: none;
   }
 /* Icons */
+.ico-aerial {
+  background-image: url('images/icon-aerial.png');
+  height: 22px;
+  position: absolute;
+  width: 17px;
+}
+.ico-aerial-small {
+  background-image: url('images/icon-aerial-small.png');
+  height: 13px;
+  margin-left: 11px;
+  margin-top: 7px;
+  position: absolute;
+  width: 13px;
+}
 .ico-fullscreen {
   background-image: url('images/fullscreen-toggle.png');
   height: 12px;
   position: absolute;
   width: 13px;
+}
+.ico-generic {
+  background-image: url('images/icon-eye.png');
+  height: 22px;
+  position: absolute;
+  width: 17px;
+}
+.ico-generic-small {
+  background-image: url('images/icon-eye-small.png');
+  height: 10px;
+  margin-top: 9px;
+  margin-left: 8px;
+  position: absolute;
+  width: 17px;
 }
 .ico-nps {
   background-image: url('images/icon-nps.png');
@@ -678,6 +705,36 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 .ico-nps-small {
   background-image: url('images/icon-nps-small.png');
   height: 15px;
+  margin-left: 12px;
+  margin-top: 6px;
   position: absolute;
   width: 12px;
+}
+.ico-street {
+  background-image: url('images/icon-street.png');
+  height: 22px;
+  position: absolute;
+  width: 17px;
+}
+.ico-street-small {
+  background-image: url('images/icon-street-small.png');
+  height: 13px;
+  margin-left: 9px;
+  margin-top: 8px;
+  position: absolute;
+  width: 17px;
+}
+.ico-topo {
+  background-image: url('images/icon-topo.png');
+  height: 22px;
+  position: absolute;
+  width: 17px;
+}
+.ico-topo-small {
+  background-image: url('images/icon-topo-small.png');
+  height: 13px;
+  margin-left: 9px;
+  margin-top: 8px;
+  position: absolute;
+  width: 17px;
 }

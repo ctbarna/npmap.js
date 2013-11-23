@@ -36,6 +36,28 @@ var Map = L.Map.extend({
 
     if (me.attributionControl) {
       me.attributionControl.setPrefix('<a href="http://www.nps.gov/npmap/disclaimer.html" target="_blank">Disclaimer</a>');
+      me.attributionControl._update = function() {
+        if (!this._map) { return; }
+
+        var attribs = [];
+
+        for (var i in this._attributions) {
+          if (this._attributions[i]) {
+            attribs.push(i);
+          }
+        }
+
+        var prefixAndAttribs = [];
+
+        if (this.options.prefix) {
+          prefixAndAttribs.push(this.options.prefix);
+        }
+        if (attribs.length) {
+          prefixAndAttribs.push(attribs.join(' | '));
+        }
+
+        this._container.innerHTML = prefixAndAttribs.join(' | ');
+      };
     }
 
     if (!me._loaded) {

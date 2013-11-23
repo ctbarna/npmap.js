@@ -3,6 +3,7 @@
 'use strict';
 
 var HomeControl = L.Control.extend({
+  _order: 1,
   options: {
     position: 'topleft'
   },
@@ -36,7 +37,7 @@ var HomeControl = L.Control.extend({
 });
 
 L.Map.mergeOptions({
-  homeControl: false
+  homeControl: true
 });
 L.Map.addInitHook(function() {
   if (this.options.homeControl) {
