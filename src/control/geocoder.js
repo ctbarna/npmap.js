@@ -10,7 +10,10 @@ var geocode = require('../util/geocode'),
   util = require('../util/util');
 
 var GeocoderControl = L.Control.extend({
-  _attribution: 'Nominatim (&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors)',
+  _attribution: {
+    esri: 'Geocoding by Esri',
+    nominatim: 'Nominatim (&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors)'
+  },
   _oldValue: null,
   options: {
     position: 'topright'
@@ -51,23 +54,17 @@ var GeocoderControl = L.Control.extend({
       L.DomUtil.removeClass(icon, 'icon-search');
       L.DomUtil.addClass(icon, 'icon-working-black');
       L.DomUtil.addClass(me._button, 'working');
-      
-      geocode.nominatim(value, function(response) {
+      geocode.esri(value, function(result) {
         L.DomEvent.on(me._button, 'click', me._geocodeRequest, me);
         L.DomUtil.removeClass(icon, 'icon-working-black');
         L.DomUtil.addClass(icon, 'icon-search');
         L.DomUtil.removeClass(me._button, 'working');
 
-        if (response && response.success) {
-          if (response.results && response.results.length) {
-            var bounds = response.results[0].boundingbox;
-
-            me._map.fitBounds([
-              [bounds[0], bounds[2]],
-              [bounds[1], bounds[3]]
-            ]);
+        if (result && result.success) {
+          if (result.results && result.results.length) {
+            me._map.fitBounds(result.results[0].bounds);
           } else {
-            if (response.message) {
+            if (result.message) {
               //NPMap.Map.notify(response.message, null, 'info');
             } else {
               //NPMap.Map.notify('That location could not be found.', null, 'info');
@@ -76,7 +73,10 @@ var GeocoderControl = L.Control.extend({
         } else {
           //NPMap.Map.notify(response.message, null, 'error');
         }
+      }, {
+        center: me._map.getCenter()
       });
+      
     }
   },
   _handleSelect: function(li) {
@@ -248,12 +248,12 @@ var GeocoderControl = L.Control.extend({
     button.innerHTML = '<i class="icon-search"></i>';
     button.title = 'Search';
     input.placeholder = 'Find a location';
-    map.attributionControl.addAttribution(this._attribution);
+    map.attributionControl.addAttribution(this._attribution.esri);
 
     return container;
   },
   onRemove: function(map) {
-    map.attributionControl.removeAttribution(this._attribution);
+    map.attributionControl.removeAttribution(this._attribution.esri);
   }
 });
 

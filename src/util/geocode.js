@@ -1,10 +1,94 @@
+/* globals L */
+
 'use strict';
 
-var reqwest = require('reqwest');
+var reqwest = require('reqwest'),
+  util = require('../util/util');
 
 module.exports = ({
   /**
-   * Performs a geocode operation.
+   *
+   */
+  _formatEsriResult: function(result) {
+    var extent = result.extent,
+      geometry = result.feature.geometry;
+
+    return {
+      bounds: [
+        [extent.ymin, extent.xmin],
+        [extent.ymax, extent.xmax]
+      ],
+      latLng: [geometry.y, geometry.x],
+      name: result.name
+    };
+  },
+  /**
+   *
+   */
+  _formatNominatimResult: function(result) {
+    var bbox = result.boundingbox;
+
+    return {
+      bounds: [
+        [bbox[0], bbox[3]],
+        [bbox[1], bbox[2]]
+      ],
+      latLng: [result.lat, result.lon],
+      name: result.display_name
+    };
+  },
+  /**
+   * Performs a geocode operation aagainst the Esri geocode service.
+   * @param {String} value
+   * @param {Function} callback
+   * @param {Object} options (Optional)
+   */
+  esri: function(value, callback, options) {
+    var me = this,
+      defaults = {
+        bbox: options && options.bbox ? options.bbox : null,
+        //distance: Math.min(Math.max(center.distanceTo(ne), 2000), 50000),
+        f: 'json',
+        location: options && options.center ? options.center.lat + ',' + options.center.lng : null,
+        maxLocations: 5,
+        outFields: 'Subregion, Region, PlaceName, Match_addr, Country, Addr_type, City',
+        text: value
+      };
+
+    options = options ? L.extend(defaults, options) : defaults;
+
+    reqwest({
+      error: function() {
+        callback({
+          message: 'The location search failed. Please check your network connection.',
+          success: false
+        });
+      },
+      success: function(response) {
+        var obj = {};
+
+        if (response) {
+          var results = [];
+
+          for (var i = 0; i < response.locations.length; i++) {
+            results.push(me._formatEsriResult(response.locations[i]));
+          }
+
+          obj.results = results;
+          obj.success = true;
+        } else {
+          obj.message = 'The response from the Esri service was invalid. Please try again.';
+          obj.success = false;
+        }
+
+        callback(obj);
+      },
+      type: 'jsonp',
+      url: util.buildUrl('https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/find', options)
+    });
+  },
+  /**
+   * Performs a geocode operation against the MapQuest commercial geocode service.
    * @param {String} value
    * @param {Function} callback
    */
@@ -95,9 +179,13 @@ module.exports = ({
     });
   },
   /**
-   *
+   * Performs a geocode operation against the Nominatim geocode service provided by MapQuest.
+   * @param {String} value
+   * @param {Function} callback
    */
   nominatim: function(value, callback) {
+    var me = this;
+
     reqwest({
       error: function() {
         callback({
@@ -110,7 +198,13 @@ module.exports = ({
         var obj = {};
 
         if (response) {
-          obj.results = response;
+          var results = [];
+
+          for (var i = 0; i < response.length; i++) {
+            results.push(me._formatNominatimResult(response[i]));
+          }
+
+          obj.results = results;
           obj.success = true;
         } else {
           obj.message = 'The response from the Nominatim service was invalid. Please try again.';
