@@ -747,7 +747,6 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   position: absolute;
   width: 17px;
 }
-
-.leaflet-maki-icon div {
-  height: 100%;
+.leaflet-marker-icon {
+  background-size: 100%;
 }

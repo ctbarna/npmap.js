@@ -5,16 +5,15 @@
 var mustache = require('mustache');
 
 var MakiIcon = L.Icon.extend({
-  //
+  // Default options.
   options: {
-    className: 'leaflet-maki-icon',
-    color: '000000',
+    color: '#000000',
     name: null,
     size: 'medium'
   },
-  //
+  // Statics.
   statics: {
-    HTML_TEMPLATE: '<div style="background-image:url(https://a.tiles.mapbox.com/v3/marker/pin-{{size}}{{name}}+{{color}}{{retina}}.png);"></div>'
+    CSS_TEMPLATE: 'url(https://a.tiles.mapbox.com/v3/marker/pin-{{size}}{{name}}+{{color}}{{retina}}.png)'
   },
   /**
    *
@@ -23,16 +22,15 @@ var MakiIcon = L.Icon.extend({
     var div = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div'),
       options = this.options;
 
-    options.html = mustache.render(MakiIcon.HTML_TEMPLATE, {
-      color: '000000',
-      name: null,
-      //retina: L.Browser.retina ? '@2x' : '',
-      retina: '',
+    options.className = null;
+    options.html = null;
+    this._setIconStyles(div, 'icon');
+    div.style.backgroundImage = mustache.render(MakiIcon.CSS_TEMPLATE, {
+      color: options.color.replace('#', ''),
+      name: options.name ? '-' + options.name : null,
+      retina: L.Browser.retina ? '@2x' : '',
       size: options.size.slice(0, 1)
     });
-
-    div.innerHTML = options.html;
-    this._setIconStyles(div, 'icon');
     return div;
   },
   /**
