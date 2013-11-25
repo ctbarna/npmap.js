@@ -38,7 +38,8 @@ module.exports = {
         layer.on('click', function(e) {
           var count = 0,
             properties = feature.properties,
-            target = e.target;
+            target = e.target,
+            html;
 
           if (!popup) {
             var containers = util.getChildElementsByClassName(target._map.getContainer(), 'leaflet-top');
@@ -56,15 +57,18 @@ module.exports = {
             lastTarget = null;
           }
 
-          for (var prop in properties) {
-            count++;
-            break;
-          }
+          html = util.dataToHtml(config, properties);
 
-          if (count) {
-            popup.setContent(util.dataToHtml(config, properties));
-            target.bindPopup(popup).openPopup();
-            lastTarget = target;
+          if (html) {
+            if (feature.geometry.type === 'Point') {
+              target.bindPopup(popup).openPopup();
+              lastTarget = target;
+            } else {
+              popup.setContent(html).setLatLng(e.latlng.wrap()).openOn(target._map);
+            }
+
+            popup.setContent(html);
+
           }
         });
       };
