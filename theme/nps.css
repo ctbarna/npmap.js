@@ -347,14 +347,16 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   .leaflet-popup-content p {
     margin: 10px 0 18px 0;
   }
+  .leaflet-popup-content .layer {
+    margin-bottom: 10px;
+  }
+  .leaflet-popup-content .layer:last-child {
+    margin-bottom: 0;
+  }
   .leaflet-popup-content .title {
     font-size: 13px;
     font-weight: bold;
     margin-bottom: 8px;
-    margin-top: 10px;
-  }
-  .leaflet-popup-content .title:first-child {
-    margin-top: 0;
   }
   .leaflet-popup-content .footer {
     border-top: solid 1px #b1b0a7;

@@ -235,6 +235,7 @@ var OverviewControl = L.Control.extend({
       boxZoom: !this.options.zoomLevelFixed,
       crs: map.options.crs,
       doubleClickZoom: !this.options.zoomLevelFixed,
+      homeControl: false,
       scrollWheelZoom: !this.options.zoomLevelFixed,
       smallzoomControl: false,
       touchZoom: !this.options.zoomLevelFixed,
