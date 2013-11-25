@@ -30,6 +30,16 @@
           type: 'geojson',
           url: 'data/gateway_points_of_interest.geojson'
         },{
+          //cluster: true,
+          filter: function(feature) {
+            var properties = feature.properties;
+
+            return properties.ambient_air === '1' || properties.water_chem === '1';
+          },
+          maki: {
+            name: 'star'
+          },
+          popup: '<div class="title">{{lake}}</div><p>This lake is {{^ambient_air}}not {{/ambient_air}} an ambient air location. It is {{^water_chem}}not {{/water_chem}} a water chemistry location.</p>',
           type: 'geojson',
           url: 'https://raw.github.com/nationalparkservice/data/master/projects/air_resources_division/pnw_mapper/studies.geojson.jsonp?callback=callback'
         }],

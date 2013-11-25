@@ -69,13 +69,30 @@ module.exports = {
       };
     }
 
-    if (typeof config.pointToLayer !== 'function') {
-      config.pointToLayer = function(feature, latLng) {
-        return L.marker(latLng);
-      };
-    }
+    config.pointToLayer = function(feature, latLng) {
+      if (config.maki) {
+        var maki;
+
+        switch (typeof config.maki) {
+        case 'function':
+          maki = config.maki(feature.properties);
+          break;
+        case 'string':
+          // TODO: Support mustache templates.
+          maki = config.maki;
+          break;
+        default:
+          maki = config.maki;
+        }
+
+        config.icon = L.npmap.icon.maki(maki);
+      }
+
+      return L.marker(latLng, config);
+    };
 
     if (typeof config.style === 'string') {
+      // TODO: Check to see if it is a mustache template. If so, parse it.
       var color = colorPresets[config.style];
 
       config.style = function() {
