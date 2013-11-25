@@ -21,6 +21,10 @@
     <div id="map"></div>
     <script>
       var NPMap = {
+        center: {
+          lat: 45.3058,
+          lng: -116.7187
+        },
         div: 'map',
         overlays: [{
           type: 'geojson',
@@ -28,7 +32,8 @@
         },{
           type: 'geojson',
           url: 'https://raw.github.com/nationalparkservice/data/master/projects/air_resources_division/pnw_mapper/studies.geojson.jsonp?callback=callback'
-        }]
+        }],
+        zoom: 6
       };
 
       (function() {

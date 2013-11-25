@@ -14,6 +14,9 @@ L.npmap = module.exports = {
     smallzoom: require('./src/control/smallzoom'),
     switcher: require('./src/control/switcher')
   },
+  icon: {
+    maki: require('./src/icon/maki')
+  },
   layer: {
     arcgisserver: require('./src/layer/arcgisserver'),
     geojson: require('./src/layer/geojson'),

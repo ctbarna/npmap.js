@@ -347,51 +347,56 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   .leaflet-popup-content p {
     margin: 10px 0 18px 0;
   }
-.leaflet-popup-content .title {
-  font-size: 13px;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-.leaflet-popup-content .footer {
-  border-top: solid 1px #b1b0a7;
-  margin-bottom: 2px;
-  margin-top: 13px;
-  padding-top: 17px;
-}
-.leaflet-popup-content table {
-  border: none;
-  border-collapse: collapse;
-  margin: 0;
-  width: 100%;
-}
-.leaflet-popup-content tr {
-  border-bottom: 1px solid  #e1dfd7;
-  vertical-align: middle;
-}
-.leaflet-popup-content tr.hoverable {
-  cursor: pointer;
-}
-.leaflet-popup-content tr.hoverable:hover {
-  background-color: #e1dfd7;
-}
-.leaflet-popup-content tr:last-child {
-  border-bottom: none;
-}
-.leaflet-popup-content td, .leaflet-popup-content th {
-  border: none;
-  padding-bottom: 7px;
-  padding-top: 7px;
-}
-.leaflet-popup-content tr.hoverable td, .leaflet-popup-content tr.hoverable th {
-  padding-left: 5px;
-  padding-right: 5px;
-}
-.leaflet-popup-content th {
-  white-space: nowrap;
-}
+  .leaflet-popup-content .title {
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    margin-top: 10px;
+  }
+  .leaflet-popup-content .title:first-child {
+    margin-top: 0;
+  }
+  .leaflet-popup-content .footer {
+    border-top: solid 1px #b1b0a7;
+    margin-bottom: 2px;
+    margin-top: 13px;
+    padding-top: 17px;
+  }
+  .leaflet-popup-content table {
+    border: none;
+    border-collapse: collapse;
+    margin: 0;
+    width: 100%;
+  }
+  .leaflet-popup-content tr {
+    border-bottom: 1px solid  #e1dfd7;
+    vertical-align: middle;
+  }
+  .leaflet-popup-content tr.hoverable {
+    cursor: pointer;
+  }
+  .leaflet-popup-content tr.hoverable:hover {
+    background-color: #e1dfd7;
+  }
+  .leaflet-popup-content tr:last-child {
+    border-bottom: none;
+  }
+  .leaflet-popup-content td, .leaflet-popup-content th {
+    border: none;
+    padding-bottom: 7px;
+    padding-top: 7px;
+  }
+  .leaflet-popup-content tr.hoverable td, .leaflet-popup-content tr.hoverable th {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+  .leaflet-popup-content th {
+    white-space: nowrap;
+  }
 .leaflet-popup-scrolled {
   border-bottom: none;
   border-top: none;
+  margin-right: 5px;
   padding-right: 5px;
 }
 /* Zoombox */
@@ -739,4 +744,8 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   margin-top: 8px;
   position: absolute;
   width: 17px;
+}
+
+.leaflet-maki-icon div {
+  height: 100%;
 }

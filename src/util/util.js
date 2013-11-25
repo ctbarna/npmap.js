@@ -8,9 +8,14 @@ var json3 = require('json3'),
 
 module.exports = {
   /**
-   *
+   * Builds an HTML attribute table.
+   * @param {String} name
+   * @param {Object} data
+   * @return {String}
    */
-  _buildAttributeTable: function(div, name, data) {
+  _buildAttributeTable: function(name, data) {
+    var div = L.DomUtil.create('div', 'layer');
+
     if (!L.Util.isArray(data)) {
       data = [data];
     }
@@ -22,7 +27,6 @@ module.exports = {
         tableResultsBody = L.DomUtil.create('tbody', null);
 
       divTitle.setAttribute('class', 'title');
-      divTitle.setAttribute('style', 'margin-top:10px;');
       divTitle.textContent = name;
 
       for (var fieldName in dataLayer) {
@@ -30,6 +34,7 @@ module.exports = {
           tableField = L.DomUtil.create('td', null),
           tableRow = L.DomUtil.create('tr', null);
 
+        tableField.style.paddingRight = '10px';
         tableField.textContent = fieldName;
         tableRow.appendChild(tableField);
         tableData.textContent = dataLayer[fieldName];
@@ -42,8 +47,20 @@ module.exports = {
       div.appendChild(tableResults);
     }
 
-    return div;
+    return this.getOuterHtml(div);
   },
+  /**
+   *
+   */
+  _checkDisplay: function(node, changed) {
+    if (node.style && node.style.display === 'none') {
+      changed.push(node);
+      node.style.display = 'block';
+    }
+  },
+  /**
+   *
+   */
   _lazyLoader: function(i,j){function k(a){var a=a.toLowerCase(),b=a.indexOf("js"),a=a.indexOf("css");return-1==b&&-1==a?!1:b>a?"js":"css"}function m(a){var b=document.createElement("link");b.href=a;b.rel="stylesheet";b.type="text/css";b.onload=c;b.onreadystatechange=function(){("loaded"==this.readyState||"complete"==this.readyState)&&c()};document.getElementsByTagName("head")[0].appendChild(b)}function f(a){try{document.styleSheets[a].cssRules?c():document.styleSheets[a].rules&&document.styleSheets[a].rules.length?c():setTimeout(function(){f(a)},250)}catch(b){setTimeout(function(){f(a)},250)}}function c(){g--;0==g&&j&&j()}for(var g=0,d,l=document.styleSheets.length-1,h=0;h<i.length;h++)if(g++,d=i[h],"css"==k(d)&&(m(d),l++,!window.opera&&-1==navigator.userAgent.indexOf("MSIE")&&f(l)),"js"==k(d)){var e=document.createElement("script");e.type="text/javascript";e.src=d;e.onload=c;document.getElementsByTagName("head")[0].appendChild(e)}},
   /**
    *
@@ -96,11 +113,14 @@ module.exports = {
     return returnArray.join('');
   },
   /**
-   *
+   * Converts data to HTML for the popup or tooltip control.
+   * @param {Object} config
+   * @param {Object} data
+   * @param {String} type (Optional)
+   * @return {String}
    */
   dataToHtml: function(config, data, type) {
-    var div = L.DomUtil.create('div', 'layer'),
-      html;
+    var html;
 
     type = type || 'popup';
 
@@ -112,14 +132,13 @@ module.exports = {
         html = mustache.render(config[type], data);
       }
     } else if (type === 'popup') {
-      // TODO: Shouldn't NPMap.js move the layer name config to layer._name? Also... hoverable needs to be cleaner.
+      // TODO: Shouldn't NPMap.js move the layer name config to layer._name?
       var name = config.name || 'Layer';
 
-      html = this.getOuterHtml(this._buildAttributeTable(div, name, data));
+      html = this._buildAttributeTable(name, data);
     }
 
-    div.innerHTML = html;
-    return div;
+    return html;
   },
   /**
    *
@@ -249,12 +268,6 @@ module.exports = {
     for (var lx = 0, ly = 0; el !== null; lx += el.offsetLeft, ly += el.offsetTop, el = el.offsetParent);
 
     return {left: lx, top: ly};
-  },
-  _checkDisplay: function(node, changed) {
-    if (node.style && node.style.display === 'none') {
-      changed.push(node);
-      node.style.display = 'block';
-    }
   },
   /**
    * Gets the outer dimensions, in pixels, of an HTML element.

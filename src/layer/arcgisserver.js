@@ -16,7 +16,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
   },
   _dataToHtml: function(data) {
     // TODO: Also need to display the name of the layer, if defined.
-    return  util.getOuterHtml(util._buildAttributeTable(L.DomUtil.create('div', 'layer'), data.layerName, data.attributes));
+    return  util._buildAttributeTable(data.layerName, data.attributes);
   },
   /**
    * Handles a  click operation for this layer.
@@ -24,6 +24,9 @@ var ArcGisServerLayer = L.TileLayer.extend({
    * @param {Object} config
    * @param {Function} callback
    */
+
+//layer._handleClick(latLng, layer, function(l, data) {
+
   _handleClick: function(latLng, layer, callback) {
     var me = this;
 
@@ -57,6 +60,8 @@ var ArcGisServerLayer = L.TileLayer.extend({
           }
 
           callback(layer, html);
+        } else {
+          callback(layer, null);
         }
       } else {
         callback(layer, null);

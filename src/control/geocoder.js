@@ -1,8 +1,5 @@
 /* global L */
 
-// TODO: Add OSM attribution (if using Nominatim).
-
-
 'use strict';
 
 var geocode = require('../util/geocode'),
@@ -12,7 +9,7 @@ var geocode = require('../util/geocode'),
 var GeocoderControl = L.Control.extend({
   _attribution: {
     esri: 'Geocoding by Esri',
-    nominatim: 'Nominatim (&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors)'
+    nominatim: 'Geocoding by Nominatim (&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors)'
   },
   _oldValue: null,
   options: {

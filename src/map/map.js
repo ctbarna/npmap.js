@@ -4,11 +4,11 @@
 
 var baselayerPresets = require('../preset/baselayers.json'),
   colorPresets = require('../preset/colors.json'),
-  iconPresets = require('../preset/icons.json'),
   overlayPresets = require('../preset/overlays.json'),
   util = require('../util/util');
 
 var Map = L.Map.extend({
+  //
   options: {
     zoomControl: false
   },
@@ -64,6 +64,7 @@ var Map = L.Map.extend({
       me.setView(config.center, config.zoom);
     }
 
+    me._setupDefaults();
     me._setupPopup();
     me._setupTooltip();
     me.on('autopanstart', function() {
@@ -105,16 +106,32 @@ var Map = L.Map.extend({
   /**
    *
    */
+  _setupDefaults: function() {
+    var style = colorPresets.gold;
+
+    L.CircleMarker.mergeOptions(style);
+    L.Path.mergeOptions(style);
+    L.Polygon.mergeOptions(style);
+    L.Polyline.mergeOptions(style);
+    L.Popup.mergeOptions({
+      autoPanPaddingBottomRight: [20, 20],
+      autoPanPaddingTopLeft: [20, 20],
+      maxHeight: 300,
+      maxWidth: 221,
+      minWidth: 221,
+      offset: [1, -3]
+    });
+  },
+  /**
+   *
+   */
   _setupPopup: function() {
-    var defaultPadding = 20,
+    var containers = util.getChildElementsByClassName(this.getContainer(), 'leaflet-top'),
+      leftWidth = util.getOuterDimensions(containers[0]).width,
+      rightHeight = util.getOuterDimensions(containers[1]).height,
       me = this,
-      popup = me['_npmap-popup'] = L.popup({
-        autoPanPaddingBottomRight: [defaultPadding, defaultPadding],
-        autoPanPaddingTopLeft: [55, defaultPadding],
-        maxHeight: 300,
-        maxWidth: 221,
-        minWidth: 221,
-        offset: [0, -2]
+      popup = L.popup({
+        autoPanPaddingTopLeft: [leftWidth + 20, rightHeight + 20]
       });
 
     me.on('click', function(e) {
@@ -321,17 +338,6 @@ var Map = L.Map.extend({
     return config;
   }
 });
-
-(function() {
-  var style = colorPresets.gold;
-  L.CircleMarker.mergeOptions(style);
-  L.Marker.mergeOptions({
-    icon: L.icon(iconPresets.maki.marker['24'])
-  });
-  L.Path.mergeOptions(style);
-  L.Polygon.mergeOptions(style);
-  L.Polyline.mergeOptions(style);
-})();
 
 module.exports = function(config) {
   return new Map(config);

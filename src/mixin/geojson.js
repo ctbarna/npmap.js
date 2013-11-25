@@ -3,6 +3,7 @@
 'use strict';
 
 var colorPresets = require('../preset/colors.json'),
+  //iconPresets = require('../preset/icons.json'),
   topojson = require('../util/topojson'),
   util = require('../util/util');
 
@@ -29,32 +30,49 @@ module.exports = {
    * @return {Object} config
    */
   _toLeaflet: function(config) {
-    // TODO: This isn't really working. Clicks are turned off, but mouseover still changes to pointer. GitHub issue: https://github.com/Leaflet/Leaflet/pull/1107.
     if (typeof config.clickable === 'undefined' || config.clickable === true) {
+      var lastTarget,
+        popup;
+
       config.onEachFeature = function(feature, layer) {
-        layer.on({
-          click: function(e) {
-            var count = 0,
-                properties = e.target.feature.properties;
+        layer.on('click', function(e) {
+          var count = 0,
+            properties = feature.properties,
+            target = e.target;
 
-            for (var prop in properties) {
-              count++;
-              break;
-            }
+          if (!popup) {
+            var containers = util.getChildElementsByClassName(target._map.getContainer(), 'leaflet-top');
 
-            if (count) {
-              var map = e.target._map;
+            popup = L.popup({
+              autoPanPaddingTopLeft: [
+                util.getOuterDimensions(containers[0]).width + 20,
+                util.getOuterDimensions(containers[1]).height + 20
+              ]
+            });
+          }
 
-              map['_npmap-popup'].setContent(util.dataToHtml(config, properties)).setLatLng(e.latlng.wrap()).openOn(map);
-            }
+          if (lastTarget) {
+            lastTarget.closePopup().unbindPopup();
+            lastTarget = null;
+          }
+
+          for (var prop in properties) {
+            count++;
+            break;
+          }
+
+          if (count) {
+            popup.setContent(util.dataToHtml(config, properties));
+            target.bindPopup(popup).openPopup();
+            lastTarget = target;
           }
         });
       };
     }
 
     if (typeof config.pointToLayer !== 'function') {
-      config.pointToLayer = function(feature, latlng) {
-        return L.circleMarker(latlng);
+      config.pointToLayer = function(feature, latLng) {
+        return L.marker(latLng);
       };
     }
 
@@ -69,7 +87,7 @@ module.exports = {
     return config;
   },
   /**
-   * Override L.GeoJSON.addData to support TopoJSON format.
+   * Override L.GeoJSON.addData to add support for TopoJSON data.
    * @param {Object} feature
    */
   addData: function(feature) {
