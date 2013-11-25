@@ -42,13 +42,8 @@ module.exports = {
             html;
 
           if (!popup) {
-            var containers = util.getChildElementsByClassName(target._map.getContainer(), 'leaflet-top');
-
             popup = L.popup({
-              autoPanPaddingTopLeft: [
-                util.getOuterDimensions(containers[0]).width + 20,
-                util.getOuterDimensions(containers[1]).height + 20
-              ]
+              autoPanPaddingTopLeft: util._getAutoPanPaddingTopLeft(target._map.getContainer())
             });
           }
 

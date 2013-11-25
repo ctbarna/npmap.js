@@ -8,12 +8,13 @@ var baselayerPresets = require('../preset/baselayers.json'),
   util = require('../util/util');
 
 var Map = L.Map.extend({
-  //
+  // Default options.
   options: {
     zoomControl: false
   },
   /**
-   *
+   * Initialize the map.
+   * @param {Object} confg (Optional)
    */
   initialize: function(config) {
     var container = L.DomUtil.create('div', 'npmap-container'),
@@ -109,17 +110,19 @@ var Map = L.Map.extend({
     return this;
   },
   /**
-   *
+   * Sets the map cursor.
+   * @param {String}
    */
   _setCursor: function(type) {
     this._container.style.cursor = type;
   },
   /**
-   *
+   * Sets up the defaults.
    */
   _setupDefaults: function() {
     var style = colorPresets.gold;
 
+    L.Circle.mergeOptions(style);
     L.CircleMarker.mergeOptions(style);
     L.Path.mergeOptions(style);
     L.Polygon.mergeOptions(style);
@@ -134,15 +137,12 @@ var Map = L.Map.extend({
     });
   },
   /**
-   *
+   * Sets up the popup.
    */
   _setupPopup: function() {
-    var containers = util.getChildElementsByClassName(this.getContainer(), 'leaflet-top'),
-      leftWidth = util.getOuterDimensions(containers[0]).width,
-      rightHeight = util.getOuterDimensions(containers[1]).height,
-      me = this,
+    var me = this,
       popup = L.popup({
-        autoPanPaddingTopLeft: [leftWidth + 20, rightHeight + 20]
+        autoPanPaddingTopLeft: util._getAutoPanPaddingTopLeft(this.getContainer())
       });
 
     me.on('click', function(e) {
