@@ -39,19 +39,30 @@ var Map = L.Map.extend({
       me.attributionControl._update = function() {
         if (!this._map) { return; }
 
-        var attribs = [];
+        var attribs = [],
+          prefixAndAttribs = [];
 
-        for (var i in this._attributions) {
-          if (this._attributions[i]) {
-            attribs.push(i);
+        for (var attribution in this._attributions) {
+          var i = -1;
+
+          if (attribution) {
+            for (var j = 0; j < attribs.length; j++) {
+              if (attribs[j] === attribution) {
+                i = j;
+                break;
+              }
+            }
+
+            if (i === -1) {
+              attribs.push(attribution);
+            }
           }
         }
-
-        var prefixAndAttribs = [];
 
         if (this.options.prefix) {
           prefixAndAttribs.push(this.options.prefix);
         }
+
         if (attribs.length) {
           prefixAndAttribs.push(attribs.join(' | '));
         }
