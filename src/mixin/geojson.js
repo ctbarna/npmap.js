@@ -3,7 +3,6 @@
 'use strict';
 
 var colorPresets = require('../preset/colors.json'),
-  //iconPresets = require('../preset/icons.json'),
   topojson = require('../util/topojson'),
   util = require('../util/util');
 
