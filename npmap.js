@@ -30,7 +30,6 @@ L.npmap = module.exports = {
   preset: {
     baselayers: require('./src/preset/baselayers.json'),
     colors: require('./src/preset/colors.json'),
-    icons: require('./src/preset/icons.json'),
     layers: require('./src/preset/overlays.json')
   },
   util: {
