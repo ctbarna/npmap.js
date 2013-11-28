@@ -9,58 +9,46 @@ var GeoJsonLayer = L.GeoJSON.extend({
   includes: [
     require('../mixin/geojson')
   ],
+  /**
+   *
+   */
+  _create: function(config, data) {
+    L.GeoJSON.prototype.initialize.call(this, data, config);
+    this._addAttribution();
+    return this;
+  },
   initialize: function(config) {
-    this._config = this._toLeaflet(config);
+    config = this._toLeaflet(config);
 
     if (typeof config.data === 'object') {
-      L.GeoJSON.prototype.initialize.call(this, config.data, config);
-      this._addAttribution();
-      return this;
+      this._create(config, config.data);
     } else {
-      var me = this;
+      var me = this,
+        url = config.url;
 
-      util.strict(config.url, 'string');
+      util.strict(url, 'string');
 
-      if (config.url.indexOf('http://') === -1 && config.url.indexOf('https://') === -1) {
+      if (util.isLocalUrl(url)) {
         reqwest({
-          error: function(error) {
-            console.log('The GeoJSON layer cannot be loaded. Error: ' + error + '.');
+          error: function() {
+            console.log('There was an error loading the GeoJSON.');
           },
           success: function(response) {
-            L.GeoJSON.prototype.initialize.call(me, response, me._config);
-            me._addAttribution();
-            return me;
+            me._create(config, response);
           },
           type: 'json',
-          url: config.url
+          url: url
         });
       } else {
         reqwest({
-          crossOrigin: true,
           error: function() {
-            console.log('The GeoJSON layer cannot be loaded via CORS. Will now try JSONP.');
-
-            try {
-              reqwest({
-                success: function(response) {
-                  L.GeoJSON.prototype.initialize.call(me, response, me._config);
-                  me._addAttribution();
-                  return me;
-                },
-                type: 'jsonp',
-                url: config.url
-              });
-            } catch (exception) {
-              console.log('The GeoJSON layer cannot be loaded via JSONP. Perhaps you need to add a callback parameter to the URL config property?');
-            }
+            console.log('There was an error loading the GeoJSON.');
           },
           success: function(response) {
-            L.GeoJSON.prototype.initialize.call(me, response, me._config);
-            me._addAttribution();
-            return me;
+            me._create(config, response);
           },
-          type: 'json',
-          url: config.url
+          type: 'jsonp',
+          url: 'http://npmap-json2jsonp.herokuapp.com/?callback=?&url=' + url
         });
       }
     }

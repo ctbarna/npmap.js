@@ -10,8 +10,8 @@ var KmlLayer = L.GeoJSON.extend({
   includes: [
     require('../mixin/geojson')
   ],
-  _create: function(config, response) {
-    L.GeoJSON.prototype.initialize.call(this, togeojson.kml(new DOMParser().parseFromString(response, 'text/xml')), config);
+  _create: function(config, data) {
+    L.GeoJSON.prototype.initialize.call(this, togeojson.kml(new DOMParser().parseFromString(data, 'text/xml')), config);
     this._addAttribution();
     return this;
   },

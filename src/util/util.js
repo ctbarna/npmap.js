@@ -381,7 +381,9 @@ module.exports = {
     }
   },
   /**
-   *
+   * Checks to see if a url is local or remote.
+   * @param {String} url
+   * @return {Boolean}
    */
   isLocalUrl: function(url) {
     return !(/^(?:[a-z]+:)?\/\//i.test(url));
