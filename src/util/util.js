@@ -383,6 +383,12 @@ module.exports = {
   /**
    *
    */
+  isLocalUrl: function(url) {
+    return !(/^(?:[a-z]+:)?\/\//i.test(url));
+  },
+  /**
+   *
+   */
   putCursorAtEndOfInput: function(input) {
     if (input.setSelectionRange) {
       var length = input.value.length * 2;

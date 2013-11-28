@@ -2,8 +2,7 @@
 
 'use strict';
 
-var
-  //reqwest = require('reqwest'),
+var reqwest = require('reqwest'),
   togeojson = require('togeojson'),
   util = require('../util/util');
 
@@ -11,41 +10,41 @@ var KmlLayer = L.GeoJSON.extend({
   includes: [
     require('../mixin/geojson')
   ],
-  _stringToDoc: function(str) {
-    return new DOMParser().parseFromString(str, 'text/xml');
+  _create: function(config, response) {
+    L.GeoJSON.prototype.initialize.call(this, togeojson.kml(new DOMParser().parseFromString(response, 'text/xml')), config);
+    this._addAttribution();
+    return this;
   },
   initialize: function(config) {
     var me = this;
 
     config = this._toLeaflet(config);
 
-    // TODO: Test this.
     if (typeof config.data === 'string') {
-      L.GeoJSON.prototype.initialize.call(this, togeojson.kml(me._stringToDoc(config.data)), config);
-      this._addAttribution();
+      me._create(config, config.data);
       return this;
     } else {
-      util.strict(config.url, 'string');
+      var url = config.url;
 
-      /*
-      reqwest({
-        success: function(response) {
-          console.log(response);
-        },
-        type: 'xml',
-        url: config.url
-      });
-      */
+      util.strict(url, 'string');
 
-      var request = new XMLHttpRequest();
+      if (util.isLocalUrl(url)) {
+        var request = new XMLHttpRequest();
 
-      request.onload = function() {
-        L.GeoJSON.prototype.initialize.call(me, togeojson.kml(me._stringToDoc(this.responseText)), config);
-        me._addAttribution();
-        return me;
-      };
-      request.open('get', config.url, true);
-      request.send();
+        request.onload = function() {
+          me._create(config, this.responseText);
+        };
+        request.open('get', url, true);
+        request.send();
+      } else {
+        reqwest({
+          success: function(response) {
+            me._create(config, response);
+          },
+          type: 'jsonp',
+          url: 'http://npmap-xml2jsonp.herokuapp.com/?callback=?&url=' + url
+        });
+      }
     }
   }
 });

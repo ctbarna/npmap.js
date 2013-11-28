@@ -23,8 +23,13 @@
       var NPMap = {
         div: 'map',
         overlays: [{
+          popup: '<div class="title">{{alphacode}}</div>',
           type: 'kml',
-          url: 'http://localhost:1984/examples/data/park_points.kml'
+          url: 'data/park_points.kml'
+        },{
+          popup: '<div class="title">{{{name}}}</div>',
+          type: 'kml',
+          url: 'http://www.nps.gov/npmap/support/library/examples/data/dc.kml'
         }]
       };
 
