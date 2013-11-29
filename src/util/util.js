@@ -163,28 +163,28 @@ module.exports = {
    * @return {String}
    */
   dataToHtml: function(config, data, type) {
-    var count = 0,
-      html;
+    var html;
 
-    for (var prop in data) {
-      count++;
-      break;
-    }
+    type = type || 'popup';
 
-    if (count) {
-      type = type || 'popup';
+    // TODO: Shouldn't NPMap.js move the layer popup config to layer._popup?
+    if (config[type]) {
+      if (typeof config[type] === 'function') {
+        html = config[type](data);
+      } else if (typeof config[type] === 'string') {
+        html = this.handlebars(config[type], data);
+      }
+    } else if (type === 'popup') {
+      // TODO: Shouldn't NPMap.js move the layer name config to layer._name?
+      var count = 0,
+        name = config.name || 'Layer';
 
-      // TODO: Shouldn't NPMap.js move the layer popup config to layer._popup?
-      if (config[type]) {
-        if (typeof config[type] === 'function') {
-          html = config[type](data);
-        } else if (typeof config[type] === 'string') {
-          html = this.handlebars(config[type], data);
-        }
-      } else if (type === 'popup') {
-        // TODO: Shouldn't NPMap.js move the layer name config to layer._name?
-        var name = config.name || 'Layer';
+      for (var prop in data) {
+        count++;
+        break;
+      }
 
+      if (count) {
         html = this._buildAttributeTable(name, data);
       }
     }
