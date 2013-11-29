@@ -2,13 +2,12 @@
 
 'use strict';
 
-var baselayerPresets = require('../preset/baselayers.json'),
-  colorPresets = require('../preset/colors.json'),
-  overlayPresets = require('../preset/overlays.json'),
-  util = require('../util/util');
+var baselayerPresets = require('./preset/baselayers.json'),
+  colorPresets = require('./preset/colors.json'),
+  overlayPresets = require('./preset/overlays.json'),
+  util = require('./util/util');
 
 var Map = L.Map.extend({
-  // Default options.
   options: {
     zoomControl: false
   },
@@ -212,7 +211,6 @@ var Map = L.Map.extend({
           } else {
             if (queryable.length === completed) {
               clearInterval(interval);
-              me._setCursor(lastCursor);
               me
                 .off('dragstart', mapChanged)
                 .off('movestart', mapChanged)
@@ -236,6 +234,8 @@ var Map = L.Map.extend({
 
                 popup.setContent(html).setLatLng(latLng).openOn(me);
               }
+
+              me._setCursor(lastCursor);
             }
           }
         }, 100);
@@ -246,16 +246,20 @@ var Map = L.Map.extend({
    *
    */
   _setupTooltip: function() {
-    var me = this;
+    var me = this,
+      tooltip = L.npmap.tooltip({
+        html: 'Hello World',
+        map: me,
+        padding: '4px 8px'
+      });
 
-    me.on('click', function() {
-      // TODO: Hide tooltip
-    });
     me.on('mousemove', function(e) {
-      var latLng = e.latlng.wrap(),
-        results = [];
+      var hasData = false,
+        html = '',
+        latLng = e.latlng.wrap();
 
       me._setCursor('default');
+      tooltip.hide();
 
       for (var layerId in me._layers) {
         var layer = me._layers[layerId];
@@ -263,14 +267,26 @@ var Map = L.Map.extend({
         if (typeof layer._handleMousemove === 'function' && layer._hasInteractivity !== false) {
           layer._handleMousemove(latLng, layer, function(l, data) {
             if (data) {
-              results.push(data);
+              if (!hasData) {
+                hasData = true;
+              }
+
+              if (typeof layer.options.tooltip === 'function') {
+                html += layer.options.tooltip(data);
+              } else if (typeof layer.options.tooltip === 'string') {
+                html += util.handlebars(layer.options.tooltip, data);
+              }
             }
           });
         }
       }
 
-      if (results.length) {
+      if (hasData) {
         me._setCursor('pointer');
+      }
+
+      if (html.length) {
+        tooltip.show(e.layerPoint, html);
       }
     });
   },

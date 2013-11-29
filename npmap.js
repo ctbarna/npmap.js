@@ -26,12 +26,13 @@ L.npmap = module.exports = {
     cartodb: require('./src/layer/cartodb'),
     tiled: require('./src/layer/tiled')
   },
-  map: require('./src/map/map'),
+  map: require('./src/map'),
   preset: {
     baselayers: require('./src/preset/baselayers.json'),
     colors: require('./src/preset/colors.json'),
     layers: require('./src/preset/overlays.json')
   },
+  tooltip: require('./src/tooltip'),
   util: {
     _: require('./src/util/util'),
     topojson: require('./src/util/topojson')

@@ -26,8 +26,6 @@ describe('L.npmap.map', function() {
         div: element
       });
 
-      
-
       expect(map.options.div).to.be.ok();
     });
   });

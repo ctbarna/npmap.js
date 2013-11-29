@@ -6,7 +6,7 @@
 
 Extends [Leaflet](http://leafletjs.com) to include functionality and a look-and-feel built specifically for the National Park Service.
 
-This is beta software. Feel free to play around, but keep this in mind (and please help test and [report issues](https://github.com/nationalparkservice/npmap.js/issues)).
+This is beta software. Feel free to play around, but keep this in mind -- and please help test and [report issues](https://github.com/nationalparkservice/npmap.js/issues).
 
 NPMap.js will eventually take the place of the [NPMap JavaScript library](https://github.com/nationalparkservice/npmap).
 
@@ -23,11 +23,12 @@ NPMap.js is versioned using [semantic versioining](http://semver.org). This mean
 - Bug fixes and miscellaneous changes bumps the patch
 
 ## Changelog
+
 - [v1.1.0](https://github.com/nationalparkservice/npmap.js/issues?milestone=1&page=1&state=closed): Under Development
 
 ## Hosted Version
 
-NPMap.js is hosted on the National Park Service's content delivery network. Feel free to load the library directly from there. You can access hosted versions at http://www.nps.gov/npmap/dev/tools/npmap.js/major.minor.patch/. You should replace "major.minor.patch" with the number of the version you want to access.
+NPMap.js is hosted on the National Park Service's content delivery network. Feel free to load the library directly from there. You can access hosted versions at http://www.nps.gov/npmap/npmap.js/major.minor.patch/. You should replace "major.minor.patch" with the number of the version you want to access.
 
 ## Building
 
@@ -40,7 +41,7 @@ You must have [node.js](http://nodejs.org/) installed to run the build. After in
 
 The [browserify](https://github.com/substack/node-browserify) package is used to combine dependencies. It is installed locally, along with other required packages, when you run `npm install`. Running `make` builds NPMap.js, using [UglifyJS](https://github.com/mishoo/UglifyJS) to create minified versions in `dist/`.
 
-If you are interested in extending or helping with the development of NPMap.js, you may want to use the watcher tool, [nodemon](https://github.com/remy/nodemon). It watches your code and runs a command when it detects a change.
+If you are interested in extending or helping with the development of NPMap.js, you may want to use the watcher tool, [nodemon](https://github.com/remy/nodemon). It watches your code and rebuilds the library when it detects a change.
 
 Nodemon is not part of the package file, so if you'd like to use it, you will need to install it with npm:
 
@@ -62,13 +63,15 @@ Take a look at [API.md](https://github.com/nationalparkservice/npmap.js/blob/mas
 
 Targeted examples reside in the `examples` directory.
 
-Most of the examples have two versions: a version with `-api` at the end of the file name and a version with `-bootstrap` at the end of the file name. This reflects the two different ways NPMap.js can be used:
+Some of the examples have two versions: a version with `-api` at the end of the file name and a version with `-bootstrap` at the end of the file name. This reflects the two different ways NPMap.js can be used:
 
 1. Like "traditional" mapping APIs. This works well if you are familiar with JavaScript *and* have access to include JavaScript and CSS files in the web page your map is going to be included in. These examples use `npmap.js` directly, and utilize the [API](https://github.com/nationalparkservice/npmap.js/blob/master/API.md) to build the map.
 2. Indirectly, through the use of `bootstrap.js`. This allows you to configure your map using the `NPMap` variable. This is the recommended approach for non-technical users or those who don't have access to the web page the map is going to be included in (which is the case if you are using the National Park Service content management system). This is also the approach used by the [NPMap Builder](https://github.com/nationalparkservice/npmap-builder).
 
 ## Support
 
-You can get in touch with the NPMap team by contacting us via Twitter ([@npmap](http://twitter.com/npmap)) or email ([npmap@nps.gov](mailto:npmap@nps.gov)).
+You can get in touch with the NPMap team by contacting us via Twitter ([@npmap](http://twitter.com/npmap)) or email ([npmap@nps.gov](mailto:npmap@nps.gov)). We are happy to help with any questions, and feedback is welcome as well!
+
+## Code Status
 
 [![Build Status](https://travis-ci.org/nationalparkservice/npmap.js.png)](https://travis-ci.org/nationalparkservice/npmap.js)
