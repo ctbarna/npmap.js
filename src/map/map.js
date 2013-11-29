@@ -146,14 +146,14 @@ var Map = L.Map.extend({
    * Sets up the popup.
    */
   _setupPopup: function() {
-    var me = this,
-      popup = L.popup({
-        autoPanPaddingTopLeft: util._getAutoPanPaddingTopLeft(this.getContainer())
-      });
+    var me = this;
 
     me.on('click', function(e) {
       var changed = false,
         latLng = e.latlng.wrap(),
+        popup = L.popup({
+          autoPanPaddingTopLeft: util._getAutoPanPaddingTopLeft(this.getContainer())
+        }),
         queryable = [],
         layer;
 
