@@ -86,6 +86,8 @@ var Map = L.Map.extend({
     for (var i = 0; i < config.baseLayers.length; i++) {
       var baseLayer = config.baseLayers[i];
 
+      baseLayer.zIndex = 0;
+
       if (baseLayer.visible === true) {
         baseLayer.L = L.npmap.layer[baseLayer.type](baseLayer);
         me.addLayer(baseLayer.L);
@@ -94,15 +96,19 @@ var Map = L.Map.extend({
     }
 
     if (config.overlays.length) {
-      for (var j = 0; j < config.overlays.length; j++) {
-        var layer = config.overlays[j];
+      var zIndex = 1;
 
-        if (layer.visible || typeof layer.visible === 'undefined') {
-          layer.visible = true;
-          layer.L = L.npmap.layer[layer.type](layer);
-          me.addLayer(layer.L);
+      for (var j = 0; j < config.overlays.length; j++) {
+        var overlay = config.overlays[j];
+
+        if (overlay.visible || typeof overlay.visible === 'undefined') {
+          overlay.visible = true;
+          overlay.zIndex = zIndex;
+          overlay.L = L.npmap.layer[overlay.type](overlay);
+          me.addLayer(overlay.L);
+          zIndex++;
         } else {
-          layer.visible = false;
+          overlay.visible = false;
         }
       }
     }
