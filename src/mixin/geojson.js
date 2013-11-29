@@ -8,7 +8,7 @@ var colorPresets = require('../preset/colors.json'),
 
 module.exports = {
   /**
-   * Adds an attribution string for a GeoJSON "layer".
+   * Adds an attribution string for a GeoJSON layer.
    */
   _addAttribution: function() {
     if (this.options.attribution && this._map.attributionControl) {
@@ -16,7 +16,7 @@ module.exports = {
     }
   },
   /**
-   * Removes an attribution string for a GeoJSON "layer".
+   * Removes an attribution string for a GeoJSON layer.
    */
   _removeAttribution: function() {
     if (this.options.attribution && this._map.attributionControl) {
@@ -30,39 +30,30 @@ module.exports = {
    */
   _toLeaflet: function(config) {
     if (typeof config.clickable === 'undefined' || config.clickable === true) {
-      var lastTarget,
-        popup;
+      var lastTarget;
 
       config.onEachFeature = function(feature, layer) {
         layer.on('click', function(e) {
-          var count = 0,
-            properties = feature.properties,
+          var properties = feature.properties,
+            html = util.dataToHtml(config, properties),
             target = e.target,
-            html;
-
-          if (!popup) {
             popup = L.popup({
               autoPanPaddingTopLeft: util._getAutoPanPaddingTopLeft(target._map.getContainer())
             });
-          }
 
           if (lastTarget) {
             lastTarget.closePopup().unbindPopup();
-            lastTarget = null;
+            lastTarget = target;
           }
-
-          html = util.dataToHtml(config, properties);
 
           if (html) {
             if (feature.geometry.type === 'Point') {
+              popup.setContent(html);
               target.bindPopup(popup).openPopup();
               lastTarget = target;
             } else {
               popup.setContent(html).setLatLng(e.latlng.wrap()).openOn(target._map);
             }
-
-            popup.setContent(html);
-
           }
         });
       };
