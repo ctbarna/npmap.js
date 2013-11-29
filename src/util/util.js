@@ -6,7 +6,7 @@ var Handlebars = require('handlebars'),
   json3 = require('json3'),
   reqwest = require('reqwest');
 
-Handlebars.registerHelper('ifCond', function (v1, operator, v2, opts) {
+Handlebars.registerHelper('if', function (v1, operator, v2, opts) {
   var isTrue = false;
 
   switch (operator) {

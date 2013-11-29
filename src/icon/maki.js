@@ -5,13 +5,11 @@
 var util = require('../util/util');
 
 var MakiIcon = L.Icon.extend({
-  // Default options.
   options: {
     color: '#000000',
     name: null,
     size: 'medium'
   },
-  // Statics.
   statics: {
     CSS_TEMPLATE: 'url(https://a.tiles.mapbox.com/v3/marker/pin-{{size}}{{name}}+{{color}}{{retina}}.png)'
   },

@@ -23,9 +23,6 @@ var ArcGisServerLayer = L.TileLayer.extend({
    * @param {Object} config
    * @param {Function} callback
    */
-
-//layer._handleClick(latLng, layer, function(l, data) {
-
   _handleClick: function(latLng, layer, callback) {
     var me = this;
 
