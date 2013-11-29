@@ -26,6 +26,8 @@ describe('L.npmap.map', function() {
         div: element
       });
 
+      
+
       expect(map.options.div).to.be.ok();
     });
   });
@@ -48,7 +50,7 @@ describe('L.npmap.map', function() {
       });
     });
     describe('overviewControl', function() {
-      it('creates a overviewControl when a valid "overviewControl" object is provided', function() {
+      it('creates an overviewControl when a valid "overviewControl" object is provided', function() {
         var map = L.npmap.map({
           div: element,
           overviewControl: {
@@ -58,7 +60,7 @@ describe('L.npmap.map', function() {
 
         expect(map.overviewControl).to.be.ok();
       });
-      it('does not create a overviewControl when option "overviewControl: false" or "overviewControl: undefined"', function() {
+      it('does not create an overviewControl when option "overviewControl: false" or "overviewControl: undefined"', function() {
         var map = L.npmap.map({
           div: element
         });

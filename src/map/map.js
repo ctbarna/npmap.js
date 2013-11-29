@@ -150,10 +150,6 @@ var Map = L.Map.extend({
 
     me.on('click', function(e) {
       var changed = false,
-        latLng = e.latlng.wrap(),
-        popup = L.popup({
-          autoPanPaddingTopLeft: util._getAutoPanPaddingTopLeft(this.getContainer())
-        }),
         queryable = [],
         layer;
 
@@ -176,8 +172,12 @@ var Map = L.Map.extend({
 
       if (queryable.length) {
         var completed = 0,
+          lastCursor = me.getContainer().style.cursor,
+          latLng = e.latlng.wrap(),
           results = [],
           interval;
+
+        me._setCursor('wait');
 
         for (var i = 0; i < queryable.length; i++) {
           layer = queryable[i];
@@ -204,6 +204,7 @@ var Map = L.Map.extend({
         interval = setInterval(function() {
           if (changed) {
             clearInterval(interval);
+            me._setCursor(lastCursor);
             me
               .off('dragstart', mapChanged)
               .off('movestart', mapChanged)
@@ -211,13 +212,17 @@ var Map = L.Map.extend({
           } else {
             if (queryable.length === completed) {
               clearInterval(interval);
+              me._setCursor(lastCursor);
               me
                 .off('dragstart', mapChanged)
                 .off('movestart', mapChanged)
                 .off('zoomstart', mapChanged);
 
               if (results.length) {
-                var html = '';
+                var html = '',
+                  popup = L.popup({
+                    autoPanPaddingTopLeft: util._getAutoPanPaddingTopLeft(me.getContainer())
+                  });
 
                 for (var i = 0; i < results.length; i++) {
                   var result = results[i];
