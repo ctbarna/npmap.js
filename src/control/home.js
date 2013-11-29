@@ -32,6 +32,7 @@ var HomeControl = L.Control.extend({
       options = map.options;
 
     map.setView(options.center, options.zoom);
+    map.closePopup();
   }
 });
 
