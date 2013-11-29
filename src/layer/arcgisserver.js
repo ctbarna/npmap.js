@@ -3,7 +3,6 @@
 'use strict';
 
 var json3 = require('json3'),
-  mustache = require('mustache'),
   reqwest = require('reqwest'),
   util = require('../util/util');
 
@@ -48,7 +47,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
               break;
             case 'string':
               for (i = 0; i < results.length; i++) {
-                html += mustache.render(me.options.popup, results[i]);
+                html += util.handlebars(me.options.popup, results[i]);
               }
 
               break;

@@ -2,9 +2,42 @@
 
 'use strict';
 
-var json3 = require('json3'),
-    mustache = require('mustache'),
-    reqwest = require('reqwest');
+var Handlebars = require('handlebars'),
+  json3 = require('json3'),
+  reqwest = require('reqwest');
+
+Handlebars.registerHelper('ifCond', function (v1, operator, v2, opts) {
+  var isTrue = false;
+
+  switch (operator) {
+  case '===':
+    isTrue = v1 === v2;
+    break;
+  case '!==':
+    isTrue = v1 !== v2;
+    break;
+  case '<':
+    isTrue = v1 < v2;
+    break;
+  case '<=':
+    isTrue = v1 <= v2;
+    break;
+  case '>':
+    isTrue = v1 > v2;
+    break;
+  case '>=':
+    isTrue = v1 >= v2;
+    break;
+  case '||':
+    isTrue = v1 || v2;
+    break;
+  case '&&':
+    isTrue = v1 && v2;
+    break;
+  }
+
+  return isTrue ? opts.fn(this) : opts.inverse(this);
+});
 
 module.exports = {
   /**
@@ -146,7 +179,7 @@ module.exports = {
         if (typeof config[type] === 'function') {
           html = config[type](data);
         } else if (typeof config[type] === 'string') {
-          html = mustache.render(config[type], data);
+          html = this.handlebars(config[type], data);
         }
       } else if (type === 'popup') {
         // TODO: Shouldn't NPMap.js move the layer name config to layer._name?
@@ -387,6 +420,14 @@ module.exports = {
     } else {
       return Object.keys(obj).length;
     }
+  },
+  /**
+   *
+   */
+  handlebars: function(template, data) {
+    template = Handlebars.compile(template);
+
+    return template(data);
   },
   /**
    * Checks to see if a url is local or remote.

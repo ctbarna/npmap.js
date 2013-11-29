@@ -19,9 +19,9 @@
     "url": "http://www.nps.gov/npmap/team/jim-mcandrew.html"
   }],
   "dependencies": {
+    "handlebars": "1.1.2",
     "json3": "3.2.5",
     "leaflet": "0.7.0",
-    "mustache": "0.7.2",
     "reqwest": "0.9.0",
     "togeojson": "0.4.1"
   },

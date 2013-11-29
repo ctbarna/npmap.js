@@ -2,7 +2,7 @@
 
 'use strict';
 
-var mustache = require('mustache');
+var util = require('../util/util');
 
 var MakiIcon = L.Icon.extend({
   // Default options.
@@ -25,7 +25,7 @@ var MakiIcon = L.Icon.extend({
     options.className = null;
     options.html = null;
     this._setIconStyles(div, 'icon');
-    div.style.backgroundImage = mustache.render(MakiIcon.CSS_TEMPLATE, {
+    div.style.backgroundImage = util.handlebars(MakiIcon.CSS_TEMPLATE, {
       color: options.color.replace('#', ''),
       name: options.name ? '-' + options.name : null,
       retina: L.Browser.retina ? '@2x' : '',

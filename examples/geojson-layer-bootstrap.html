@@ -27,28 +27,22 @@
         },
         div: 'map',
         overlays: [{
-          
-          type: 'geojson',
-          url: 'data/gateway_points_of_interest.geojson'
-        },{
-          /*
           filter: function(feature) {
-            var properties = feature.properties;
-
-            return properties.ambient_air === '1' || properties.water_chem === '1';
+            return feature.properties.park === 'Yellowstone';
           },
+          name: 'Yellowstone Gateway POIs',
           maki: {
             name: 'star'
           },
-          popup: '<div class="title">{{lake}}</div><p>This lake is {{^ambient_air}}not {{/ambient_air}} an ambient air location. It is {{^water_chem}}not {{/water_chem}} a water chemistry location.</p>',
+          popup: '<div class="title">{{name}}</div><p>This is {{#ifCond type \'!==\' \'community\'}}not {{/ifCond}}a community.</p>',
           type: 'geojson',
-          url: 'https://raw.github.com/nationalparkservice/data/master/projects/air_resources_division/pnw_mapper/studies.geojson'
+          url: 'data/gateway_points_of_interest.geojson'
         },{
-          */
           maki: {
             color: '#609321',
             name: 'park'
           },
+          name: 'National Parks',
           type: 'geojson',
           url: 'http://www.nps.gov/npmap/support/library/examples/data/national-parks.geojson'
         }],
