@@ -221,9 +221,9 @@ var ArcGisServerLayer = L.TileLayer.extend({
 
     reqwest({
       success: function(response) {
+        // TODO: If not identifiable, set _hasInteractivity to false. Is this info available in the service?
         me._metadata = response;
         me.fire('metadata', response);
-        // TODO: If not identifiable, set _hasInteractivity to false. Not sure how to get this information from service, or if it is even supported.
       },
       type: 'jsonp',
       url: config.url + '?f=json'
@@ -237,11 +237,11 @@ var ArcGisServerLayer = L.TileLayer.extend({
    */
   onRemove: function(map) {
     if (this._dynamicAttributionData) {
-      this._removeAttribution();
-      this.off('load', this._updateAttribution, this);
-      this._map.off('viewreset zoomend dragend', this._updateAttribution, this);
+      this.off('load', this._updateAttribution);
+      this._map.off('viewreset zoomend dragend', this._updateAttribution);
     }
 
+    this._removeAttribution();
     L.TileLayer.prototype.onRemove.call(this, map);
   }
 });

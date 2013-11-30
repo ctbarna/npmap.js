@@ -27,16 +27,19 @@
         },
         div: 'map',
         overlays: [{
+          attribution: 'NPMap Team',
           popup: '<div class="title">{{Name}}</div><p>{{Description}}</p>',
           tooltip: '{{Name}}',
           type: 'geojson',
           url: 'data/rectangle.geojson'
         },{
+          attribution: 'NPMap Team',
           table: 'park_bounds',
           tooltip: 'Bounding box for {{alpha_code}}',
           type: 'cartodb',
           user: 'nps'
         },{
+          attribution: 'Land Resources Division',
           maki: {
             color: '#609321',
             name: 'park'

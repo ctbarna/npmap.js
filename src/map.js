@@ -7,6 +7,80 @@ var baselayerPresets = require('./preset/baselayers.json'),
   overlayPresets = require('./preset/overlays.json'),
   util = require('./util/util');
 
+// Override and setup defaults.
+(function() {
+  var style = colorPresets.gold;
+
+  L.Circle.mergeOptions(style);
+  L.CircleMarker.mergeOptions(style);
+  L.Control.Attribution.mergeOptions({
+    prefix: '<a href="http://www.nps.gov/npmap/disclaimer.html" target="_blank">Disclaimer</a>'
+  });
+  L.Path.mergeOptions(style);
+  L.Polygon.mergeOptions(style);
+  L.Polyline.mergeOptions(style);
+  L.Popup.mergeOptions({
+    autoPanPaddingBottomRight: [20, 20],
+    autoPanPaddingTopLeft: [20, 20],
+    maxHeight: 300,
+    maxWidth: 221,
+    minWidth: 221,
+    offset: [1, -3]
+  });
+  L.Map.addInitHook(function() {
+    var me = this;
+
+    function resize() {
+      var container = me.getContainer(),
+        left = util.getOuterDimensions(util.getChildElementsByClassName(container, 'leaflet-control-container')[0].childNodes[2]).width;
+
+      if (left) {
+        left = left + 20;
+      }
+
+      util.getChildElementsByClassName(container, 'leaflet-control-attribution')[0].style['max-width'] = (util.getOuterDimensions(container).width - left) + 'px';
+    }
+
+    if (this.options.attributionControl) {
+      this.attributionControl._update = function() {
+        var attribs = [],
+          prefixAndAttribs = [];
+
+        for (var attribution in this._attributions) {
+          if (this._attributions[attribution] > 0) {
+            var i = -1;
+
+            if (attribution) {
+              for (var j = 0; j < attribs.length; j++) {
+                if (attribs[j] === attribution) {
+                  i = j;
+                  break;
+                }
+              }
+
+              if (i === -1) {
+                attribs.push(attribution);
+              }
+            }
+          }
+        }
+
+        if (this.options.prefix) {
+          prefixAndAttribs.push(this.options.prefix);
+        }
+
+        if (attribs.length) {
+          prefixAndAttribs.push(attribs.join(' | '));
+        }
+
+        this._container.innerHTML = prefixAndAttribs.join(' | ');
+      };
+    }
+    this.on('resize', resize);
+    resize();
+  });
+})();
+
 var Map = L.Map.extend({
   options: {
     zoomControl: false
@@ -34,48 +108,10 @@ var Map = L.Map.extend({
     config.div = map;
     L.Map.prototype.initialize.call(me, config.div, config);
 
-    if (me.attributionControl) {
-      me.attributionControl.setPrefix('<a href="http://www.nps.gov/npmap/disclaimer.html" target="_blank">Disclaimer</a>');
-      me.attributionControl._update = function() {
-        if (!this._map) { return; }
-
-        var attribs = [],
-          prefixAndAttribs = [];
-
-        for (var attribution in this._attributions) {
-          var i = -1;
-
-          if (attribution) {
-            for (var j = 0; j < attribs.length; j++) {
-              if (attribs[j] === attribution) {
-                i = j;
-                break;
-              }
-            }
-
-            if (i === -1) {
-              attribs.push(attribution);
-            }
-          }
-        }
-
-        if (this.options.prefix) {
-          prefixAndAttribs.push(this.options.prefix);
-        }
-
-        if (attribs.length) {
-          prefixAndAttribs.push(attribs.join(' | '));
-        }
-
-        this._container.innerHTML = prefixAndAttribs.join(' | ');
-      };
-    }
-
     if (!me._loaded) {
       me.setView(config.center, config.zoom);
     }
 
-    me._setupDefaults();
     me._setupPopup();
     me._setupTooltip();
     me.on('autopanstart', function() {
@@ -120,26 +156,6 @@ var Map = L.Map.extend({
    */
   _setCursor: function(type) {
     this._container.style.cursor = type;
-  },
-  /**
-   * Sets up the defaults.
-   */
-  _setupDefaults: function() {
-    var style = colorPresets.gold;
-
-    L.Circle.mergeOptions(style);
-    L.CircleMarker.mergeOptions(style);
-    L.Path.mergeOptions(style);
-    L.Polygon.mergeOptions(style);
-    L.Polyline.mergeOptions(style);
-    L.Popup.mergeOptions({
-      autoPanPaddingBottomRight: [20, 20],
-      autoPanPaddingTopLeft: [20, 20],
-      maxHeight: 300,
-      maxWidth: 221,
-      minWidth: 221,
-      offset: [1, -3]
-    });
   },
   /**
    * Sets up the popup.
@@ -250,7 +266,7 @@ var Map = L.Map.extend({
       me = this,
       tooltip = L.npmap.tooltip({
         map: me,
-        padding: '4px 8px'
+        padding: '7px 10px'
       });
 
     me._tooltips = [];

@@ -7,13 +7,14 @@ var geocode = require('../util/geocode'),
   util = require('../util/util');
 
 var GeocoderControl = L.Control.extend({
-  _attribution: {
+  _attributions: {
     esri: 'Geocoding by Esri',
     nominatim: 'Geocoding by Nominatim (&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors)'
   },
   _oldValue: null,
   options: {
-    position: 'topright'
+    position: 'topright',
+    provider: 'esri'
   },
   _checkScroll: function() {
     if (this._selected) {
@@ -256,14 +257,14 @@ var GeocoderControl = L.Control.extend({
     input.setAttribute('placeholder', 'Find a location');
     input.setAttribute('role', 'combobox');
     input.setAttribute('type', 'text');
-    map.attributionControl.addAttribution(this._attribution.esri);
+    map.attributionControl.addAttribution(this._attributions[this.options.provider]);
     ul.setAttribute('id', 'geocoder_listbox');
     ul.setAttribute('role', 'listbox');
 
     return container;
   },
   onRemove: function(map) {
-    map.attributionControl.removeAttribution(this._attribution.esri);
+    map.attributionControl.removeAttribution(this._attributions[this.options.provider]);
   }
 });
 
