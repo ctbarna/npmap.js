@@ -22,7 +22,6 @@
     <script>
       var attribution = '<a href="http://mapbox.com/about/maps" target="_blank">MapBox</a>, &copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors',
           NPMap = {
-            div: 'map',
             baseLayers: [{
               attribution: attribution,
               id: 'mapbox.geography-class',
@@ -30,6 +29,7 @@
               tooltip: '<div class="content">{{admin}}</div>',
               type: 'mapbox'
             }],
+            div: 'map',
             maxZoom: 8,
             overlays: [{
               attribution: attribution,
