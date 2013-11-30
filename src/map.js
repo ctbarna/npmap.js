@@ -310,8 +310,10 @@ var Map = L.Map.extend({
                 tip = util.handlebars(layer.options.tooltip, data);
               }
 
-              me._tooltips.push(tip);
-              activeTips.push(tip);
+              if (tip) {
+                me._tooltips.push(tip);
+                activeTips.push(tip);
+              }
             }
           });
         }
