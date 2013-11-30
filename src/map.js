@@ -246,27 +246,35 @@ var Map = L.Map.extend({
    *
    */
   _setupTooltip: function() {
-    var me = this,
+    var activeTips = [],
+      me = this,
       tooltip = L.npmap.tooltip({
         map: me,
         padding: '4px 8px'
       });
 
+    me._tooltips = [];
+
     L.DomEvent.on(util.getChildElementsByClassName(me.getContainer(), 'leaflet-popup-pane')[0], 'mousemove', function(e) {
-      e.stopPropagation();
-
-      if (me.activeTip) {
-        me.activeTip.hide();
-      }
+      L.DomEvent.stopPropagation(e);
+      tooltip.hide();
     });
-
     me.on('mousemove', function(e) {
       var hasData = false,
-        html = '',
-        latLng = e.latlng.wrap();
+        latLng = e.latlng.wrap(),
+        newActiveTips = [];
 
-      me._setCursor('default');
       tooltip.hide();
+      me._setCursor('default');
+
+      for (var i = 0; i < me._tooltips.length; i++) {
+        if (activeTips.indexOf(me._tooltips[i]) === -1) {
+          newActiveTips.push(me._tooltips[i]);
+        }
+      }
+
+      activeTips = [];
+      me._tooltips = newActiveTips;
 
       for (var layerId in me._layers) {
         var layer = me._layers[layerId];
@@ -274,15 +282,20 @@ var Map = L.Map.extend({
         if (typeof layer._handleMousemove === 'function' && layer._hasInteractivity !== false) {
           layer._handleMousemove(latLng, layer, function(l, data) {
             if (data) {
+              var tip;
+
               if (!hasData) {
                 hasData = true;
               }
 
               if (typeof layer.options.tooltip === 'function') {
-                html += layer.options.tooltip(data);
+                tip = layer.options.tooltip(data);
               } else if (typeof layer.options.tooltip === 'string') {
-                html += util.handlebars(layer.options.tooltip, data);
+                tip = util.handlebars(layer.options.tooltip, data);
               }
+
+              me._tooltips.push(tip);
+              activeTips.push(tip);
             }
           });
         }
@@ -292,8 +305,8 @@ var Map = L.Map.extend({
         me._setCursor('pointer');
       }
 
-      if (html.length) {
-        tooltip.show(e.containerPoint, html);
+      if (me._tooltips.length) {
+        tooltip.show(e.containerPoint, me._tooltips.join('<br>'));
       }
     });
   },

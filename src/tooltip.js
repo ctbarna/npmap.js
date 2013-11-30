@@ -156,9 +156,7 @@ var Tooltip = L.Class.extend({
       mapSize = this._map.getSize(),
       offset = this.options.mouseOffset || {x: 0, y: 0};
 
-    //point = point.add(this.options.mouseOffset);
-
-    if (point.x + containerSize.x > mapSize.x) {
+    if (point.x + containerSize.x > mapSize.x - offset.x - 5) {
       container.style.left = 'auto';
       container.style.right = (mapSize.x - point.x + (offset.x - 5)) + 'px';
     } else {

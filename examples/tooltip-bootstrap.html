@@ -27,6 +27,11 @@
         },
         div: 'map',
         overlays: [{
+          popup: '<div class="title">{{Name}}</div><p>{{Description}}</p>',
+          tooltip: '{{Name}}',
+          type: 'geojson',
+          url: 'data/rectangle.geojson'
+        },{
           table: 'park_bounds',
           tooltip: 'Bounding box for {{alpha_code}}',
           type: 'cartodb',
@@ -37,7 +42,7 @@
             name: 'park'
           },
           popup: '<div class="title">{{Name}}</div><p>The alpha code is {{Code}}.</p>',
-          tooltip: '<p>{{Code}}</p>',
+          tooltip: 'Center point for {{Code}}',
           type: 'geojson',
           url: 'http://www.nps.gov/npmap/support/library/examples/data/national-parks.geojson'
         }],

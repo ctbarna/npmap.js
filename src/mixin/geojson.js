@@ -30,7 +30,7 @@ module.exports = {
    */
   _toLeaflet: function(config) {
     if (typeof config.clickable === 'undefined' || config.clickable === true) {
-      var lastTarget;
+      var activeTip, lastTarget;
 
       config.onEachFeature = function(feature, layer) {
         layer.on('click', function(e) {
@@ -56,6 +56,32 @@ module.exports = {
             }
           }
         });
+        layer.on('mouseout', function(e) {
+          if (activeTip) {
+            var tooltips = e.target._map._tooltips;
+
+            tooltips.splice(tooltips.indexOf(activeTip), 1);
+          }
+        });
+        layer.on('mouseover', function(e) {
+          var tooltipConfig = config.tooltip;
+
+          if (tooltipConfig) {
+            var properties = feature.properties,
+              tip;
+
+            if (typeof tooltipConfig === 'function') {
+              tip = tooltipConfig(properties);
+            } else if (typeof tooltipConfig === 'string') {
+              tip = util.handlebars(tooltipConfig, properties);
+            }
+
+            if (tip) {
+              e.target._map._tooltips.push(tip);
+              activeTip = tip;
+            }
+          }
+        });
       };
     }
 
@@ -68,7 +94,7 @@ module.exports = {
           maki = config.maki(feature.properties);
           break;
         case 'string':
-          // TODO: Support mustache templates.
+          // TODO: Support handlebar templates.
           maki = config.maki;
           break;
         default:
@@ -82,7 +108,7 @@ module.exports = {
     };
 
     if (typeof config.style === 'string') {
-      // TODO: Check to see if it is a mustache template. If so, parse it.
+      // TODO: Check to see if it is a handlebars template. If so, parse it.
       var color = colorPresets[config.style];
 
       config.style = function() {
