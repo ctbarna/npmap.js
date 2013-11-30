@@ -23,23 +23,22 @@ NPMap = {
 
   function build(config) {
     function step() {
-      function step2(c) {
-        c.spinner.stop();
-        c.div.removeChild(L.npmap.util._.getChildElementsByClassName(c.div, 'npmap-loading')[0]);
-        c.L = L.npmap.map(c);
-        delete c.spinner;
-      }
-
       if (typeof config.div === 'string') {
         config.div = document.getElementById(config.div);
       }
 
+      
+      config.div.removeChild(L.npmap.util._.getChildElementsByClassName(config.div, 'npmap-loading')[0]);
+      config.L = L.npmap.map(config);
+
       if (config.hooks && config.hooks.init) {
         config.hooks.init(function() {
-          step2(config);
+          config.spinner.stop();
+          delete config.spinner;
         });
       } else {
-        step2(config);
+        config.spinner.stop();
+        delete config.spinner;
       }
     };
 
