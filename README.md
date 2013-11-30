@@ -76,5 +76,4 @@ You can get in touch with the NPMap team by contacting us via Twitter ([@npmap](
 
 [![Build Status](https://travis-ci.org/nationalparkservice/npmap.js.png)](https://travis-ci.org/nationalparkservice/npmap.js)
 [![Dependencies](https://david-dm.org/nationalparkservice/npmap.js
-.png)](https://david-dm.org/nationalparkservice/npmap.js
-.png)
+.png)](https://david-dm.org/nationalparkservice/npmap.js)
