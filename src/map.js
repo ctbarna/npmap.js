@@ -248,10 +248,17 @@ var Map = L.Map.extend({
   _setupTooltip: function() {
     var me = this,
       tooltip = L.npmap.tooltip({
-        html: 'Hello World',
         map: me,
         padding: '4px 8px'
       });
+
+    L.DomEvent.on(util.getChildElementsByClassName(me.getContainer(), 'leaflet-popup-pane')[0], 'mousemove', function(e) {
+      e.stopPropagation();
+
+      if (me.activeTip) {
+        me.activeTip.hide();
+      }
+    });
 
     me.on('mousemove', function(e) {
       var hasData = false,
@@ -286,7 +293,7 @@ var Map = L.Map.extend({
       }
 
       if (html.length) {
-        tooltip.show(e.layerPoint, html);
+        tooltip.show(e.containerPoint, html);
       }
     });
   },

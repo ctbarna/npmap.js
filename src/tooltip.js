@@ -95,8 +95,7 @@ var Tooltip = L.Class.extend({
     L.DomEvent.stopPropagation(e);
 
     if (this.options.trackMouse) {
-      var point = this._map.mouseEventToContainerPoint(e);
-      this.setPosition(point);
+      this.setPosition(this._map.mouseEventToContainerPoint(e));
     }
   },
   _onTargetMouseout: function() {
@@ -107,14 +106,6 @@ var Tooltip = L.Class.extend({
   },
   _show: function() {
     this._container.style.display = 'inline-block';
-
-    // Necessary to force re-calculation of the opacity value so transition will run correctly
-    /*
-    if (window.getComputedStyle) {
-      window.getComputedStyle(this._container).opacity;
-    }
-    */
-
     L.DomUtil.addClass(this._container, 'leaflet-tooltip-fade');
     this._showing = true;
   },
@@ -162,15 +153,16 @@ var Tooltip = L.Class.extend({
   setPosition: function(point) {
     var container = this._container,
       containerSize = this._getElementSize(this._container),
-      mapSize = this._map.getSize();
+      mapSize = this._map.getSize(),
+      offset = this.options.mouseOffset || {x: 0, y: 0};
 
-    point = point.add(this.options.mouseOffset);
-    
+    //point = point.add(this.options.mouseOffset);
+
     if (point.x + containerSize.x > mapSize.x) {
       container.style.left = 'auto';
-      container.style.right = (mapSize.x - point.x) + 'px';
+      container.style.right = (mapSize.x - point.x + (offset.x - 5)) + 'px';
     } else {
-      container.style.left = point.x + 'px';
+      container.style.left = point.x + offset.x + 'px';
       container.style.right = 'auto';
     }
     
