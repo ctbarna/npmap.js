@@ -7,14 +7,19 @@ var geocode = require('../util/geocode'),
   util = require('../util/util');
 
 var GeocoderControl = L.Control.extend({
-  _attributions: {
-    esri: 'Geocoding by Esri',
-    nominatim: 'Geocoding by Nominatim (&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors)'
-  },
-  _oldValue: null,
   options: {
     position: 'topright',
     provider: 'esri'
+  },
+  statics: {
+    ATTRIBUTIONS: {
+      ESRI: 'Geocoding by Esri',
+      NOMINATIM: 'Geocoding by Nominatim (&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors)'
+    }
+  },
+  initialize: function(options) {
+    L.Util.extend(this.options, options);
+    return this;
   },
   _checkScroll: function() {
     if (this._selected) {
@@ -217,10 +222,6 @@ var GeocoderControl = L.Control.extend({
     L.DomEvent.off(me._input, 'focus', me._inputOnFocus);
     delete me._inputOnFocus;
   },
-  initialize: function(options) {
-    L.Util.extend(this.options, options);
-    return this;
-  },
   onAdd: function(map) {
     var container = L.DomUtil.create('div', 'leaflet-control-geocoder'),
       button = this._button = L.DomUtil.create('button', null, container),
@@ -257,14 +258,14 @@ var GeocoderControl = L.Control.extend({
     input.setAttribute('placeholder', 'Find a location');
     input.setAttribute('role', 'combobox');
     input.setAttribute('type', 'text');
-    map.attributionControl.addAttribution(this._attributions[this.options.provider]);
+    map.attributionControl.addAttribution(GeocoderControl.ATTRIBUTIONS[this.options.provider.toUpperCase()]);
     ul.setAttribute('id', 'geocoder_listbox');
     ul.setAttribute('role', 'listbox');
 
     return container;
   },
   onRemove: function(map) {
-    map.attributionControl.removeAttribution(this._attributions[this.options.provider]);
+    map.attributionControl.removeAttribution(GeocoderControl.ATTRIBUTIONS[this.options.provider.toUpperCase()]);
   }
 });
 

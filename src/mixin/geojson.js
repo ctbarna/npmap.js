@@ -7,27 +7,16 @@ var colorPresets = require('../preset/colors.json'),
   util = require('../util/util');
 
 module.exports = {
-  /**
-   * Adds an attribution string for a GeoJSON layer.
-   */
   _addAttribution: function() {
     if (this.options.attribution && this._map.attributionControl) {
       this._map.attributionControl.addAttribution(this.options.attribution);
     }
   },
-  /**
-   * Removes an attribution string for a GeoJSON layer.
-   */
   _removeAttribution: function() {
     if (this.options.attribution && this._map.attributionControl) {
       this._map.attributionControl.removeAttribution(this.options.attribution);
     }
   },
-  /**
-   * Converts an NPMap.js GeoJSON layer config object to a Leaflet GeoJSON layer config object.
-   * @param {Object} config
-   * @return {Object} config
-   */
   _toLeaflet: function(config) {
     if (typeof config.clickable === 'undefined' || config.clickable === true) {
       var activeTip, lastTarget;
@@ -118,10 +107,6 @@ module.exports = {
 
     return config;
   },
-  /**
-   * Override L.GeoJSON.addData to add support for TopoJSON data.
-   * @param {Object} feature
-   */
   addData: function(feature) {
     if (/\btopology\b/i.test(feature.type)) {
       for (var prop in feature.objects) {

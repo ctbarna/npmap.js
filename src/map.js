@@ -85,10 +85,6 @@ var Map = L.Map.extend({
   options: {
     zoomControl: false
   },
-  /**
-   * Initialize the map.
-   * @param {Object} confg (Optional)
-   */
   initialize: function(config) {
     var container = L.DomUtil.create('div', 'npmap-container'),
       map = L.DomUtil.create('div', 'npmap-map'),
@@ -150,16 +146,9 @@ var Map = L.Map.extend({
 
     return this;
   },
-  /**
-   * Sets the map cursor.
-   * @param {String}
-   */
   _setCursor: function(type) {
     this._container.style.cursor = type;
   },
-  /**
-   * Sets up the popup.
-   */
   _setupPopup: function() {
     var me = this;
 
@@ -258,9 +247,6 @@ var Map = L.Map.extend({
       }
     });
   },
-  /**
-   *
-   */
   _setupTooltip: function() {
     var activeTips = [],
       me = this,
@@ -328,11 +314,6 @@ var Map = L.Map.extend({
       }
     });
   },
-  /**
-   * Converts an NPMap.js map config object to a Leaflet map config object.
-   * @param {Object} config
-   * @return {Object} config
-   */
   _toLeaflet: function(config) {
     if (!config.div || (typeof config.div !== 'string' && typeof config.div !== 'object')) {
       throw new Error('The map config object must have a div property');

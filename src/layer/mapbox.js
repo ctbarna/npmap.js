@@ -18,16 +18,40 @@ var MapBoxLayer = L.TileLayer.extend({
       'd'
     ]
   },
-  formats: [
-    'jpg70',
-    'jpg80',
-    'jpg90',
-    'png',
-    'png32',
-    'png64',
-    'png128',
-    'png256'
-  ],
+  statics: {
+    FORMATS: [
+      'jpg70',
+      'jpg80',
+      'jpg90',
+      'png',
+      'png32',
+      'png64',
+      'png128',
+      'png256'
+    ]
+  },
+  initialize: function(options) {
+    var _;
+
+    L.TileLayer.prototype.initialize.call(this, undefined, options);
+
+    if (options.format) {
+      util.strictOneOf(options.format, MapBoxLayer.FORMATS);
+    }
+
+    if (L.Browser.retina && options.retinaVersion) {
+      if (typeof options.detectRetina === 'undefined' || options.detectRetina === true) {
+        options.detectRetina = true;
+        _ = options.retinaVersion;
+      }
+    } else {
+      options.detectRetina = false;
+      _ = options.tileJson || options.id;
+    }
+
+    this._hasInteractivity = false;
+    this._loadTileJson(_);
+  },
   _getGridData: function(latLng, layer, callback) {
     this._grid.getTileGrid(this._getTileGridUrl(latLng), latLng, function(resultData, gridData) {
       callback(layer, gridData);
@@ -156,28 +180,6 @@ var MapBoxLayer = L.TileLayer.extend({
     } else {
       return templated;
     }
-  },
-  initialize: function(options) {
-    var _;
-
-    L.TileLayer.prototype.initialize.call(this, undefined, options);
-
-    if (options.format) {
-      util.strictOneOf(options.format, this.formats);
-    }
-
-    if (L.Browser.retina && options.retinaVersion) {
-      if (typeof options.detectRetina === 'undefined' || options.detectRetina === true) {
-        options.detectRetina = true;
-        _ = options.retinaVersion;
-      }
-    } else {
-      options.detectRetina = false;
-      _ = options.tileJson || options.id;
-    }
-
-    this._hasInteractivity = false;
-    this._loadTileJson(_);
   },
   onAdd: function onAdd(map) {
     L.TileLayer.prototype.onAdd.call(this, map);

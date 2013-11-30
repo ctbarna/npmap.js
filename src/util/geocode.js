@@ -6,9 +6,6 @@ var reqwest = require('reqwest'),
   util = require('../util/util');
 
 module.exports = ({
-  /**
-   *
-   */
   _formatEsriResult: function(result) {
     var extent = result.extent,
       geometry = result.feature.geometry;
@@ -22,9 +19,6 @@ module.exports = ({
       name: result.name
     };
   },
-  /**
-   *
-   */
   _formatNominatimResult: function(result) {
     var bbox = result.boundingbox;
 
@@ -37,12 +31,6 @@ module.exports = ({
       name: result.display_name
     };
   },
-  /**
-   * Performs a geocode operation aagainst the Esri geocode service.
-   * @param {String} value
-   * @param {Function} callback
-   * @param {Object} options (Optional)
-   */
   esri: function(value, callback, options) {
     var me = this,
       defaults = {
@@ -87,11 +75,6 @@ module.exports = ({
       url: util.buildUrl('https://geocode.arcgis.com/arcgis/rest/services/World/GeocodeServer/find', options)
     });
   },
-  /**
-   * Performs a geocode operation against the MapQuest commercial geocode service.
-   * @param {String} value
-   * @param {Function} callback
-   */
   mapquest: function(value, callback) {
     reqwest({
       error: function() {
@@ -178,11 +161,6 @@ module.exports = ({
       url: 'http://www.mapquestapi.com/geocoding/v1/address?location=' + value + '&key=Fmjtd%7Cluub2l01nd%2Cal%3Do5-96121w&thumbMaps=false'
     });
   },
-  /**
-   * Performs a geocode operation against the Nominatim geocode service provided by MapQuest.
-   * @param {String} value
-   * @param {Function} callback
-   */
   nominatim: function(value, callback) {
     var me = this;
 

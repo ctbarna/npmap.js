@@ -13,157 +13,6 @@ var ArcGisServerLayer = L.TileLayer.extend({
   statics: {
     TILED_TEMPLATE: '{{url}}/tile/{z}/{y}/{x}'
   },
-  _dataToHtml: function(data) {
-    // TODO: Also need to display the name of the layer, if defined.
-    return  util._buildAttributeTable(data.layerName, data.attributes);
-  },
-  /**
-   * Handles a  click operation for this layer.
-   * @param {Object} latLng
-   * @param {Object} config
-   * @param {Function} callback
-   */
-  _handleClick: function(latLng, layer, callback) {
-    var me = this;
-
-    me.identify(latLng, function(response) {
-      if (response) {
-        var results = response.results;
-
-        if (results && results.length) {
-          var i = 0,
-            html = '';
-
-          if (me.options.popup) {
-            switch (typeof me.options.popup) {
-            case 'function':
-              for (i = 0; i < results.length; i++) {
-                html += me.options.popup(results[i]);
-              }
-
-              break;
-            case 'string':
-              for (i = 0; i < results.length; i++) {
-                html += util.handlebars(me.options.popup, results[i]);
-              }
-
-              break;
-            }
-          } else {
-            for (i = 0; i < results.length; i++) {
-              html += me._dataToHtml(results[i]);
-            }
-          }
-
-          callback(layer, html);
-        } else {
-          callback(layer, null);
-        }
-      } else {
-        callback(layer, null);
-      }
-    });
-  },
-  /**
-   * Removes the layer's attribution string from the attribution control.
-   */
-  _removeAttribution: function() {
-    if (this.options.attribution) {
-      this._map.attributionControl.removeAttribution(this.options.attribution);
-    }
-  },
-  /**
-   * Converts a Leaflet bounds to an Esri bounds.
-   * @param {Object} bounds
-   * @return {Object}
-   */
-  _toEsriBounds: function(bounds) {
-    return {
-      spatalReference: {
-        wkid: 4326
-      },
-      xmax: bounds.getNorthEast().lng,
-      ymax: bounds.getNorthEast().lat,
-      xmin: bounds.getSouthWest().lng,
-      ymin: bounds.getSouthWest().lat
-    };
-  },
-  /** 
-   * Updates the layer's attribution string from the "dynamic attribution" object.
-   */
-  _updateAttribution: function() {
-    var map = this._map,
-      bounds = map.getBounds(),
-      include = [],
-      zoom = map.getZoom();
-
-    this._removeAttribution();
-
-    for (var i = 0; i < this._dynamicAttributionData.length; i++) {
-      var contributor = this._dynamicAttributionData[i];
-
-      for (var j = 0; j < contributor.coverageAreas.length; j++) {
-        var coverageArea = contributor.coverageAreas[j],
-            coverageBounds = coverageArea.bbox;
-
-        if (zoom >= coverageArea.zoomMin && zoom <= coverageArea.zoomMax) {
-          if (bounds.intersects(L.latLngBounds(L.latLng(coverageBounds[0], coverageBounds[3]), L.latLng(coverageBounds[2], coverageBounds[1])))) {
-            include.push(contributor.attribution);
-            break;
-          }
-        }
-      }
-    }
-
-    if (include.length) {
-      this.options.attribution = include.join(', ');
-      map.attributionControl.addAttribution(this.options.attribution);
-    }
-  },
-  /**
-   * Perform an identify operation on this layer.
-   * @param {Object} latLng
-   * @param {Function} callback
-   */
-  identify: function(latLng, callback) {
-    var container = this._map.getContainer(),
-      params = {
-        f: 'json',
-        geometry: json3.stringify({
-          spatialReference: {
-            wkid: 4265
-          },
-          x: latLng.lng,
-          y: latLng.lat
-        }),
-        geometryType: 'esriGeometryPoint',
-        imageDisplay: container.offsetWidth + ',' + container.offsetHeight + ',96',
-        mapExtent: json3.stringify(this._toEsriBounds(this._map.getBounds())),
-        returnGeometry: false,
-        sr: '4265',
-        tolerance: 3
-      };
-
-    if (this._layers) {
-      params.layers = this._layers;
-    }
-
-    reqwest({
-      data: params,
-      success: function(response) {
-        if (callback) {
-          callback(response);
-        }
-      },
-      type: 'jsonp',
-      url: this.options.url + '/identify'
-    });
-  },
-  /**
-   * Initializes the layer. Called by the layer constructor.
-   * @param {Object} config
-   * @return {Object}
-   */
   initialize: function(config) {
     var me = this;
 
@@ -231,10 +80,130 @@ var ArcGisServerLayer = L.TileLayer.extend({
 
     return this;
   },
-  /**
-   * Called when the layer is removed from the map.
-   * @param {Object} map
-   */
+  _dataToHtml: function(data) {
+    // TODO: Also need to display the name of the layer, if defined.
+    return  util._buildAttributeTable(data.layerName, data.attributes);
+  },
+  _handleClick: function(latLng, layer, callback) {
+    var me = this;
+
+    me.identify(latLng, function(response) {
+      if (response) {
+        var results = response.results;
+
+        if (results && results.length) {
+          var i = 0,
+            html = '';
+
+          if (me.options.popup) {
+            switch (typeof me.options.popup) {
+            case 'function':
+              for (i = 0; i < results.length; i++) {
+                html += me.options.popup(results[i]);
+              }
+
+              break;
+            case 'string':
+              for (i = 0; i < results.length; i++) {
+                html += util.handlebars(me.options.popup, results[i]);
+              }
+
+              break;
+            }
+          } else {
+            for (i = 0; i < results.length; i++) {
+              html += me._dataToHtml(results[i]);
+            }
+          }
+
+          callback(layer, html);
+        } else {
+          callback(layer, null);
+        }
+      } else {
+        callback(layer, null);
+      }
+    });
+  },
+  _removeAttribution: function() {
+    if (this.options.attribution) {
+      this._map.attributionControl.removeAttribution(this.options.attribution);
+    }
+  },
+  _toEsriBounds: function(bounds) {
+    return {
+      spatalReference: {
+        wkid: 4326
+      },
+      xmax: bounds.getNorthEast().lng,
+      ymax: bounds.getNorthEast().lat,
+      xmin: bounds.getSouthWest().lng,
+      ymin: bounds.getSouthWest().lat
+    };
+  },
+  _updateAttribution: function() {
+    var map = this._map,
+      bounds = map.getBounds(),
+      include = [],
+      zoom = map.getZoom();
+
+    this._removeAttribution();
+
+    for (var i = 0; i < this._dynamicAttributionData.length; i++) {
+      var contributor = this._dynamicAttributionData[i];
+
+      for (var j = 0; j < contributor.coverageAreas.length; j++) {
+        var coverageArea = contributor.coverageAreas[j],
+            coverageBounds = coverageArea.bbox;
+
+        if (zoom >= coverageArea.zoomMin && zoom <= coverageArea.zoomMax) {
+          if (bounds.intersects(L.latLngBounds(L.latLng(coverageBounds[0], coverageBounds[3]), L.latLng(coverageBounds[2], coverageBounds[1])))) {
+            include.push(contributor.attribution);
+            break;
+          }
+        }
+      }
+    }
+
+    if (include.length) {
+      this.options.attribution = include.join(', ');
+      map.attributionControl.addAttribution(this.options.attribution);
+    }
+  },
+  identify: function(latLng, callback) {
+    var container = this._map.getContainer(),
+      params = {
+        f: 'json',
+        geometry: json3.stringify({
+          spatialReference: {
+            wkid: 4265
+          },
+          x: latLng.lng,
+          y: latLng.lat
+        }),
+        geometryType: 'esriGeometryPoint',
+        imageDisplay: container.offsetWidth + ',' + container.offsetHeight + ',96',
+        mapExtent: json3.stringify(this._toEsriBounds(this._map.getBounds())),
+        returnGeometry: false,
+        sr: '4265',
+        tolerance: 3
+      };
+
+    if (this._layers) {
+      params.layers = this._layers;
+    }
+
+    reqwest({
+      data: params,
+      success: function(response) {
+        if (callback) {
+          callback(response);
+        }
+      },
+      type: 'jsonp',
+      url: this.options.url + '/identify'
+    });
+  },
   onRemove: function(map) {
     if (this._dynamicAttributionData) {
       this.off('load', this._updateAttribution);

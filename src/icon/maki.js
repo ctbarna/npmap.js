@@ -13,33 +13,6 @@ var MakiIcon = L.Icon.extend({
   statics: {
     CSS_TEMPLATE: 'url(https://a.tiles.mapbox.com/v3/marker/pin-{{size}}{{name}}+{{color}}{{retina}}.png)'
   },
-  /**
-   *
-   */
-  createIcon: function(oldIcon) {
-    var div = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div'),
-      options = this.options;
-
-    options.className = null;
-    options.html = null;
-    this._setIconStyles(div, 'icon');
-    div.style.backgroundImage = util.handlebars(MakiIcon.CSS_TEMPLATE, {
-      color: options.color.replace('#', ''),
-      name: options.name ? '-' + options.name : null,
-      retina: L.Browser.retina ? '@2x' : '',
-      size: options.size.slice(0, 1)
-    });
-    return div;
-  },
-  /**
-   *
-   */
-  createShadow: function() {
-    return null;
-  },
-  /**
-   *
-   */
   initialize: function(options) {
     options = options || {};
 
@@ -64,6 +37,24 @@ var MakiIcon = L.Icon.extend({
 
     L.Util.extend(options, sizes[size]);
     L.Util.setOptions(this, options);
+  },
+  createIcon: function(oldIcon) {
+    var div = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div'),
+      options = this.options;
+
+    options.className = null;
+    options.html = null;
+    this._setIconStyles(div, 'icon');
+    div.style.backgroundImage = util.handlebars(MakiIcon.CSS_TEMPLATE, {
+      color: options.color.replace('#', ''),
+      name: options.name ? '-' + options.name : null,
+      retina: L.Browser.retina ? '@2x' : '',
+      size: options.size.slice(0, 1)
+    });
+    return div;
+  },
+  createShadow: function() {
+    return null;
   }
 });
 

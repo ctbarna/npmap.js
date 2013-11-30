@@ -1,7 +1,6 @@
 /**
- * Forked from danzel/Leaflet.utfgrid - https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js
+ * Forked from https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js.
  */
-
 var reqwest = require('../util/cachedreqwest')(),
     tileMath = require('../util/tilemath');
 

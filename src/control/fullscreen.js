@@ -5,9 +5,16 @@
 var util = require('../util/util');
 
 var FullscreenControl = L.Control.extend({
-  _bodyMargin: null,
-  _bodyOverflow: null,
-  _bodyPadding: null,
+  initialize: function(options) {
+    // TODO: Also add ARIA attributes.
+    this._button = document.createElement('button');
+    this._button.className = 'npmap-toolbar-button last-child pull-right';
+    this._button.innerHTML = '<span class="ico-fullscreen"></span>';
+    this._button.title = 'Toggle fullscreen';
+    L.DomEvent.addListener(this._button, 'click', this.fullscreen, this);
+
+    return this;
+  },
   _onKeyUp: function(e) {
     if (!e) {
       e = window.event;
@@ -57,16 +64,6 @@ var FullscreenControl = L.Control.extend({
     }
 
     this._map.invalidateSize();
-  },
-  initialize: function(options) {
-    this._button = document.createElement('button');
-    this._button.className = 'npmap-toolbar-button last-child pull-right';
-    // TODO: Also add ARIA attributes.
-    this._button.innerHTML = '<span class="ico-fullscreen"></span>';
-    this._button.title = 'Toggle fullscreen';
-    L.DomEvent.addListener(this._button, 'click', this.fullscreen, this);
-
-    return this;
   }
 });
 

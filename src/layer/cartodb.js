@@ -1,5 +1,4 @@
 /* global L, document */
-/* jslint node: true */
 /* jshint camelcase: false */
 
 'use strict';
@@ -12,6 +11,27 @@ var CartoDbLayer = L.TileLayer.extend({
   options: {
     errorTileUrl: L.Util.emptyImageUrl,
     format: 'png'
+  },
+  initialize: function(options) {
+    L.Util.setOptions(this, options);
+    util.strict(this.options.table, 'string');
+    util.strict(this.options.user, 'string');
+
+    var root = [document.location.protocol, '//', this.options.user, '.', 'cartodb.com'].join(''),
+      rootTile = [root, '/', 'tiles', '/', this.options.table, '/', '{z}/{x}/{y}'].join('');
+
+    this.options.grids = [rootTile, '.', 'grid.json'].join('');
+    this.options.url = [rootTile, '.', this.options.format].join('');
+    this.options.urls = {
+      root: root
+    };
+    this._getQuery();
+    L.TileLayer.prototype.initialize.call(this, this.options.url, this.options);
+    this._grid = new utfGrid(this, {
+      crossOrigin: true,
+      type: 'jsonp'
+    });
+    return this;
   },
   _getQuery: function() {
     var me = this;
@@ -50,27 +70,6 @@ var CartoDbLayer = L.TileLayer.extend({
   },
   _handleMousemove: function(latLng, layer, callback) {
     this._getGridData(latLng, layer, callback);
-  },
-  initialize: function(options) {
-    L.Util.setOptions(this, options);
-    util.strict(this.options.table, 'string');
-    util.strict(this.options.user, 'string');
-
-    var root = [document.location.protocol, '//', this.options.user, '.', 'cartodb.com'].join(''),
-      rootTile = [root, '/', 'tiles', '/', this.options.table, '/', '{z}/{x}/{y}'].join('');
-
-    this.options.grids = [rootTile, '.', 'grid.json'].join('');
-    this.options.url = [rootTile, '.', this.options.format].join('');
-    this.options.urls = {
-      root: root
-    };
-    this._getQuery();
-    L.TileLayer.prototype.initialize.call(this, this.options.url, this.options);
-    this._grid = new utfGrid(this, {
-      crossOrigin: true,
-      type: 'jsonp'
-    });
-    return this;
   },
   onAdd: function onAdd(map) {
     L.TileLayer.prototype.onAdd.call(this, map);

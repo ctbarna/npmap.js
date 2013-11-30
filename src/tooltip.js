@@ -17,6 +17,10 @@ var Tooltip = L.Class.extend({
     trackMouse: true,
     width: 'auto'
   },
+  initialize: function(options) {
+    L.setOptions(this, options);
+    this._createTip();
+  },
   _bindTarget: function(target) {
     L.DomEvent
       .on(target, 'mouseover', this._onTargetMouseover, this)
@@ -121,10 +125,6 @@ var Tooltip = L.Class.extend({
     } else {
       this._hide();
     }
-  },
-  initialize: function(options) {
-    L.setOptions(this, options);
-    this._createTip();
   },
   isVisible: function() {
     return this._showing;

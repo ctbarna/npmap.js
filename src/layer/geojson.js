@@ -9,14 +9,6 @@ var GeoJsonLayer = L.GeoJSON.extend({
   includes: [
     require('../mixin/geojson')
   ],
-  /**
-   *
-   */
-  _create: function(config, data) {
-    L.GeoJSON.prototype.initialize.call(this, data, config);
-    this._addAttribution();
-    return this;
-  },
   initialize: function(config) {
     config = this._toLeaflet(config);
 
@@ -52,6 +44,11 @@ var GeoJsonLayer = L.GeoJSON.extend({
         });
       }
     }
+  },
+  _create: function(config, data) {
+    L.GeoJSON.prototype.initialize.call(this, data, config);
+    this._addAttribution();
+    return this;
   }
 });
 

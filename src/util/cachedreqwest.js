@@ -7,9 +7,9 @@ var reqwest = require('reqwest');
 
 module.exports = function(options) {
   var cache = {},
-      defaultTimeout = 3000,
-      promises = {},
-      timeout = options && options.timeout ? options.timeout : defaultTimeout;
+    defaultTimeout = 3000,
+    promises = {},
+    timeout = options && options.timeout ? options.timeout : defaultTimeout;
 
   function cachedReqwest(options) {
     var newOptions = options;

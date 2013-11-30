@@ -3,10 +3,9 @@
 'use strict';
 
 var layerPresets = require('../preset/baselayers.json'),
-    util = require('../util/util');
+  util = require('../util/util');
 
 var OverviewControl = L.Control.extend({
-  hideText: 'Hide overview',
   options: {
     autoToggleDisplay: false,
     height: 150,
@@ -17,9 +16,20 @@ var OverviewControl = L.Control.extend({
     zoomLevelFixed: false,
     zoomLevelOffset: -5
   },
-  showText: 'Show overview',
+  initialize: function(options) {
+    util.strict(options, 'object');
+
+    if (typeof options.layer === 'string') {
+      var name = options.layer.split('-');
+
+      options.layer = layerPresets[name[0]][name[1]];
+    }
+
+    L.Util.setOptions(this, options);
+    this._layer = options.layer.L = L.npmap.layer[options.layer.type](options.layer);
+  },
   _addToggleButton: function() {
-    this._toggleDisplayButton = this._createButton('', this.hideText, null, this._container, this._toggleDisplayButtonClicked, this);
+    this._toggleDisplayButton = this._createButton('', 'Hide Overview', null, this._container, this._toggleDisplayButtonClicked, this);
     this._toggleDisplayButtonImage = L.DomUtil.create('span', null, this._toggleDisplayButton);
   },
   _createButton: function(html, title, className, container, fn, context) {
@@ -196,10 +206,10 @@ var OverviewControl = L.Control.extend({
 
     if (!this._minimized) {
       this._minimize();
-      this._toggleDisplayButton.title = this.showText;
+      this._toggleDisplayButton.title = 'Show Overview';
     } else {
       this._restore();
-      this._toggleDisplayButton.title = this.hideText;
+      this._toggleDisplayButton.title = 'Hide Overview';
     }
   },
   addTo: function(map) {
@@ -207,18 +217,6 @@ var OverviewControl = L.Control.extend({
     this._miniMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
     this._setDisplay(this._decideMinimized());
     return this;
-  },
-  initialize: function(options) {
-    util.strict(options, 'object');
-
-    if (typeof options.layer === 'string') {
-      var name = options.layer.split('-');
-
-      options.layer = layerPresets[name[0]][name[1]];
-    }
-
-    L.Util.setOptions(this, options);
-    this._layer = options.layer.L = L.npmap.layer[options.layer.type](options.layer);
   },
   onAdd: function(map) {
     this._mainMap = map;

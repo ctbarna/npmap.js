@@ -5,16 +5,21 @@
 var util = require('../util/util');
 
 var SwitcherControl = L.Control.extend({
-  _selectedId: 'basemap_listbox_selected',
   options: {
     position: 'topright'
+  },
+  statics: {
+    SELECTED_ID: 'basemap_listbox_selected'
+  },
+  initialize: function(baseLayers) {
+    this._baseLayers = baseLayers;
   },
   _addLi: function(baseLayer) {
     var li = L.DomUtil.create('li', (baseLayer.visible ? 'selected' : null));
 
     if (baseLayer.visible) {
-      li.setAttribute('id', this._selectedId);
-      this._active.setAttribute('aria-activedescendant', this._selectedId);
+      li.setAttribute('id', SwitcherControl.SELECTED_ID);
+      this._active.setAttribute('aria-activedescendant', SwitcherControl.SELECTED_ID);
     }
 
     li.innerHTML = baseLayer.name;
@@ -83,8 +88,8 @@ var SwitcherControl = L.Control.extend({
         }
       }
 
-      target.setAttribute('id', this._selectedId);
-      this._active.setAttribute('aria-activedescendant', this._selectedId);
+      target.setAttribute('id', SwitcherControl.SELECTED_ID);
+      this._active.setAttribute('aria-activedescendant', SwitcherControl.SELECTED_ID);
 
       for (i = 0; i < this._baseLayers.length; i++) {
         var baseLayer = this._baseLayers[i];
@@ -154,9 +159,6 @@ var SwitcherControl = L.Control.extend({
     for (i = 0; i < children.length; i++) {
       L.DomEvent.addListener(children[i], 'click', this._onClick, this);
     }
-  },
-  initialize: function(baseLayers) {
-    this._baseLayers = baseLayers;
   },
   onAdd: function(map) {
     this._initLayout();
