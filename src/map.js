@@ -75,9 +75,9 @@ var baselayerPresets = require('./preset/baselayers.json'),
 
         this._container.innerHTML = prefixAndAttribs.join(' | ');
       };
+      this.on('resize', resize);
+      resize();
     }
-    this.on('resize', resize);
-    resize();
   });
 })();
 
