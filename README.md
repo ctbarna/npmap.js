@@ -66,7 +66,7 @@ Targeted examples reside in the `examples` directory.
 Some of the examples have two versions: a version with `-api` at the end of the file name and a version with `-bootstrap` at the end of the file name. This reflects the two different ways NPMap.js can be used:
 
 1. Like "traditional" mapping APIs. This works well if you are familiar with JavaScript *and* have access to include JavaScript and CSS files in the web page your map is going to be included in. These examples use `npmap.js` directly, and utilize the [API](https://github.com/nationalparkservice/npmap.js/blob/master/API.md) to build the map.
-2. Indirectly, through the use of `bootstrap.js`. This allows you to configure your map using the `NPMap` variable. This is the recommended approach for non-technical users or those who don't have access to the web page the map is going to be included in (which is the case if you are using the National Park Service content management system). This is also the approach used by the [NPMap Builder](https://github.com/nationalparkservice/npmap-builder).
+2. Indirectly, through the use of `bootstrap.js`. This allows you to configure your map using the `NPMap` variable. This is the recommended approach for non-technical users and/or those who don't have access to the web page the map is going to be included in (which is the case if you are using the National Park Service content management system). This is also the approach used by the [NPMap Builder](https://github.com/nationalparkservice/npmap-builder).
 
 ## Support
 
@@ -75,3 +75,6 @@ You can get in touch with the NPMap team by contacting us via Twitter ([@npmap](
 ## Code Status
 
 [![Build Status](https://travis-ci.org/nationalparkservice/npmap.js.png)](https://travis-ci.org/nationalparkservice/npmap.js)
+[![Dependencies](https://david-dm.org/nationalparkservice/npmap.js
+.png)](https://david-dm.org/nationalparkservice/npmap.js
+.png)
