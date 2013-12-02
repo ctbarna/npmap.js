@@ -29,5 +29,28 @@ describe('L.npmap.map', function() {
 
       expect(map).to.be.ok();
     });
+    it('sets a default center for the map if none is specified', function() {
+      var map = L.npmap.map({
+        div: element
+      });
+
+      expect(map.getCenter().lat).to.be.ok();
+    });
+    it('sets a default zoom for the map if none is specified', function() {
+      var map = L.npmap.map({
+        div: element
+      });
+
+      expect(map.getZoom()).to.be.ok();
+    });
+    it('adds a default baseLayer if none is specified', function() {
+
+    });
+    it('renames the "layers" property "overlays", if specified', function() {
+      
+    });
+    it('switches preset layers in when specified in the baseLayers property', function() {
+
+    });
   });
 });

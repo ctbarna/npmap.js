@@ -8,38 +8,58 @@ Create and configure a map.
 
 *Arguments:*
 
-The first, and only, argument is required, and must be a map config object with the following properties:
+The first, and only, argument is required. It must be a map config object with the following properties:
 
 - (Required) `div` (Object or String): Either an HTML element or the id of an HTML element to render the map into.
+- (Optional) `fullscreenControl` (Boolean): Defaults to `undefined`.
+- (Optional) `geocoderControl` (Boolean or Object): Defaults to `undefined`.
+- (Optional) `homeControl` (Boolean): Defaults to `true`.
+- (Optional) `overviewControl` (Boolean or Object): Default to `undefined`.
+- (Optional) `scaleControl` (Boolean): Defaults to `undefined`.
+- (Optional) `smallzoomControl` (Boolean): Defaults to `true`.
 
 You can also (optionally) provide any of the options supported by [`L.Map`](http://leafletjs.com/reference.html#map-options).
 
 *Example:*
 
-    var map = L.npmap.map('map');
+    var map = L.npmap.map({
+      div: 'map',
+      geocoderControl: true
+    });
 
 ## Layers
 
 ### L.npmap.layer.arcgisserver(config: object)
 
-Add a layer from an ArcGis Server map or feature service, including services hosted on ArcGIS Online, to your map with `L.npmap.layer.arcgisserver()`.
+Add a layer from an ArcGIS Server map service, including services hosted on ArcGIS Online, to your map with `L.npmap.layer.arcgisserver()`.
 
 *Arguments:*
 
-The first, and only, argument is required, and must be a layer config object with the following properties:
+The first, and only, argument is required. It must be a layer config object with the following properties:
 
-- (Required) `url` (Object): A templated URL string for the ArcGIS Server service you want to create a layer.
+- (Required) `tiled` (Boolean): Should be `true` if the service is tiled and `false` if it is not.
+- (Required) `url` (String): A URL string ending with "MapServer" for the ArcGIS Server service.
+- (Optional) `attribution` (String): An attribution string for the layer. HTML is allowed.
+- (Optional) `description` (String): Descriptive text for the layer. Used in legends, modules, and controls.
 - (Optional) `dynamicAttribution` (String): The URL of a [dynamic attribution](http://blogs.esri.com/esri/arcgis/2012/08/15/dynamic-attribution-is-here/) endpoint for the service.
-- (Optional) `icon` (String)
-- (Optional) `name` (String)
+- (Optional) `layers` (String): A comma-delimited string of the ArcGIS Server layers to bring into the NPMap.js layer.
+- (Optional) `name` (String): A name for the layer. Used in legends, modules, and controls.
+- (Optional) `opacity` (Float): An opacity value for the layer. Defaults to `1.0`.
 
 You can also (optionally) provide any of the options supported by [`L.TileLayer`](http://leafletjs.com/reference.html#tilelayer).
 
 *Example:*
 
     var layer = L.npmap.layer.arcgisserver({
-      url: 'http://services.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}/'
+      attribution: '<a href="http://www.esri.com">Esri</a>',
+      opacity: 0.5,
+      tiled: true,
+      url: 'http://services.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Unemployment_Rate/MapServer'
     });
+
+### L.npmap.layer.cartodb(config: object)
+
+### L.npmap.layer.geojson(config: object)
 
 ### L.npmap.layer.github(config: object)
 
@@ -65,6 +85,8 @@ You can also (optionally) provide any of the options supported by [`L.GeoJSON`](
       user: 'nationalparkservice'
     });
 
+### L.npmap.layer.kml(config: object)
+
 ### L.npmap.layer.mapbox(config: object)
 
 Add a layer from MapBox Hosting to your map with `L.npmap.layer.mapbox()`.
@@ -88,7 +110,15 @@ You can also (optionally) provide any of the options supported by [`L.TileLayer`
       id: 'examples.map-20v6611k'
     });
 
-## Controls (aka "Tools" in old NPMap-speak)
+### L.npmap.layer.tiled(config: object)
+
+## Controls
+
+### L.npmap.fullscreenControl(config: object)
+
+### L.npmap.geocoderControl(config: object)
+
+### L.npmap.homeControl(config: object)
 
 ### L.npmap.overviewControl(config: object)
 
@@ -114,6 +144,8 @@ You can also (optionally) provide any of the options supported by [`L.Control`](
       layer: 'mapbox-light'
     });
 
+### L.npmap.scaleControl(config: object)
+
 ### L.npmap.smallzoomControl(config: object)
 
 Create a map control that contains zoom in/out buttons.
@@ -126,103 +158,10 @@ You can (optionally) provide any of the options supported by [`L.Control`](http:
 
     var control = L.npmap.control.smallzoom();
 
-==================================================
-
-Docs under construction:
-
-### Layer
-
-#### Modules
-
-- L.TileLayer
-  - arcgisserver
-    - Required:
-      - `type` (Only required if using `bootstrap.js`)
-    - Optional:
-      - `attribution`
-  - cartodb
-    - Required:
-      - `type` (Only required if using `bootstrap.js`)
-    - Optional:
-      - `attribution`
-  - mapbox (aliased from `tilestream` to preserve backwards-compatibility)
-    - Required:
-      - `id` OR `tileJson`
-      - `type` (Only required if using `bootstrap.js`)
-    - Optional:
-      - `attribution`
-      - `composited`
-      - `opacity`
-      - `retinaVersion`
-  - tiled
-  - wms
-- L.GeoJSON
-  - csv
-  - geojson
-    - Required:
-      - `type` (Only required if using `bootstrap.js`)
-    - Optional:
-      - `attribution`
-  - gpx
-  - json
-  - kml
-    - Required:
-      - `type` (Only required if using `bootstrap.js`)
-    - Optional:
-      - `attribution`
-  - shapefile
-  - xml
-
-#### Concepts
-
-- baseLayer vs. layer
-  - `icon`
-  - Presets:
-    - `baseLayers.json`
-- Raster
-  - UTFGrid
-- Vector
-  - Clustering
-  - Symbology
-    - Defaults
-    - NPS Maki
-
-### Module
-
-#### Modules
-
-- edit
-- itinerary
-- route
-
-#### Concepts
-
-- Accessibility
-- Usability and look-and-feel
-
-### Tool
-
-#### Modules
-
-- fullscreen
-- geocode
-- hash
-- infobox
-- navigate
-- overviewmap
-- print
-- scalebar
-- share
-
-#### Concepts
-
-- Accessibility
-- Usability and look-and-feel
-
-### Util
+### L.npmap.switcherControl(config: object)
 
 ## Notes
 
-- If you are using `bootstrap.js`, a `L` property will be added to every layer, map, module, or tool config object. You can use this property to interact directly with the `NPMap.js` objects.
-- `NPMap.js` extends Leaflet's classes and only provides the interfaces outlined above. You can use the larger [Leaflet API](http://leafletjs.com/reference.html) as well.
-- Unlike previous versions of the NPMap library, `bootstrap.js` now supports adding multiple maps to a page. Just make the `NPMap.config` property an array, and you are good to go.
+- If you are using `npmap-bootstrap.js`, a `L` property will be added to every layer, map, module, or tool config object. You can use this property to interact directly with the objects created by NPMap.js and Leaflet.
+- NPMap.js extends Leaflet's classes and only provides the interfaces outlined above. You can use the larger [Leaflet API](http://leafletjs.com/reference.html) as well.
+- Unlike previous versions of the NPMap library, `npmap-bootstrap.js` now supports adding multiple maps to a page. Just make the `NPMap.config` property an array, and you are good to go.
