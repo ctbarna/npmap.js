@@ -15,7 +15,8 @@ L.npmap = module.exports = {
     switcher: require('./src/control/switcher')
   },
   icon: {
-    maki: require('./src/icon/maki')
+    maki: require('./src/icon/maki'),
+    gnocchi: require('./src/icon/gnocchi')
   },
   layer: {
     arcgisserver: require('./src/layer/arcgisserver'),
