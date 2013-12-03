@@ -14,7 +14,7 @@ var NpmakiIcon = L.Icon.extend({
     CSS_TEMPLATE: 'url(https://a.tiles.mapbox.com/v3/marker/pin-{{size}}+{{color}}{{retina}}.png)'
   },
   initialize: function(options) {
-    util.appendCssFile('http://192.168.33.10:1337/theme/images/icons/maki/www/maki-sprite.css');
+    util.appendCssFile('http://192.168.33.10:1337/theme/images/icons/npmaki/npmaki-sprite.css');
     options = options || {};
 
     var size = options.size || 'medium',
@@ -44,7 +44,7 @@ var NpmakiIcon = L.Icon.extend({
       options = this.options;
 
     var overlayDiv = document.createElement('div');
-    overlayDiv.setAttribute('class', 'maki-icon ' + options.name  + ' leaflet-zoom-animated');
+    overlayDiv.setAttribute('class', 'npmaki-icon ' + options.name  + ' leaflet-zoom-animated');
     overlayDiv.setAttribute('style', 'margin-left: ' + (options.size.iconSize[0] - 24)/2  +'px; margin-top: ' + (options.size.iconSize[1] - 24 - 18)/2  + 'px;');
     options.className = null;
     options.html = null;
