@@ -16,7 +16,7 @@ L.npmap = module.exports = {
   },
   icon: {
     maki: require('./src/icon/maki'),
-    gnocchi: require('./src/icon/gnocchi')
+    npmaki: require('./src/icon/npmaki')
   },
   layer: {
     arcgisserver: require('./src/layer/arcgisserver'),
