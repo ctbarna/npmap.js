@@ -4,7 +4,7 @@
 
 var util = require('../util/util');
 
-var GnocchiIcon = L.Icon.extend({
+var NpmakiIcon = L.Icon.extend({
   options: {
     color: '#000000',
     name: null,
@@ -45,13 +45,11 @@ var GnocchiIcon = L.Icon.extend({
 
     var overlayDiv = document.createElement('div');
     overlayDiv.setAttribute('class', 'maki-icon ' + options.name  + ' leaflet-zoom-animated');
-    overlayDiv.setAttribute('tabindex', '0');
-    // TODO: make this come from the list above
-    overlayDiv.setAttribute('style', 'margin-left: 5px; margin-top: 6px;');
+    overlayDiv.setAttribute('style', 'margin-left: ' + (options.size.iconSize[0] - 24)/2  +'px; margin-top: ' + (options.size.iconSize[1] - 24 - 18)/2  + 'px;');
     options.className = null;
     options.html = null;
     this._setIconStyles(div, 'icon');
-    div.style.backgroundImage = util.handlebars(GnocchiIcon.CSS_TEMPLATE, {
+    div.style.backgroundImage = util.handlebars(NpmakiIcon.CSS_TEMPLATE, {
       color: options.color.replace('#', ''),
       retina: L.Browser.retina ? '@2x' : '',
       size: options.size.slice(0, 1)
@@ -65,5 +63,5 @@ var GnocchiIcon = L.Icon.extend({
 });
 
 module.exports = function(options) {
-  return new GnocchiIcon(options);
+  return new NpmakiIcon(options);
 };
