@@ -4,7 +4,7 @@
 
 var util = require('../util/util');
 
-var MakiIcon = L.Icon.extend({
+var GnocchiIcon = L.Icon.extend({
   options: {
     color: '#000000',
     name: null,
@@ -14,16 +14,8 @@ var MakiIcon = L.Icon.extend({
     CSS_TEMPLATE: 'url(https://a.tiles.mapbox.com/v3/marker/pin-{{size}}+{{color}}{{retina}}.png)'
   },
   initialize: function(options) {
+    util.appendCssFile('http://192.168.33.10:1337/theme/images/icons/maki/www/maki-sprite.css');
     options = options || {};
-    
-    // Add the CSS
-    var link = document.createElement('link');
-    link.setAttribute('rel', 'stylesheet');
-    link.setAttribute('href', 'http://192.168.33.10:1337/theme/images/icons/maki/www/maki-sprite.css');
-    window.onload = function() {
-      document.body.appendChild(link);
-    };
-
 
     var size = options.size || 'medium',
       sizes = {
@@ -59,12 +51,11 @@ var MakiIcon = L.Icon.extend({
     options.className = null;
     options.html = null;
     this._setIconStyles(div, 'icon');
-    div.style.backgroundImage = util.handlebars(MakiIcon.CSS_TEMPLATE, {
+    div.style.backgroundImage = util.handlebars(GnocchiIcon.CSS_TEMPLATE, {
       color: options.color.replace('#', ''),
       retina: L.Browser.retina ? '@2x' : '',
       size: options.size.slice(0, 1)
     });
-    console.log('appending');
     div.appendChild(overlayDiv);
     return div;
   },
@@ -73,10 +64,6 @@ var MakiIcon = L.Icon.extend({
   }
 });
 
-L.Marker.mergeOptions({
-  icon: new MakiIcon()
-});
-
 module.exports = function(options) {
-  return new MakiIcon(options);
+  return new GnocchiIcon(options);
 };
