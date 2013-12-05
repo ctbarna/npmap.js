@@ -91,6 +91,22 @@ module.exports = {
         }
 
         config.icon = L.npmap.icon.maki(maki);
+      } else if (config.npmaki) {
+        var npmaki;
+
+        switch (typeof config.maki) {
+        case 'function':
+          npmaki = config.maki(feature.properties);
+          break;
+        case 'string':
+          // TODO: Support handlebar templates.
+          npmaki = config.maki;
+          break;
+        default:
+          npmaki = config.maki;
+        }
+
+        config.icon = L.npmap.icon.npmaki(npmaki);
       }
 
       return L.marker(latLng, config);
