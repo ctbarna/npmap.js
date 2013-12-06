@@ -1,4 +1,4 @@
-/*globals L, NPMap*/
+/*globals L*/
 
 //TODO: See if these functions exist elsewhere
 var extend = function(obj, newObj) {
@@ -26,8 +26,11 @@ LegendControl = L.Control.extend({
     return this._div;
   },
   update: function () {
-    this._div.innerHTML = this.html;
-    this._div.setAttribute('style', cssString(this.options.style));
+    if (this._div) {
+      this._div.innerHTML = this.html;
+      this._div.setAttribute('style', cssString(this.options.style));
+    }
+    return this;
   },
   addLegend: function(html, options) {
     // Create the default style
@@ -41,8 +44,7 @@ LegendControl = L.Control.extend({
     this.html = html;
     this.options = options;
 
-    // Draw the legend
-    this.addTo(NPMap.config.L);
+    return this.update();
   },
   createLegend: function (options) {
     var html = '';
