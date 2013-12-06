@@ -5,6 +5,7 @@
 var baselayerPresets = require('./preset/baselayers.json'),
   colorPresets = require('./preset/colors.json'),
   overlayPresets = require('./preset/overlays.json'),
+  legendControl = require('./legend_control'),
   util = require('./util/util');
 
 // Override and setup defaults.
@@ -143,6 +144,8 @@ var Map = L.Map.extend({
         }
       }
     }
+
+    this.legendControl = legendControl;
 
     return this;
   },
