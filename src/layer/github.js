@@ -17,7 +17,8 @@ var GitHubLayer = L.GeoJSON.extend({
       this._addAttribution();
       return this;
     } else {
-      var me = this;
+      var branch = config.branch || 'master',
+        me = this;
 
       util.strict(config.path, 'string');
       util.strict(config.repo, 'string');
@@ -29,7 +30,7 @@ var GitHubLayer = L.GeoJSON.extend({
           return me;
         },
         type: 'jsonp',
-        url: 'https://api.github.com/repos/' + config.user + '/' + config.repo + '/contents/' + config.path
+        url: 'https://api.github.com/repos/' + config.user + '/' + config.repo + '/contents/' + config.path + '?ref=' + branch
       });
     }
   }
