@@ -21,6 +21,7 @@ L.npmap = module.exports = {
   layer: {
     arcgisserver: require('./src/layer/arcgisserver'),
     geojson: require('./src/layer/geojson'),
+    cluster: require('./src/layer/cluster'),
     github: require('./src/layer/github'),
     kml: require('./src/layer/kml'),
     mapbox: require('./src/layer/mapbox'),

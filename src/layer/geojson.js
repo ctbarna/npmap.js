@@ -48,6 +48,7 @@ var GeoJsonLayer = L.GeoJSON.extend({
   _create: function(config, data) {
     L.GeoJSON.prototype.initialize.call(this, data, config);
     this._addAttribution();
+    this._complete();
     return this;
   }
 });
