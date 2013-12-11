@@ -21,7 +21,7 @@
   "dependencies": {
     "handlebars": "1.1.2",
     "json3": "3.2.6",
-    "leaflet": "0.7.0",
+    "leaflet": "0.7.1",
     "reqwest": "0.9.3",
     "togeojson": "0.4.1"
   },
