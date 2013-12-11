@@ -123,6 +123,9 @@ module.exports = {
 
     return config;
   },
+  _complete: function() {
+    this.fire('ready');
+  },
   addData: function(feature) {
     if (/\btopology\b/i.test(feature.type)) {
       for (var prop in feature.objects) {

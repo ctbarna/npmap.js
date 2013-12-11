@@ -15,6 +15,7 @@ var GitHubLayer = L.GeoJSON.extend({
     if (typeof config.data === 'object') {
       L.GeoJSON.prototype.initialize.call(this, config.data, config);
       this._addAttribution();
+      this._complete();
       return this;
     } else {
       var branch = config.branch || 'master',
@@ -27,6 +28,7 @@ var GitHubLayer = L.GeoJSON.extend({
         success: function(response) {
           L.GeoJSON.prototype.initialize.call(me, JSON.parse(util.base64.decode(response.data.content.replace(/\n|\r/g, ''))), config);
           me._addAttribution();
+          me._complete();
           return me;
         },
         type: 'jsonp',

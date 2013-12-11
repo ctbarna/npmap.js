@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>GeoJSON Layer (Bootstrap) | Examples | NPMap.js</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        bottom: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+      }
+    </style>
+  <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.css" />
+  <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css" />
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      var NPMap = {
+        center: {
+          lat: 45.3058,
+          lng: -116.7187
+        },
+        div: 'map',
+        overlays: [{
+          filter: function(feature) {
+            return feature.properties.park === 'Yellowstone';
+          },
+          maki: {
+            name: 'star'
+          },
+          popup: '<div class="title">{{name}}</div><p>This is {{#if type \'!==\' \'community\'}}not {{/if}}a community.</p>',
+          type: 'geojson',
+          url: 'data/gateway_points_of_interest.geojson'
+        },{
+          maki: {
+            color: '#609321',
+            name: 'park'
+          },
+          popup: '<div class="title">{{Name}}</div><p>The alpha code is {{Code}}.</p>',
+          type: 'cluster',
+          format: 'geojson',
+          url: 'http://www.nps.gov/npmap/support/library/examples/data/national-parks.geojson'
+        }],
+        zoom: 6
+      };
+
+      (function() {
+        var s = document.createElement('script');
+        s.src = '../dist/npmap-bootstrap.js';
+        document.body.appendChild(s);
+      })();
+    </script>
+  </body>
+</html>
