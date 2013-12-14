@@ -1,0 +1,93 @@
+.marker-cluster-small {
+	background-color: rgba(122, 144, 79, 0.4);
+	width: 42px !important;
+	height: 42px !important;
+	margin-left: -21px !important;
+	margin-top: -21px !important;
+	border-radius: 21px !important;
+}
+.marker-cluster-small div {
+	background-color: rgba(122, 144, 79, 0.9);
+	width: 20px !important;
+	height: 20px !important;
+	margin-left: 11px !important;
+	margin-top: 11px !important;
+	border-radius: 10px !important;
+}
+.marker-cluster-small span {
+  line-height: 20px !important;
+}
+.marker-cluster-medium {
+	background-color: rgba(212, 153, 0, 0.4);
+	width: 60px !important;
+	height: 60px !important;
+	margin-left: -30px !important;
+	margin-top: -30px !important;
+	border-radius: 30px !important;
+	}
+.marker-cluster-medium div {
+	background-color: rgba(212, 153, 0, 0.9);
+	width: 35px !important;
+	height: 35px !important;
+	border-radius: 17px !important;
+	}
+.marker-cluster-medium span {
+  line-height: 35px !important;
+}
+.marker-cluster-large {
+	background-color: rgba(129, 71, 5, 0.4);
+	width: 75px !important;
+	height: 75px !important;
+	margin-left: -37px !important;
+	margin-top: -37px !important;
+	border-radius: 37px !important;
+	}
+.marker-cluster-large div {
+	background-color: rgba(129, 71, 5, 0.9);
+	width: 50px !important;
+	height: 50px !important;
+	border-radius: 25px !important;
+	}
+.marker-cluster-large span {
+  line-height: 50px !important;
+}
+	
+	/* IE 6-8 fallback colors */
+.leaflet-oldie .marker-cluster-small {
+	background-color: rgb(201, 210, 184);
+	}
+.leaflet-oldie .marker-cluster-small div {
+	background-color: rgb(121, 144, 79);
+	}
+
+.leaflet-oldie .marker-cluster-medium {
+	background-color: rgb(238, 214, 149);
+	}
+.leaflet-oldie .marker-cluster-medium div {
+	background-color: rgb(212, 153, 0);
+	}
+
+.leaflet-oldie .marker-cluster-large {
+	background-color: rgb(205, 181, 158);
+	}
+.leaflet-oldie .marker-cluster-large div {
+	background-color: rgb(129, 71, 5);
+}
+
+.marker-cluster {
+	background-clip: padding-box;
+	border-radius: 20px;
+	}
+.marker-cluster div {
+	width: 30px;
+	height: 30px;
+	margin-left: 12px;
+	margin-top: 12px;
+	text-align: center;
+	border-radius: 15px;
+	font: 12px "Helvetica Neue", Arial, Helvetica, sans-serif;
+        color: #fff;
+	}
+.marker-cluster span {
+	line-height: 30px;
+	}
