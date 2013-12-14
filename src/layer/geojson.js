@@ -54,5 +54,9 @@ var GeoJsonLayer = L.GeoJSON.extend({
 });
 
 module.exports = function(config) {
-  return new GeoJsonLayer(config);
+  if (config && config.cluster) {
+    return L.npmap.layer.cluster(config);
+  } else {
+    return new GeoJsonLayer(config);
+  }
 };
