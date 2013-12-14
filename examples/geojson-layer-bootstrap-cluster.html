@@ -17,7 +17,7 @@
       }
     </style>
   <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.Default.css" />
+  <link rel="stylesheet" href="../src/cluster/MarkerCluster.Default.css" />
   </head>
   <body>
     <div id="map"></div>
@@ -40,12 +40,16 @@
           url: 'data/gateway_points_of_interest.geojson'
         },{
           maki: {
-            color: '#609321',
+//            color: '#609321',
+            color: '#0FF',
             name: 'park'
           },
           popup: '<div class="title">{{Name}}</div><p>The alpha code is {{Code}}.</p>',
-          type: 'cluster',
-          format: 'geojson',
+          type: 'geojson',
+          cluster: {
+            maxClusterRadius: 70,
+            showCoverageOnHover: false
+          },
           url: 'http://www.nps.gov/npmap/support/library/examples/data/national-parks.geojson'
         }],
         zoom: 6

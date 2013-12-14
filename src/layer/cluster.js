@@ -7,7 +7,10 @@ require('../cluster/leaflet.markercluster-src');
 
 var ClusterLayer = L.MarkerClusterGroup.extend({
   initialize: function(config) {
-    this.L = L.npmap.layer[config.format](config);
+    // More information on the options here: https://github.com/Leaflet/Leaflet.markercluster/blob/master/README.md#all-options
+    L.Util.setOptions(this, config.cluster);
+    delete config.cluster;
+    this.L = L.npmap.layer[config.type](config);
 
     // Defaults
     //
@@ -26,6 +29,9 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
     //The bounds of the currently shown area (from _getExpandedVisibleBounds) Updated on zoom/move
     this._currentShownBounds = null;
     //
+    // Assign options
+    console.log('options', this);
+    this.showCoveageOnHover = false;
 
     var that = this;
     this.L.on('ready', function(me) {
