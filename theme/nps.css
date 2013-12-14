@@ -36,6 +36,7 @@
   width: 100%;
 }
 .npmap-map {
+  background-image: url('images/grain.png');
   height: 100%;
   width: 100%;
 }
@@ -228,7 +229,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 }
 /* Icons */
 .npmap [class^="icon-"], [class*=" icon-"] {
-  background-image: url(images/icons/sprite.png);
+  background-image: url('images/icons/sprite.png');
   background-repeat: no-repeat;
   display: inline-block;
   height: 14px;
