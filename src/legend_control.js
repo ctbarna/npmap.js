@@ -34,7 +34,7 @@ LegendControl = L.Control.extend({
   },
   addLegend: function(html, options) {
     // Create the default style
-    this.options.style = {'background-color': 'rgba(255,255,255,.6)', 'padding': '5px'};
+    this.options.style = {'background-color': 'rgba(255,255,255,.8)', 'padding': '5px'};
 
     // Assign the input values
     options = extend(this.options, options);
@@ -58,6 +58,30 @@ LegendControl = L.Control.extend({
           for (var icon in options.layers[layer].makiIcons) {
             html += '<span style="background-color: ' + options.layers[layer].makiIcons[icon]  + ';">&nbsp;&nbsp;&nbsp;&nbsp;</span> ' + icon + '</br>';
           }
+        }
+        // Deal with clusters
+        if (options.layers[layer].clustered) {
+          var bottomValue = 0;
+          var upperValue = 0;
+          var lastColor = '';
+          var clusterHtml = '';
+          clusterHtml += '<h6>Groups</h6>';
+          for (var group = 0; group < options.layers[layer].clustered.length; group++) {
+            if (lastColor && options.layers[layer].clustered[group].color !== lastColor) {
+              if (!lastColor.match(/^#/g)) {lastColor = '#' + lastColor;}
+              clusterHtml += '<span style="background-color: ' + lastColor  + '; border-radius: 8px;">&nbsp;&nbsp;&nbsp;&nbsp;</span> ' + bottomValue + ' - ' + upperValue + ' points</br>';
+              bottomValue = upperValue + 1;
+            }
+            upperValue = options.layers[layer].clustered[group].maxNodes;
+            lastColor = options.layers[layer].clustered[group].color;
+          }
+          if (!lastColor.match(/^#/g)) {lastColor = '#' + lastColor;}
+          if (bottomValue === 0) {
+            clusterHtml = '<span style="background-color: ' + lastColor  + '; border-radius: 8px;">&nbsp;&nbsp;&nbsp;&nbsp;</span> Grouped Points</br>';
+          } else {
+            clusterHtml += '<span style="background-color: ' + lastColor  + '; border-radius: 8px;">&nbsp;&nbsp;&nbsp;&nbsp;</span> &gt; ' + bottomValue + ' points</br>';
+          }
+          html += clusterHtml;
         }
       }
     }

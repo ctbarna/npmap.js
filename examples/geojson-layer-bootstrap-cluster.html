@@ -17,7 +17,6 @@
       }
     </style>
   <link rel="stylesheet" href="http://leaflet.github.io/Leaflet.markercluster/dist/MarkerCluster.css" />
-  <link rel="stylesheet" href="../src/cluster/MarkerCluster.Default.css" />
   </head>
   <body>
     <div id="map"></div>
@@ -48,7 +47,7 @@
           type: 'geojson',
           cluster: {
             maxClusterRadius: 70,
-            icon: '#000'
+            clusterIcon: '#000'
           },
           url: 'http://www.nps.gov/npmap/support/library/examples/data/national-parks.geojson'
         }],

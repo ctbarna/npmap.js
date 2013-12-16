@@ -9,16 +9,14 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
   initialize: function(config) {
     // The config uses all available options here: https://github.com/Leaflet/Leaflet.markercluster/blob/master/README.md#all-options
     // It also supports a custom color option
-    // icon = false -- defaults to three colors, green for small, yellow for medium, and brown/red for large
-    // icon = #color -- sets all sizes to the defined color
-    // icon = object {small: {color: #color}, medium: {color: #color}, large: {color: #color}} -- gives you access to change any parameter, but still limits you to the 3 sizes
-    // icon = array [] -- allows you to define as many different cluster sizes as you like
+    // clusterIcon = false -- defaults to three colors, green for small, yellow for medium, and brown/red for large
+    // clusterIcon = #color -- sets all sizes to the defined color
+    // clusterIcon = object {small: {color: #color}, medium: {color: #color}, large: {color: #color}} -- gives you access to change any parameter, but still limits you to the 3 sizes
+    // clusterIcon = array [] -- allows you to define as many different cluster sizes as you like
     //config.cluster.iconCreateFunction = new this.CreateCustomIconFunction({small: {color: '#0f0'}, medium: {color: '#f00'}, large: {color: '00f'}});
-    if (config.cluster.icon) {
-      config.cluster.iconCreateFunction = new this.CreateCustomIconFunction(config.cluster.icon);
-    }
-    delete config.cluster.icon;
+    config.cluster.iconCreateFunction = new this.CreateCustomIconFunction(config.cluster.clusterIcon);
     L.Util.setOptions(this, config.cluster);
+    config.clustered = config.cluster.iconCreateFunction('getInfo');
     delete config.cluster;
     this.L = L.npmap.layer[config.type](config);
 
@@ -117,6 +115,10 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
       return styleLoop(styles, cssStyle);
     },
     customIconCreateFunction = function (cluster) {
+      // Support a get info request
+      if (cluster === 'getInfo') {
+        return defaultSettings;
+      }
       var childCount = cluster.getChildCount(),
       className, size;
 
