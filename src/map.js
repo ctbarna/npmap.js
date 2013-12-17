@@ -96,7 +96,7 @@ var Map = L.Map.extend({
       toolbar = L.DomUtil.create('div', 'npmap-toolbar');
 
     config = me._toLeaflet(config);
-    config.div.insertBefore(npmap, config.div.childNodes[0]);
+    config.div.insertBefore(npmap, config.div.hasChildNodes() ? config.div.childNodes[0] : null);
     npmap.appendChild(modules);
     npmap.appendChild(container);
     container.appendChild(toolbar);
