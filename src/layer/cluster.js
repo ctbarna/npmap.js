@@ -75,16 +75,12 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
       var styles = {
         main: {
           'background-clip': 'padding-box',
-          'background-color': 'rgba(' +  hexToArray(style.color)[0] +', ' +  hexToArray(style.color)[1] + ', ' +  hexToArray(style.color)[2] + ', 0.4)',
-          'width': (style.size + style.outerRing) + 'px',
-          'height': (style.size + style.outerRing) +'px',
-          'margin-left': ((style.size + style.outerRing)*-0.5) + 'px',
-          'margin-top': ((style.size + style.outerRing)*-0.5) + 'px',
+          'background-color': supportsRgba('rgba(' +  hexToArray(style.color)[0] +', ' +  hexToArray(style.color)[1] + ', ' +  hexToArray(style.color)[2] + ', 0.4)'),
           'border-radius': ((style.size + style.outerRing)*0.5) + 'px'
         },
         div: {
           'text-align': 'center',
-          'background-color': 'rgba(' +  hexToArray(style.color)[0] +', ' +  hexToArray(style.color)[1] + ', ' +  hexToArray(style.color)[2] + ', 0.9)',
+          'background-color': supportsRgba('rgba(' +  hexToArray(style.color)[0] +', ' +  hexToArray(style.color)[1] + ', ' +  hexToArray(style.color)[2] + ', 0.9)'),
           'width': style.size + 'px',
           'height': style.size + 'px',
           'margin-left': (style.outerRing / 2) + 'px',
@@ -144,6 +140,12 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
           styleElement.textContent += '.' + 'marker-cluster-custom-' + defaultSettings[i].maxNodes.toString() + ' ' + styleName  + ' {' + currStyle[styleType]  + '}\n';
         }
       }
+      styleElement.textContent += '.leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {';
+      styleElement.textContent +=  '-webkit-transition: -webkit-transform 0.2s ease-out, opacity 0.2s ease-in;';
+      styleElement.textContent +=  '-moz-transition: -moz-transform 0.2s ease-out, opacity 0.2s ease-in;';
+      styleElement.textContent +=  '-o-transition: -o-transform 0.2s ease-out, opacity 0.2s ease-in;';
+      styleElement.textContent +=  'transition: transform 0.2s ease-out, opacity 0.2s ease-in;';
+      styleElement.textContent +=  '}';
       document.getElementsByTagName('head')[0].appendChild(styleElement);
     },
     hexToArray = function(hexValue) {
@@ -191,6 +193,35 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
             defaultSettings[j].fontColor = autoTextColor(hexToArray(newSettings[defaultSettings[j].name].color));
           }
         }
+      }
+    },
+    supportsRgba = function(color) {
+      var testDiv = document.createElement('div'),
+      rgbaTestVal = 'rgba(0,0,0,0.1)',
+      returnValue = false,
+      newColor;
+      testDiv.style.color = rgbaTestVal;
+      if (testDiv.style.color.substr(0,4) === 'rgba') {
+        returnValue = true;
+      }
+      if (color) {
+        if (returnValue) {
+          return color;
+        } else {
+          //newColor = color.replace(/^rgba/g, 'rgb').split(',').slice(0,3).join(',') + ')';
+          newColor = color.replace(/^rgba\(/g, 'rgb(,').replace(')','').split(',');
+          newColor[1] = Math.floor(parseInt(newColor[1],10) + (255 * (1 - parseFloat(newColor[4], 10))));
+          newColor[2] = Math.floor(parseInt(newColor[2],10) + (255 * (1 - parseFloat(newColor[4], 10))));
+          newColor[3] = Math.floor(parseInt(newColor[3],10) + (255 * (1 - parseFloat(newColor[4], 10))));
+          if (newColor[1] > 255) {newColor[1] = 255;}
+          if (newColor[2] > 255) {newColor[2] = 255;}
+          if (newColor[3] > 255) {newColor[3] = 255;}
+          newColor=newColor.slice(0,4).join(',').replace('(,','(') + ')';
+
+          return newColor;
+        }
+      } else {
+        return returnValue;
       }
     };
 
