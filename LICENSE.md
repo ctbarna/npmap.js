@@ -10,6 +10,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 NPMap.js uses a modified version of the [Esri-Leaflet](https://github.com/Esri/esri-leaflet) plugin.
 
+## Leaflet-markercluster
+
+NPMap.js uses the [Leaflet.markercluster] plugin. It is licensed under the [MIT license](http://www.opensource.org/licenses/mit-license.php).
+
 ## Leaflet-MiniMap
 
 NPMap.js uses a modified version of the [Leaflet-MiniMap](https://github.com/Norkart/Leaflet-MiniMap) plugin. The license follows:
