@@ -19,9 +19,10 @@ L.npmap = module.exports = {
     npmaki: require('./src/icon/npmaki')
   },
   layer: {
+    _cluster: require('./src/layer/cluster'),
     arcgisserver: require('./src/layer/arcgisserver'),
+    csv: require('./src/layer/csv'),
     geojson: require('./src/layer/geojson'),
-    cluster: require('./src/layer/cluster'),
     github: require('./src/layer/github'),
     kml: require('./src/layer/kml'),
     mapbox: require('./src/layer/mapbox'),

@@ -54,7 +54,7 @@ module.exports = function(config) {
   config = config || {};
 
   if (config.cluster) {
-    return L.npmap.layer.cluster(config);
+    return L.npmap.layer._cluster(config);
   } else {
     return new KmlLayer(config);
   }
