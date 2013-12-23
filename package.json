@@ -22,6 +22,7 @@
     "handlebars": "1.1.2",
     "json3": "3.2.6",
     "leaflet": "0.7.1",
+    "leaflet-markercluster": "https://github.com/Leaflet/Leaflet.markercluster/archive/0.4.tar.gz",
     "reqwest": "0.9.3",
     "togeojson": "0.4.1"
   },
