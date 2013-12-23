@@ -11,16 +11,15 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
   initialize: function(config) {
     var that = this;
 
+    if (config.cluster === true) {
+      config.cluster = {};
+    }
+
     config.cluster.iconCreateFunction = new this.createCustomIconFunction(config.cluster.clusterIcon);
     L.Util.setOptions(this, config.cluster);
     config.clustered = config.cluster.iconCreateFunction('getInfo');
     delete config.cluster;
     this.L = L.npmap.layer[config.type](config);
-
-    if (!this.options.iconCreateFunction) {
-      this.options.iconCreateFunction = this._defaultIconCreateFunction;
-    }
-
     this._currentShownBounds = null;
     this._featureGroup = new L.FeatureGroup();
     this._featureGroup.on(L.FeatureGroup.EVENTS, this._propagateEvent, this);
@@ -44,14 +43,14 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
       size: 20,
       outerRing: 22,
       fontColor: '#fff'
-    }, {
+    },{
       name: 'medium',
       maxNodes: 99,
       color: '#D49900',
       size: 35,
       outerRing: 24,
       fontColor: '#fff'
-    }, {
+    },{
       name: 'large',
       maxNodes: Infinity,
       color: '#814705',
