@@ -25,42 +25,42 @@ dist/images:
 
 dist/npmap-bootstrap.js: src/bootstrap.js
 				cp src/bootstrap.js dist/npmap-bootstrap.js
-				gzip dist/npmap-bootstrap.js
+				gzip dist/npmap-bootstrap.js --force
 				cp src/bootstrap.js dist/npmap-bootstrap.js
 
 dist/npmap-bootstrap.min.js: dist/npmap-bootstrap.js
 				$(UGLIFY) $< -c -m -o $@
-				gzip dist/npmap-bootstrap.min.js
+				gzip dist/npmap-bootstrap.min.js --force
 				$(UGLIFY) $< -c -m -o $@
 
 dist/npmap-standalone.css: theme/nps.css
 				cp theme/nps.css dist/npmap-standalone.css
-				gzip dist/npmap-standalone.css
+				gzip dist/npmap-standalone.css --force
 				cp theme/nps.css dist/npmap-standalone.css
 
 dist/npmap.css: node_modules/leaflet/dist/leaflet.css theme/nps.css
 				cat node_modules/leaflet/dist/leaflet.css theme/nps.css > dist/npmap.css
-				gzip dist/npmap.css
+				gzip dist/npmap.css --force
 				cat node_modules/leaflet/dist/leaflet.css theme/nps.css > dist/npmap.css
 
 dist/npmap.js: node_modules/.install dist $(shell $(BROWSERIFY) --list main.js)
 				$(BROWSERIFY) --debug main.js > $@
-				gzip dist/npmap.js
+				gzip dist/npmap.js --force
 				$(BROWSERIFY) --debug main.js > $@
 
 dist/npmap.min.js: dist/npmap.js
 				$(UGLIFY) $< -c -m -o $@
-				gzip dist/npmap.min.js
+				gzip dist/npmap.min.js --force
 				$(UGLIFY) $< -c -m -o $@
 
 dist/npmap-standalone.js: node_modules/.install dist $(shell $(BROWSERIFY) --list npmap.js)
 				$(BROWSERIFY) --debug npmap.js  > $@
-				gzip dist/npmap-standalone.js
+				gzip dist/npmap-standalone.js --force
 				$(BROWSERIFY) --debug npmap.js  > $@
 
 dist/npmap-standalone.min.js: dist/npmap-standalone.js
 				$(UGLIFY) $< -c -m -o $@
-				gzip dist/npmap-standalone.min.js
+				gzip dist/npmap-standalone.min.js --force
 				$(UGLIFY) $< -c -m -o $@
 
 clean:
