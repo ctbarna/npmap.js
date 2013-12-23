@@ -18,6 +18,14 @@ module.exports = {
     }
   },
   _toLeaflet: function(config) {
+    var styles = {
+      fill: '',
+      'fill-opacity': '',
+      stroke: '',
+      'stroke-opacity': '',
+      'stroke-width': ''
+    };
+
     if (typeof config.clickable === 'undefined' || config.clickable === true) {
       var activeTip, lastTarget;
 
@@ -75,43 +83,79 @@ module.exports = {
     }
 
     config.pointToLayer = function(feature, latLng) {
-      if (config.maki) {
-        var maki;
+      // Check for 'marker-color', 'marker-library', 'marker-size', and 'marker-symbol' properties in feature first.
+      // If they don't exist, check for "marker" object in the config. (color, library, size, symbol, url (check this first))
+      // If those don't exist, use defaults.
+      var fromFeature = {},
+        icon = {
+          color: '#000',
+          library: 'maki',
+          size: 'medium',
+          symbol: null
+        },
+        properties = feature.properties,
+        prop;
 
-        switch (typeof config.maki) {
-        case 'function':
-          maki = config.maki(feature.properties);
-          break;
-        case 'string':
-          // TODO: Support handlebar templates.
-          maki = config.maki;
-          break;
-        default:
-          maki = config.maki;
+      for (prop in icon) {
+        if (typeof properties['marker-' + prop] !== 'undefined') {
+          fromFeature[prop] = properties['marker-' + prop];
+        }
+      }
+
+      if (typeof config.styles === 'undefined') {
+        for (prop in fromFeature) {
+          icon[prop] = fromFeature[prop];
         }
 
-        config.icon = L.npmap.icon.maki(maki);
-      } else if (config.npmaki) {
-        var npmaki;
+        config.icon = L.npmap.icon[icon.library](icon);
+      } else {
+        var c = typeof config.styles === 'function' ? config.styles(properties) : config.styles;
 
-        switch (typeof config.maki) {
-        case 'function':
-          npmaki = config.maki(feature.properties);
-          break;
-        case 'string':
-          // TODO: Support handlebar templates.
-          npmaki = config.maki;
-          break;
-        default:
-          npmaki = config.maki;
+        if (c) {
+          // If iconUrl is set, it currently overrides *everything*.
+          if (typeof c.iconUrl === 'string') {
+            config.icon = new L.Icon(c);
+          } else {
+            for (prop in icon) {
+              if (typeof c['marker-' + prop] === 'string') {
+                icon[prop] = util.handlebars(c['marker-' + prop], properties);
+              } else if (typeof c['marker-' + prop] === 'function') {
+                icon[prop] = c['marker-' + prop](properties);
+              }
+            }
+
+            for (prop in fromFeature) {
+              icon[prop] = fromFeature[prop];
+            }
+
+            config.icon = L.npmap.icon[icon.library](icon);
+          }
+        } else {
+          for (prop in fromFeature) {
+            icon[prop] = fromFeature[prop];
+          }
+
+          config.icon = L.npmap.icon[icon.library](icon);
         }
-
-        config.icon = L.npmap.icon.npmaki(npmaki);
       }
 
       return L.marker(latLng, config);
     };
 
+    // These styles can be sent in as strings or functions at the config level
+    // They can also be set, per geometry, in the data source.
+
+    //fill
+    //fill-opacity
+    //marker-color
+    //marker-library: "npmaki" (default), "maki"
+    //marker-size
+    //marker-symbol
+    //stroke
+    //stroke-opacity
+    //stroke-width
+
+    /*
     if (typeof config.style === 'string') {
       // TODO: Check to see if it is a handlebars template. If so, parse it.
       var color = colorPresets[config.style];
@@ -120,6 +164,7 @@ module.exports = {
         return color;
       };
     }
+    */
 
     return config;
   },

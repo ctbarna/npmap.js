@@ -451,6 +451,7 @@ module.exports = {
       input.value = input.value;
     }
   },
+  reqwest: reqwest,
   /**
    *
    */

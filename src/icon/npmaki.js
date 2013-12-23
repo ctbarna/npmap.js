@@ -7,8 +7,8 @@ var util = require('../util/util');
 var NpmakiIcon = L.Icon.extend({
   options: {
     color: '#000000',
-    name: null,
-    size: 'medium'
+    size: 'medium',
+    symbol: null
   },
   statics: {
     CSS_TEMPLATE: 'url(https://a.tiles.mapbox.com/v3/marker/pin-{{size}}+{{color}}{{retina}}.png)'
@@ -41,10 +41,10 @@ var NpmakiIcon = L.Icon.extend({
   },
   createIcon: function(oldIcon) {
     var div = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div'),
-      options = this.options;
+      options = this.options,
+      overlayDiv = document.createElement('div');
 
-    var overlayDiv = document.createElement('div');
-    overlayDiv.setAttribute('class', 'npmaki-icon ' + options.name  + ' leaflet-zoom-animated');
+    overlayDiv.setAttribute('class', 'npmaki-icon ' + (typeof options.symbol === 'string' && options.symbol.length ? options.symbol : '') + ' leaflet-zoom-animated');
     overlayDiv.setAttribute('style', 'margin-left: 5px; margin-top: 6px;');
     options.className = null;
     options.html = null;
