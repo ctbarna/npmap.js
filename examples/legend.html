@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>Legend Control | Examples | NPMap.js</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        bottom: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      var NPMap = {
+        div: 'map',
+        hooks: {
+          init: function(callback) {
+            var legend = NPMap.config.L.legendControl(),
+            legendHtml = '<h4>Legend</h4><ul><li>Item 1</li><li>Item 2</li></ul>';
+            legend.addLegend(legendHtml).addTo(NPMap.config.L);
+            callback();
+          }
+        }
+      };
+
+      (function() {
+        var s = document.createElement('script');
+        s.src = '../dist/npmap-bootstrap.js';
+        document.body.appendChild(s);
+      })();
+    </script>
+  </body>
+</html>

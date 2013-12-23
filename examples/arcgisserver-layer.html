@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>ArcGIS Layer | Examples | NPMap.js</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        bottom: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      var NPMap = {
+        div: 'map',
+        baseLayers: [{
+          attribution: 'Esri',
+          tiled: true,
+          type: 'arcgisserver',
+          url: 'http://services.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer'
+        }],
+        maxZoom: 13,
+        overlays: [{
+          attribution: 'Esri',
+          opacity: 0.5,
+          tiled: true,
+          type: 'arcgisserver',
+          url: 'http://services.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Unemployment_Rate/MapServer'
+        }]
+      };
+
+      (function() {
+        var s = document.createElement('script');
+        s.src = '../dist/npmap-bootstrap.js';
+        document.body.appendChild(s);
+      })();
+    </script>
+  </body>
+</html>
