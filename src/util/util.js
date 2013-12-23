@@ -6,7 +6,7 @@ var Handlebars = require('handlebars'),
   json3 = require('json3'),
   reqwest = require('reqwest');
 
-Handlebars.registerHelper('if', function (v1, operator, v2, opts) {
+Handlebars.registerHelper('if', function(v1, operator, v2, opts) {
   var isTrue = false;
 
   switch (operator) {
@@ -37,6 +37,9 @@ Handlebars.registerHelper('if', function (v1, operator, v2, opts) {
   }
 
   return isTrue ? opts.fn(this) : opts.inverse(this);
+});
+Handlebars.registerHelper('toLowerCase', function(str) {
+  return str.toLowerCase();
 });
 
 module.exports = {
