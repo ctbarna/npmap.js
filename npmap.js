@@ -27,7 +27,8 @@ L.npmap = module.exports = {
     kml: require('./src/layer/kml'),
     mapbox: require('./src/layer/mapbox'),
     cartodb: require('./src/layer/cartodb'),
-    tiled: require('./src/layer/tiled')
+    tiled: require('./src/layer/tiled'),
+    wms: require('./src/layer/wms')
   },
   map: require('./src/map'),
   preset: {
