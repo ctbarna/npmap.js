@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <title>CSV Layer | Examples | NPMap.js</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        bottom: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      var NPMap = {
+        center: {
+          lat: 39.37,
+          lng: -105.7
+        },
+        div: 'map',
+        overlays: [{
+          popup: '<div class="title">{{{name}}}</div><div class="content">Zip Code: {{{zip}}}</div>',
+          type: 'csv',
+          url: 'data/colorado_cities.csv'
+        }],
+        zoom: 6
+      };
+
+      (function() {
+        var s = document.createElement('script');
+        s.src = '../dist/npmap-bootstrap.js';
+        document.body.appendChild(s);
+      })();
+    </script>
+  </body>
+</html>
