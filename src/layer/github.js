@@ -39,5 +39,11 @@ var GitHubLayer = L.GeoJSON.extend({
 });
 
 module.exports = function(config) {
-  return new GitHubLayer(config);
+  config = config || {};
+
+  if (config.cluster) {
+    return L.npmap.layer.cluster(config);
+  } else {
+    return new GitHubLayer(config);
+  }
 };

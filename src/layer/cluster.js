@@ -4,13 +4,14 @@
 
 require('leaflet.markercluster');
 
-console.log(L.MarkerClusterGroup);
-
 var ClusterLayer = L.MarkerClusterGroup.extend({
+  options: {
+    showCoverageOnHover: false
+  },
   initialize: function(config) {
     var that = this;
 
-    config.cluster.iconCreateFunction = new this.CreateCustomIconFunction(config.cluster.clusterIcon);
+    config.cluster.iconCreateFunction = new this.createCustomIconFunction(config.cluster.clusterIcon);
     L.Util.setOptions(this, config.cluster);
     config.clustered = config.cluster.iconCreateFunction('getInfo');
     delete config.cluster;
@@ -20,23 +21,22 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
       this.options.iconCreateFunction = this._defaultIconCreateFunction;
     }
 
-    this._featureGroup = L.featureGroup();
+    this._currentShownBounds = null;
+    this._featureGroup = new L.FeatureGroup();
     this._featureGroup.on(L.FeatureGroup.EVENTS, this._propagateEvent, this);
-    this._nonPointGroup = L.featureGroup();
-    this._nonPointGroup.on(L.FeatureGroup.EVENTS, this._propagateEvent, this);
     this._inZoomAnimation = 0;
     this._needsClustering = [];
     this._needsRemoving = [];
-    this._currentShownBounds = null;
-    this.showCoveageOnHover = false;
-
+    this._nonPointGroup = L.featureGroup();
+    this._nonPointGroup.on(L.FeatureGroup.EVENTS, this._propagateEvent, this);
+    this._queue = [];
     this.L.on('ready', function(me) {
       that.addLayer(me.target);
     }, this);
 
     return this;
   },
-  CreateCustomIconFunction: function(settings) {
+  createCustomIconFunction: function(settings) {
     var defaultSettings = [{
       name: 'small',
       maxNodes: 9,
@@ -82,8 +82,6 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
       document.getElementsByTagName('head')[0].appendChild(styleElement);
     }
     function autoTextColor(rgb) {
-      // This determines if the background is too light to use a white text color
-      // http://www.wat-c.org/tools/CCA/1.1/
       if (Object.prototype.toString.call(rgb) !== '[object Array]') {
         rgb = hexToArray(rgb);
       }
@@ -117,7 +115,7 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
           'border-radius': (style.size / 2) + 'px'
         },
         span: {
-          font: '12px "Helvetica Neue", Arial, Helvetica, sans-serif',
+          font: '12px Frutiger, "Frutiger Linotype", Univers, Calibri, "Gill Sans", "Gill Sans MT", "Myriad Pro", Myriad, "DejaVu Sans Condensed", "Liberation Sans", "Nimbus Sans L", Tahoma, Geneva, "Helvetica Neue", Helvetica, Arial, sans-serif',
           color: 'rgb(' +  hexToArray(style.fontColor)[0] +', ' +  hexToArray(style.fontColor)[1] + ', ' +  hexToArray(style.fontColor)[2] + ')',
           'line-height': style.size + 'px'
         }
@@ -235,7 +233,6 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
     }
 
     addStyles();
-
     return customIconCreateFunction;
   }
 });

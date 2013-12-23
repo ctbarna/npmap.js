@@ -51,5 +51,11 @@ var KmlLayer = L.GeoJSON.extend({
 });
 
 module.exports = function(config) {
-  return new KmlLayer(config);
+  config = config || {};
+
+  if (config.cluster) {
+    return L.npmap.layer.cluster(config);
+  } else {
+    return new KmlLayer(config);
+  }
 };
