@@ -18,44 +18,17 @@
     </style>
   </head>
   <body>
-    <!--
-      //fill
-      //fill-opacity
-      //marker-color
-      //marker-library: "npmaki" (default), "maki"
-      //marker-size
-      //marker-symbol
-      //stroke
-      //stroke-opacity
-      //stroke-width
-
-      You can setup styles for vector shapes in multiple ways. NPMap.js looks in the following order for styles. If it doesn't find any, it falls back to a set of defaults:
-
-      1. In the data source itself (simplestyle-spec + 'marker-library')
-      2. In the overlay config, via a "styles" config:
-         1. As an object with string configs (handlebars templates are supported)
-         2. As a function that returns a config object
-
-      No matter which way the styles are passed in, they should be in the simplestyle-spec with one additional parameter: 'marker-library'.
-    -->
     <div id="map"></div>
     <script>
       var NPMap = {
         center: {
-          lat: 39.37,
-          lng: -105.7
+          lat: 42.42,
+          lng: -104.71
         },
         div: 'map',
         overlays: [{
           name: 'National Parks',
           popup: '<div class="title"><a href="http://www.nps.gov/{{toLowerCase Code}}">{{Name}}</a></div>',
-          /*
-          styles: {
-            'marker-color': '#609321',
-            'marker-size': 'small',
-            'marker-symbol': 'park'
-          },
-          */
           styles: function(data) {
             return {
               'marker-size': 'small',
@@ -71,8 +44,11 @@
           },
           type: 'csv',
           url: 'data/colorado_cities_simplestyle.csv'
+        },{
+          type: 'geojson',
+          url: 'data/demo.geojson'
         }],
-        zoom: 7
+        zoom: 6
       };
 
       (function() {

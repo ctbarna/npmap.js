@@ -18,12 +18,13 @@ module.exports = {
     }
   },
   _toLeaflet: function(config) {
-    var styles = {
-      fill: '',
-      'fill-opacity': '',
-      stroke: '',
-      'stroke-opacity': '',
-      'stroke-width': ''
+    var configStyles = config.styles || {},
+      match = {
+      'fill': 'fillColor',
+      'fill-opacity': 'fillOpacity',
+      'stroke': 'color',
+      'stroke-opacity': 'opacity',
+      'stroke-width': 'weight'
     };
 
     if (typeof config.clickable === 'undefined' || config.clickable === true) {
@@ -83,9 +84,8 @@ module.exports = {
     }
 
     config.pointToLayer = function(feature, latLng) {
-      // Check for 'marker-color', 'marker-library', 'marker-size', and 'marker-symbol' properties in feature first.
-      // If they don't exist, check for "marker" object in the config. (color, library, size, symbol, url (check this first))
-      // If those don't exist, use defaults.
+      // TODO: Support preset colors.
+      // TODO: Support handlebars templates.
       var fromFeature = {},
         icon = {
           color: '#000',
@@ -96,9 +96,13 @@ module.exports = {
         properties = feature.properties,
         prop;
 
-      for (prop in icon) {
-        if (typeof properties['marker-' + prop] !== 'undefined') {
-          fromFeature[prop] = properties['marker-' + prop];
+      if (!configStyles.ignoreFeatureStyles) {
+        for (prop in icon) {
+          var a = properties['marker-' + prop];
+
+          if (typeof a !== 'undefined' && a !== null && a.length) {
+            fromFeature[prop] = properties['marker-' + prop];
+          }
         }
       }
 
@@ -112,9 +116,18 @@ module.exports = {
         var c = typeof config.styles === 'function' ? config.styles(properties) : config.styles;
 
         if (c) {
-          // If iconUrl is set, it currently overrides *everything*.
-          if (typeof c.iconUrl === 'string') {
-            config.icon = new L.Icon(c);
+          if (c.leaflet === true) {
+            for (prop in fromFeature) {
+              icon[prop] = fromFeature[prop];
+            }
+
+            for (prop in c) {
+              if (prop !== 'leaflet' && typeof fromFeature[prop] === 'undefined') {
+                icon[prop] = c[prop];
+              }
+            }
+
+            config.icon = new L.Icon(icon);
           } else {
             for (prop in icon) {
               if (typeof c['marker-' + prop] === 'string') {
@@ -141,30 +154,57 @@ module.exports = {
 
       return L.marker(latLng, config);
     };
+    config.style = function(feature) {
+      // TODO: Support preset colors.
+      // TODO: Support handlebars templates.
+      if (feature.geometry.type !== 'Point') {
+        var count = 0,
+          properties = feature.properties,
+          style = {},
+          prop;
 
-    // These styles can be sent in as strings or functions at the config level
-    // They can also be set, per geometry, in the data source.
+        if (!configStyles.ignoreFeatureStyles) {
+          for (prop in match) {
+            if (typeof properties[prop] !== 'undefined' && properties[prop] !== '') {
+              style[match[prop]] = properties[prop];
+            }
+          }
+        }
 
-    //fill
-    //fill-opacity
-    //marker-color
-    //marker-library: "npmaki" (default), "maki"
-    //marker-size
-    //marker-symbol
-    //stroke
-    //stroke-opacity
-    //stroke-width
+        if (typeof config.styles !== 'undefined') {
+          var c = typeof config.styles === 'function' ? config.styles(properties) : config.styles;
 
-    /*
-    if (typeof config.style === 'string') {
-      // TODO: Check to see if it is a handlebars template. If so, parse it.
-      var color = colorPresets[config.style];
+          if (c) {
+            if (c.leaflet === true) {
+              for (prop in c) {
+                if (prop !== 'leaflet' && typeof style[prop] === 'undefined') {
+                  style[prop] = c[prop];
+                }
+              }
+            } else {
+              if (typeof c === 'object') {
+                for (prop in match) {
+                  if (typeof c[prop] !== 'undefined' && c[prop] !== '' && typeof style[match[prop]] === 'undefined') {
+                    style[match[prop]] = c[prop];
+                  }
+                }
+              } else if (typeof c === 'string') {
 
-      config.style = function() {
-        return color;
-      };
-    }
-    */
+              }
+            }
+          }
+        }
+
+        for (prop in style) {
+          count++;
+          break;
+        }
+
+        if (count) {
+          return style;
+        }
+      }
+    };
 
     return config;
   },

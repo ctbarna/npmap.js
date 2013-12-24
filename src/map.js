@@ -17,9 +17,12 @@ var baselayerPresets = require('./preset/baselayers.json'),
   L.Control.Attribution.mergeOptions({
     prefix: '<a href="http://www.nps.gov/npmap/disclaimer.html" target="_blank">Disclaimer</a>'
   });
-  L.Path.mergeOptions(style);
   L.Polygon.mergeOptions(style);
-  L.Polyline.mergeOptions(style);
+  L.Polyline.mergeOptions({
+    color: style.color,
+    opacity: style.opacity,
+    weight: style.weight
+  });
   L.Popup.mergeOptions({
     autoPanPaddingBottomRight: [20, 20],
     autoPanPaddingTopLeft: [20, 20],
