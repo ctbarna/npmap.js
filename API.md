@@ -42,7 +42,7 @@ The first, and only, argument is required. It must be a layer config object with
 - (Optional) `attribution` (String): An attribution string for the layer. HTML is allowed.
 - (Optional) `description` (String): Descriptive text for the layer. Used in legends, modules, and controls.
 - (Optional) `dynamicAttribution` (String): The URL of a [dynamic attribution](http://blogs.esri.com/esri/arcgis/2012/08/15/dynamic-attribution-is-here/) endpoint for the service.
-- (Optional) `layers` (String): A comma-delimited string of the ArcGIS Server layers to bring into the NPMap.js layer.
+- (Optional) `layers` (String): A comma-delimited string of the ArcGIS Server integer layer identifiers to bring into the NPMap.js layer.
 - (Optional) `name` (String): A name for the layer. Used in legends, modules, and controls.
 - (Optional) `opacity` (Float): An opacity value for the layer. Defaults to `1.0`.
 
@@ -59,6 +59,8 @@ You can also (optionally) provide any of the options supported by [`L.TileLayer`
 
 ### L.npmap.layer.cartodb(config: object)
 
+### L.npmap.layer.csv(config: object)
+
 ### L.npmap.layer.geojson(config: object)
 
 ### L.npmap.layer.github(config: object)
@@ -69,10 +71,14 @@ Add a GeoJSON/TopoJSON layer from GitHub to your map with `L.npmap.layer.github(
 
 The first, and only, argument is required, and must be a layer config object with the following properties:
 
-- (Depends) `data` (Object | String): The GeoJSON data you'd like to add to the map. If this is a string, NPMap.js will parse it into an object for you. Required if your GitHub details (the other three "depends" properties) aren't provided.
-- (Depends) `path` (String): The path to your GitHub file. This **should not** include your GitHub organization/user name or the name of the repository. This is the path to the GeoJSON file in your GitHub repository: e.g. `fire/CA-STF-HV2F.geojson`.
-- (Depends) `repo` (String): The name of the repository that contains the data.
-- (Depends) `user` (String): The name of the organization or user that owns the repository.
+- (Required) `data` (Object | String): The GeoJSON data you'd like to add to the map. If this is a string, NPMap.js will parse it into an object for you. Required if your GitHub details (the other three "required" properties below) aren't provided.
+
+OR
+
+- (Required) `path` (String): The path to your GitHub file. This **should not** include your GitHub organization/user name or the name of the repository. This is the path to the GeoJSON file in your GitHub repository: e.g. `fire/CA-STF-HV2F.geojson`.
+- (Required) `repo` (String): The name of the repository that contains the data.
+- (Required) `user` (String): The name of the organization or user that owns the repository.
+- (Optional) `branch` (String) The name of the branch your GitHub file should be pulled in from. Defaults to `master`.
 
 You can also (optionally) provide any of the options supported by [`L.GeoJSON`](http://leafletjs.com/reference.html#tilelayer).
 
@@ -95,8 +101,14 @@ Add a layer from MapBox Hosting to your map with `L.npmap.layer.mapbox()`.
 
 The first, and only, argument is required, and must be a layer config object with the following properties:
 
-- (Depends) `id` (String): The id ('account.id') of the MapBox map or tileset you want to add to the map. Required if `tileJson` is not provided.
-- (Depends) `tileJson` (Object): A tileJson object for the MapBox map or tileset you want to add to the map. Required if `id` is not provided.
+- (Required) `id` (String): The id ('account.id') of the MapBox map or tileset you want to add to the map. Can also be a comma-delimited string with multiple "account.id" strings if you want to take advantage of MapBox Hosting's compositing feature. Required if `tileJson` is not provided.
+
+OR
+
+- (Required) `tileJson` (Object): A tileJson object for the MapBox map or tileset you want to add to the map. Required if `id` is not provided.
+
+AND
+
 - (Optional) `format` (String): One of the following: 'jpg70', 'jpg80', 'jpg90', 'png', 'png32', 'png64', 'png128', or 'png256'. If not provided, defaults to 'png'.
 - (Optional) `icon` (String)
 - (Optional) `name` (String)
@@ -111,6 +123,8 @@ You can also (optionally) provide any of the options supported by [`L.TileLayer`
     });
 
 ### L.npmap.layer.tiled(config: object)
+
+### L.npmap.layer.wms(config: object)
 
 ## Controls
 
@@ -130,7 +144,7 @@ The first, and only, argument is required, and must be a config object with the 
 
 - (Optional) `autoToggleDisplay` (Boolean): Should the overview hide automatically if the parent map bounds does not fit within the bounds of the overview map? Defaults to `false`.
 - (Optional) `height` (Number): The height of the overview map. Defaults to 150 pixels.
-- (Required) `layer` (String|Object): A layer config object that you would like to add to the map. Can either be a layer preset string or a layer config object.
+- (Optional) `layer` (String|Object): A layer config object that you would like to add to the map. Can either be a layer preset string or a layer config object. If this is `undefined`, NPMap.js uses the baseLayer that is currently visible on the parent map.
 - (Optional) `toggleDisplay` (Boolean): Should the overview map be togglable? Defaults to `true`.
 - (Optional) `width` (Number): The width of the overview map. Defaults to 150 pixels.
 - (Optional) `zoomLevelFixed` (Number): Overrides `zoomLevelOffset`, sets the map to a fixed zoom level.
@@ -160,8 +174,58 @@ You can (optionally) provide any of the options supported by [`L.Control`](http:
 
 ### L.npmap.switcherControl(config: object)
 
+The switcher control is used and controlled internally by NPMap.js, and is created and added to your map when more than one baseLayers is present in your map configuration object.
+
+## Icons
+
+### L.npmap.icon.maki(config: object)
+
+### L.npmap.icon.npmaki(config: object)
+
+## Utils
+
+## Concepts
+
+### Using Popups
+
+### Using Tooltips
+
+### Styling Vectors
+
+NPMap.js uses the [simplestyle specification](https://github.com/mapbox/simplestyle-spec), which currently (at v1.1.0) includes the following:
+
+    fill
+    fill-opacity
+    marker-color
+    marker-size
+    marker-symbol
+    stroke
+    stroke-opacity
+    stroke-width
+
+In addition, NPMap.js supports the following addition to the specification:
+
+  marker-library
+
+This property defaults to "maki", and can be either "maki" or "npmaki".
+
+Styles for vector shapes can be set in multiple ways. NPMap.js looks in the following order for styles:
+
+1. In the properties pulled in for each feature from the data source. You can tell NPMap.js to ignore feature styles by setting the "ignoreFeatureStyles" property to true. For example, if a GeoJSON Point feature has a "marker-symbol" property, it will be used to style the marker on the map unless "ignoreFeatureStyles" is set to true in the styles object of the overlay configuration.
+2. In the overlay configuration object, via a "styles" property:
+   1. As an object
+   2. As a function that is passed a data object for each feature and returns an object
+
+If no styles are found in these two places, NPMap.js falls back to a set of defaults.
+
+If you prefer not to use the simplestyle specification, you can utilize the Leaflet styles directly by adding <code>leaflet: true</code> to the <code>styles</code> object on your overlay configuration. NPMap.js will then pass the object directly to Leaflet.
+
+**An important note**: Style properties cascade. This means that if a "marker-symbol" property is passed in via the data source (e.g. a GeoJSON feature's properties) and a "marker-color" property is passed in via the overlay config object, the geometry will be styled with both the "marker-symbol" AND "marker-color" properties unless the "ignoreFeatureStyles" property is present.
+
+Take a look at the [Styling Vectors example](https://github.com/nationalparkservice/npmap.js/blob/master/examples/styling-vectors.html) to see an example of using the different configuration options to style vector data.
+
 ## Notes
 
-- If you are using `npmap-bootstrap.js`, a `L` property will be added to every layer, map, module, or tool config object. You can use this property to interact directly with the objects created by NPMap.js and Leaflet.
-- NPMap.js extends Leaflet's classes and only provides the interfaces outlined above. You can use the larger [Leaflet API](http://leafletjs.com/reference.html) as well.
-- Unlike previous versions of the NPMap library, `npmap-bootstrap.js` now supports adding multiple maps to a page. Just make the `NPMap.config` property an array, and you are good to go.
+- NPMap.js adds `L` property to every layer, map, module, or tool config object passed in via the map configuration object. You can use this property to interact programatically with the objects created by NPMap.js and Leaflet.
+- NPMap.js extends Leaflet's classes and only provides the interfaces outlined above. It is meant to act as a complement to the larger [Leaflet API](http://leafletjs.com/reference.html).
+- Unlike previous versions of the NPMap library, `npmap-bootstrap.js` now supports adding multiple maps to a page. Just make the `NPMap.config` property an array of map configuration objects.
