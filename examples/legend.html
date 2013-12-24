@@ -22,13 +22,8 @@
     <script>
       var NPMap = {
         div: 'map',
-        hooks: {
-          init: function(callback) {
-            var legend = NPMap.config.L.legendControl(),
-            legendHtml = '<h4>Legend</h4><ul><li>Item 1</li><li>Item 2</li></ul>';
-            legend.addLegend(legendHtml).addTo(NPMap.config.L);
-            callback();
-          }
+        legendControl: {
+          html: '<h4>Legend</h4><ul><li>Item 1</li><li>Item 2</li></ul>'
         }
       };
 

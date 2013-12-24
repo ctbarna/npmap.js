@@ -9,6 +9,7 @@ L.npmap = module.exports = {
     fullscreen: require('./src/control/fullscreen'),
     geocoder: require('./src/control/geocoder'),
     home: require('./src/control/home'),
+    legend: require('./src/control/legend'),
     overview: require('./src/control/overview'),
     scale: require('./src/control/scale'),
     smallzoom: require('./src/control/smallzoom'),

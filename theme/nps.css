@@ -462,6 +462,23 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 .leaflet-control-home a {
   background-image: url('images/icon-fa-home.png');
 }
+/* Legend Control */
+.leaflet-control-legend {
+  background-color: #fff;
+  background-color: rgba(255,255,255,.8);
+  min-width: 140px;
+  padding: 5px;
+}
+  .leaflet-control-legend h4 {
+    margin: 0;
+  }
+  .leaflet-control-legend ul {
+    margin: 0;
+    padding-left: 0;
+  }
+  .leaflet-control-legend ul li {
+    list-style-type: none;
+  }
 /* Overview Control */
 .leaflet-control-overview {
   -webkit-box-shadow: -1px 0 5px rgba(0,0,0,.28);
