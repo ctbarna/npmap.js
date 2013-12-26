@@ -37,23 +37,12 @@ You must have [node.js](http://nodejs.org/) installed to run the build. After in
     git clone https://github.com/nationalparkservice/npmap.js.git
     cd npmap.js
     npm install
-    make
 
-The [browserify](https://github.com/substack/node-browserify) package is used to combine dependencies. It is installed locally, along with other required packages, when you run `npm install`. Running `make` builds NPMap.js, using [UglifyJS](https://github.com/mishoo/UglifyJS) to create minified versions in `dist/`.
+Then use [Grunt](http://gruntjs.com/) to build the library:
 
-If you are interested in extending or helping with the development of NPMap.js, you may want to use the watcher tool, [nodemon](https://github.com/remy/nodemon). It watches your code and rebuilds the library when it detects a change.
+    grunt build
 
-Nodemon is not part of the package file, so if you'd like to use it, you will need to install it with npm:
-
-    npm install -g nodemon
-
-You will also want to add the following line to the .nodemonignore file, otherwise it will rebuild multiple times:
-
-    dist/*
-
-To tell nodemon to watch your code and remake on every change, run the command:
-
-    nodemon -x "make -f" Makefile
+Internally, the Grunt task uses [browserify](https://github.com/substack/node-browserify) to combine dependencies. It is installed locally, along with other required packages, when you run `npm install`. The build task also uses [uglify](https://github.com/gruntjs/grunt-contrib-uglify) and [cssmin](https://npmjs.org/package/grunt-contrib-cssmin) to create minified versions in `dist/`.
 
 ## Documentation
 
@@ -61,7 +50,7 @@ Take a look at [API.md](https://github.com/nationalparkservice/npmap.js/blob/mas
 
 ## Examples
 
-Targeted examples reside in the `examples` directory.
+Simple and targeted examples reside in the `examples` directory.
 
 Some of the examples have two versions: a version with `-api` at the end of the file name and a version with `-bootstrap` at the end of the file name. This reflects the two different ways NPMap.js can be used:
 

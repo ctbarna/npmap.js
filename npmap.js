@@ -1,6 +1,5 @@
 /* global L */
 
-window.L = require('leaflet/dist/leaflet-src');
 window.L.Icon.Default.imagePath = 'http://www.nps.gov/npmap/npmap.js/' + require('./package.json').version + '/images';
 
 L.npmap = module.exports = {
