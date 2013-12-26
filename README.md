@@ -67,3 +67,4 @@ You can get in touch with the NPMap team by contacting us via Twitter ([@npmap](
 [![Dependencies](https://david-dm.org/nationalparkservice/npmap.js
 .png)](https://david-dm.org/nationalparkservice/npmap.js#info=dependencies&view=table)
 [![Dev Dependencies](https://david-dm.org/nationalparkservice/npmap.js/dev-status.png)](https://david-dm.org/nationalparkservice/npmap.js#info=devDependencies&view=table)
+[![Built with Grunt](https://cdn.gruntjs.com/builtwith.png)](http://gruntjs.com/)
