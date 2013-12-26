@@ -64,7 +64,7 @@ module.exports = function(grunt) {
         src: ['*.css', '!*.min.css']
       }
     },
-    invalidate: {
+    invalidate_cloudfront: {
       options: {
         distribution: '<%= aws.distribution %>',
         key: '<%= aws.key %>',
@@ -89,21 +89,7 @@ module.exports = function(grunt) {
       ]
     },
     pkg: pkg,
-    uglify: {
-      npmap: {
-        dest: 'dist/npmap.min.js',
-        src: 'dist/npmap.js'
-      },
-      'npmap-bootstrap': {
-        dest: 'dist/npmap-bootstrap.min.js',
-        src: 'dist/npmap-bootstrap.js'
-      },
-      'npmap-standalone': {
-        dest: 'dist/npmap-standalone.min.js',
-        src: 'dist/npmap-standalone.js'
-      }
-    },
-    upload: {
+    s3: {
       options: {
         access: 'public-read',
         bucket: '<%= aws.bucket %>',
@@ -177,6 +163,20 @@ module.exports = function(grunt) {
         }]
       }
     },
+    uglify: {
+      npmap: {
+        dest: 'dist/npmap.min.js',
+        src: 'dist/npmap.js'
+      },
+      'npmap-bootstrap': {
+        dest: 'dist/npmap-bootstrap.min.js',
+        src: 'dist/npmap-bootstrap.js'
+      },
+      'npmap-standalone': {
+        dest: 'dist/npmap-standalone.min.js',
+        src: 'dist/npmap-standalone.js'
+      }
+    },
     usebanner: {
       dist: {
         options: {
@@ -205,7 +205,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha-phantomjs');
   grunt.loadNpmTasks('grunt-s3');
   grunt.registerTask('build', ['clean', 'copy', 'concat', 'browserify', 'uglify', 'cssmin', 'usebanner']); //TODO: csscomb, validation
-  grunt.registerTask('deploy', ['upload', 'invalidate']);
+  grunt.registerTask('deploy', ['s3', 'invalidate_cloudfront']);
   grunt.registerTask('lint', ['csslint']); //TODO: jshint
   grunt.registerTask('test', ['mocha_phantomjs']);
 };
