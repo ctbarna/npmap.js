@@ -44,6 +44,12 @@ Then use [Grunt](http://gruntjs.com/) to build the library:
 
 Internally, the Grunt task uses [browserify](https://github.com/substack/node-browserify) to combine dependencies. It is installed locally, along with other required packages, when you run `npm install`. The build task also uses [uglify](https://github.com/gruntjs/grunt-contrib-uglify) and [cssmin](https://npmjs.org/package/grunt-contrib-cssmin) to create minified versions in `dist/`.
 
+## Testing
+
+NPMap.js uses the [Mocha](http://visionmedia.github.io/mocha/) JavaScript test framework and [PhantomJS](http://phantomjs.org/) to run the tests. To run the tests:
+
+    grunt test
+
 ## Documentation
 
 Take a look at [API.md](https://github.com/nationalparkservice/npmap.js/blob/master/API.md). Ignore the random notes at the bottom; they will be cleaned up and turned into complete thoughts soon.

@@ -83,6 +83,11 @@ module.exports = function(grunt) {
         }]
       }
     },
+    mocha_phantomjs: {
+      all: [
+        'test/index.html'
+      ]
+    },
     pkg: pkg,
     uglify: {
       npmap: {
@@ -197,8 +202,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-invalidate-cloudfront');
+  grunt.loadNpmTasks('grunt-mocha-phantomjs');
   grunt.loadNpmTasks('grunt-s3');
   grunt.registerTask('build', ['clean', 'copy', 'concat', 'browserify', 'uglify', 'cssmin', 'usebanner']); //TODO: csscomb, validation
   grunt.registerTask('deploy', ['upload', 'invalidate']);
   grunt.registerTask('lint', ['csslint']); //TODO: jshint
+  grunt.registerTask('test', ['mocha_phantomjs']);
 };

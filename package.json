@@ -42,6 +42,7 @@
     "grunt-contrib-cssmin": "0.7.0",
     "grunt-contrib-uglify": "0.2.6",
     "grunt-invalidate-cloudfront": "0.1.2",
+    "grunt-mocha-phantomjs": "0.3.2",
     "grunt-s3": "0.2.0-alpha.3",
     "happen": "~0.1.2",
     "mocha": "1.16.2",
@@ -64,9 +65,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/nationalparkservice/npmap.js.git"
-  },
-  "scripts": {
-    "test": "mocha-phantomjs test/index.html"
   },
   "version": "0.0.0"
 }
