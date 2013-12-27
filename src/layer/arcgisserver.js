@@ -13,14 +13,26 @@ var ArcGisServerLayer = L.TileLayer.extend({
   statics: {
     TILED_TEMPLATE: '{{url}}/tile/{z}/{y}/{x}'
   },
+  _defaultLayerParams: {
+    bboxSR: 3875,
+    f: 'image',
+    format: 'png24',
+    imageSR: 3875,
+    layers: '',
+    transparent: true
+  },
   initialize: function(config) {
     var me = this;
 
     util.strict(config.tiled, 'boolean');
     util.strict(config.url, 'string');
 
-    if (config.layers) {
-      this._layers = config.layers;
+    this._layerParams = L.Util.extend({}, this._defaultLayerParams);
+
+    for (var prop in config) {
+      if (config.hasOwnProperty(prop) && this._defaultLayerParams.hasOwnProperty(prop)) {
+        this._layerParams[prop] = config[prop];
+      }
     }
 
     if (config.tiled) {
@@ -47,25 +59,18 @@ var ArcGisServerLayer = L.TileLayer.extend({
           z = tilePoint.z,
           u = config.url + '/export?dpi=96&transparent=true&format=png8&bbox=' + ((x * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - ((y + 1) * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - ((y + 1) * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + ',' + (((x + 1) * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - (y * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - (y * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + '&bboxSR=4326&imageSR=102100&size=256,256&f=image';
 
-        if (this._layers) {
-          u += '&layers=show:' + this._layers;
+        if (me._layerParams.layers && me._layerParams.layers.length) {
+          u += '&layers=show:' + me._layerParams.layers;
+          console.log('here');
+        }
+
+        if (me._editable) {
+          u += 'nocache=' + new Date().getTime();
         }
 
         return u;
       };
       L.TileLayer.prototype.initialize.call(this, undefined, config);
-    }
-
-    if (this.options.dynamicAttribution && this.options.dynamicAttribution.indexOf('http://') === 0) {
-      reqwest({
-        success: function(response) {
-          me._dynamicAttributionData = response.contributors;
-          me._map.on('viewreset zoomend dragend', me._updateAttribution, me);
-          me.on('load', me._updateAttribution, me);
-        },
-        type: 'jsonp',
-        url: this.options.dynamicAttribution
-      });
     }
 
     reqwest({
@@ -99,13 +104,13 @@ var ArcGisServerLayer = L.TileLayer.extend({
             switch (typeof me.options.popup) {
             case 'function':
               for (i = 0; i < results.length; i++) {
-                html += me.options.popup(results[i]);
+                html += me.options.popup(results[i].attributes);
               }
 
               break;
             case 'string':
               for (i = 0; i < results.length; i++) {
-                html += util.handlebars(me.options.popup, results[i]);
+                html += util.handlebars(me.options.popup, results[i].attributes);
               }
 
               break;
@@ -154,7 +159,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
 
       for (var j = 0; j < contributor.coverageAreas.length; j++) {
         var coverageArea = contributor.coverageAreas[j],
-            coverageBounds = coverageArea.bbox;
+          coverageBounds = coverageArea.bbox;
 
         if (zoom >= coverageArea.zoomMin && zoom <= coverageArea.zoomMax) {
           if (bounds.intersects(L.latLngBounds(L.latLng(coverageBounds[0], coverageBounds[3]), L.latLng(coverageBounds[2], coverageBounds[1])))) {
@@ -170,27 +175,32 @@ var ArcGisServerLayer = L.TileLayer.extend({
       map.attributionControl.addAttribution(this.options.attribution);
     }
   },
+  addSublayer: function(sublayer) {
+    this._layerParams.layers = this._layerParams.layers + ',' + sublayer;
+    this.redraw();
+  },
   identify: function(latLng, callback) {
     var container = this._map.getContainer(),
       params = {
         f: 'json',
         geometry: json3.stringify({
           spatialReference: {
-            wkid: 4265
+            wkid: 3857
           },
           x: latLng.lng,
           y: latLng.lat
         }),
         geometryType: 'esriGeometryPoint',
         imageDisplay: container.offsetWidth + ',' + container.offsetHeight + ',96',
+        layers: 'visible',
         mapExtent: json3.stringify(this._toEsriBounds(this._map.getBounds())),
         returnGeometry: false,
         sr: '4265',
         tolerance: 3
       };
 
-    if (this._layers) {
-      params.layers = this._layers;
+    if (this._layerParams.layers && this._layerParams.layers.length) {
+      params.layers += ':' + this._layerParams.layers;
     }
 
     reqwest({
@@ -204,14 +214,52 @@ var ArcGisServerLayer = L.TileLayer.extend({
       url: this.options.url + '/identify'
     });
   },
+  onAdd: function(map) {
+    this._map = map;
+
+    if (map.options.crs && map.options.crs.code) {
+      var sr = map.options.crs.code.split(':')[1];
+      this._layerParams.bboxSR = sr;
+      this._layerParams.imageSR = sr;
+    }
+
+    if (this.options.dynamicAttribution && this.options.dynamicAttribution.indexOf('http://') === 0) {
+      var me = this;
+
+      reqwest({
+        success: function(response) {
+          me._dynamicAttributionData = response.contributors;
+          me._map.on('viewreset zoomend dragend', me._updateAttribution, me);
+          me.on('load', me._updateAttribution, me);
+        },
+        type: 'jsonp',
+        url: this.options.dynamicAttribution
+      });
+    }
+
+    L.TileLayer.prototype.onAdd.call(this, map);
+  },
   onRemove: function(map) {
     if (this._dynamicAttributionData) {
       this.off('load', this._updateAttribution);
       this._map.off('viewreset zoomend dragend', this._updateAttribution);
     }
 
-    this._removeAttribution();
     L.TileLayer.prototype.onRemove.call(this, map);
+  },
+  removeSublayer: function(sublayer) {
+    var layers = this._layerParams.layers.split(','),
+      index = (function() {
+        for (var i = 0; i < layers.length; i++) {
+          if (sublayer.toString() === layers[i]) {
+            return i;
+          }
+        }
+      })();
+
+    layers.splice(index, 1);
+    this._layerParams.layers = layers.join(',');
+    this.redraw();
   }
 });
 
