@@ -35,23 +35,17 @@ var GeocoderControl = L.Control.extend({
       stopPropagation = L.DomEvent.stopPropagation,
       ul = this._ul = L.DomUtil.create('ul', 'leaflet-control', container);
 
+    L.DomEvent.disableClickPropagation(button);
+    L.DomEvent.disableClickPropagation(input);
+    L.DomEvent.disableClickPropagation(ul);
     L.DomEvent
-      .on(button, 'click', stopPropagation)
       .on(button, 'click', this._geocodeRequest, this)
-      .on(button, 'dblclick', stopPropagation)
-      .on(button, 'mousedown', stopPropagation)
       .on(button, 'mousewheel', stopPropagation)
-      .on(input, 'click', stopPropagation)
-      .on(input, 'dblclick', stopPropagation)
       .on(input, 'focus', function() {
         this.value = this.value;
       })
       .on(input, 'focus', this._inputOnFocus, this)
-      .on(input, 'mousedown', stopPropagation)
       .on(input, 'mousewheel', stopPropagation)
-      .on(ul, 'click', stopPropagation)
-      .on(ul, 'dblclick', stopPropagation)
-      .on(ul, 'mousedown', stopPropagation)
       .on(ul, 'mousewheel', stopPropagation);
 
     button.innerHTML = '<i class="icon-search"></i>';
