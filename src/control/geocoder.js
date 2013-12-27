@@ -7,6 +7,7 @@ var geocode = require('../util/geocode'),
   util = require('../util/util');
 
 var GeocoderControl = L.Control.extend({
+  includes: L.Mixin.Events,
   options: {
     position: 'topright',
     provider: 'esri'
@@ -23,8 +24,73 @@ var GeocoderControl = L.Control.extend({
     }
   },
   initialize: function(options) {
-    L.Util.extend(this.options, options);
+    L.Util.setOptions(this, options);
     return this;
+  },
+  onAdd: function(map) {
+    var attribution = GeocoderControl.ATTRIBUTIONS[this.options.provider.toUpperCase()],
+      container = L.DomUtil.create('div', 'leaflet-control-geocoder'),
+      button = this._button = L.DomUtil.create('button', null, container),
+      input = this._input = L.DomUtil.create('input', null, container),
+      stopPropagation = L.DomEvent.stopPropagation,
+      ul = this._ul = L.DomUtil.create('ul', 'leaflet-control', container);
+
+    L.DomEvent
+      .on(button, 'click', stopPropagation)
+      .on(button, 'click', this._geocodeRequest, this)
+      .on(button, 'dblclick', stopPropagation)
+      .on(button, 'mousedown', stopPropagation)
+      .on(button, 'mousewheel', stopPropagation)
+      .on(input, 'click', stopPropagation)
+      .on(input, 'dblclick', stopPropagation)
+      .on(input, 'focus', function() {
+        this.value = this.value;
+      })
+      .on(input, 'focus', this._inputOnFocus, this)
+      .on(input, 'mousedown', stopPropagation)
+      .on(input, 'mousewheel', stopPropagation)
+      .on(ul, 'click', stopPropagation)
+      .on(ul, 'dblclick', stopPropagation)
+      .on(ul, 'mousedown', stopPropagation)
+      .on(ul, 'mousewheel', stopPropagation);
+
+    button.innerHTML = '<i class="icon-search"></i>';
+    button.title = 'Search';
+    input.setAttribute('aria-activedescendant', null);
+    input.setAttribute('aria-autocomplete', 'list');
+    input.setAttribute('aria-expanded', false);
+    input.setAttribute('aria-label', 'Geocode');
+    input.setAttribute('aria-owns', 'geocoder_listbox');
+    input.setAttribute('placeholder', 'Find a location');
+    input.setAttribute('role', 'combobox');
+    input.setAttribute('type', 'text');
+    ul.setAttribute('id', 'geocoder_listbox');
+    ul.setAttribute('role', 'listbox');
+
+    if (attribution) {
+      if (L.Util.isArray(attribution)) {
+        for (var i = 0; i < attribution.length; i++) {
+          map.attributionControl.addAttribution(attribution[i]);
+        }
+      } else {
+        map.attributionControl.addAttribution(attribution);
+      }
+    }
+
+    return container;
+  },
+  onRemove: function(map) {
+    var attribution = GeocoderControl.ATTRIBUTIONS[this.options.provider.toUpperCase()];
+
+    if (attribution) {
+      if (L.Util.isArray(attribution)) {
+        for (var i = 0; i < attribution.length; i++) {
+          map.attributionControl.removeAttribution(attribution[i]);
+        }
+      } else {
+        map.attributionControl.removeAttribution(attribution);
+      }
+    }
   },
   _checkScroll: function() {
     if (this._selected) {
@@ -223,71 +289,6 @@ var GeocoderControl = L.Control.extend({
     });
     L.DomEvent.off(me._input, 'focus', me._inputOnFocus);
     delete me._inputOnFocus;
-  },
-  onAdd: function(map) {
-    var attribution = GeocoderControl.ATTRIBUTIONS[this.options.provider.toUpperCase()],
-      container = L.DomUtil.create('div', 'leaflet-control-geocoder'),
-      button = this._button = L.DomUtil.create('button', null, container),
-      input = this._input = L.DomUtil.create('input', null, container),
-      stop = L.DomEvent.stop,
-      stopPropagation = L.DomEvent.stopPropagation,
-      ul = this._ul = L.DomUtil.create('ul', 'leaflet-control', container);
-
-    L.DomEvent
-      .on(button, 'click', stop)
-      .on(button, 'click', this._geocodeRequest, this)
-      .on(button, 'dblclick', stopPropagation)
-      .on(button, 'mousedown', stopPropagation)
-      .on(input, 'click', stop)
-      .on(input, 'dblclick', stopPropagation)
-      .on(input, 'focus', function() {
-        this.value = this.value;
-      })
-      .on(input, 'focus', this._inputOnFocus, this)
-      .on(input, 'mousedown', stopPropagation)
-      .on(input, 'mousewheel', stopPropagation)
-      .on(ul, 'click', stop)
-      .on(ul, 'dblclick', stopPropagation)
-      .on(ul, 'mousedown', stopPropagation)
-      .on(ul, 'mousewheel', stopPropagation);
-
-    button.innerHTML = '<i class="icon-search"></i>';
-    button.title = 'Search';
-    input.setAttribute('aria-activedescendant', null);
-    input.setAttribute('aria-autocomplete', 'list');
-    input.setAttribute('aria-expanded', false);
-    input.setAttribute('aria-label', 'Geocode');
-    input.setAttribute('aria-owns', 'geocoder_listbox');
-    input.setAttribute('placeholder', 'Find a location');
-    input.setAttribute('role', 'combobox');
-    input.setAttribute('type', 'text');
-    ul.setAttribute('id', 'geocoder_listbox');
-    ul.setAttribute('role', 'listbox');
-
-    if (attribution) {
-      if (L.Util.isArray(attribution)) {
-        for (var i = 0; i < attribution.length; i++) {
-          map.attributionControl.addAttribution(attribution[i]);
-        }
-      } else {
-        map.attributionControl.addAttribution(attribution);
-      }
-    }
-
-    return container;
-  },
-  onRemove: function(map) {
-    var attribution = GeocoderControl.ATTRIBUTIONS[this.options.provider.toUpperCase()];
-
-    if (attribution) {
-      if (L.Util.isArray(attribution)) {
-        for (var i = 0; i < attribution.length; i++) {
-          map.attributionControl.removeAttribution(attribution[i]);
-        }
-      } else {
-        map.attributionControl.removeAttribution(attribution);
-      }
-    }
   }
 });
 
