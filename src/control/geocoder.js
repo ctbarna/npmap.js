@@ -13,8 +13,13 @@ var GeocoderControl = L.Control.extend({
   },
   statics: {
     ATTRIBUTIONS: {
+      BING: 'Geocoding by Microsoft',
       ESRI: 'Geocoding by Esri',
-      NOMINATIM: 'Geocoding by Nominatim (&copy; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a> contributors)'
+      MAPQUEST: 'Geocoding by MapQuest',
+      NOMINATIM: [
+        'Geocoding by Nominatim',
+        '&copy; <a href=\'http://openstreetmap.org/copyright\'>OpenStreetMap</a> contributors'
+      ]
     }
   },
   initialize: function(options) {
@@ -59,7 +64,7 @@ var GeocoderControl = L.Control.extend({
       L.DomUtil.removeClass(icon, 'icon-search');
       L.DomUtil.addClass(icon, 'icon-working-black');
       L.DomUtil.addClass(me._button, 'working');
-      geocode.esri(value, function(result) {
+      geocode[me.options.provider](value, function(result) {
         L.DomEvent.on(me._button, 'click', me._geocodeRequest, me);
         L.DomUtil.removeClass(icon, 'icon-working-black');
         L.DomUtil.addClass(icon, 'icon-search');
@@ -78,10 +83,7 @@ var GeocoderControl = L.Control.extend({
         } else {
           //NPMap.Map.notify(response.message, null, 'error');
         }
-      }, {
-        center: me._map.getCenter()
       });
-      
     }
   },
   _handleSelect: function(li) {
@@ -223,7 +225,8 @@ var GeocoderControl = L.Control.extend({
     delete me._inputOnFocus;
   },
   onAdd: function(map) {
-    var container = L.DomUtil.create('div', 'leaflet-control-geocoder'),
+    var attribution = GeocoderControl.ATTRIBUTIONS[this.options.provider.toUpperCase()],
+      container = L.DomUtil.create('div', 'leaflet-control-geocoder'),
       button = this._button = L.DomUtil.create('button', null, container),
       input = this._input = L.DomUtil.create('input', null, container),
       stop = L.DomEvent.stop,
@@ -258,14 +261,33 @@ var GeocoderControl = L.Control.extend({
     input.setAttribute('placeholder', 'Find a location');
     input.setAttribute('role', 'combobox');
     input.setAttribute('type', 'text');
-    map.attributionControl.addAttribution(GeocoderControl.ATTRIBUTIONS[this.options.provider.toUpperCase()]);
     ul.setAttribute('id', 'geocoder_listbox');
     ul.setAttribute('role', 'listbox');
+
+    if (attribution) {
+      if (L.Util.isArray(attribution)) {
+        for (var i = 0; i < attribution.length; i++) {
+          map.attributionControl.addAttribution(attribution[i]);
+        }
+      } else {
+        map.attributionControl.addAttribution(attribution);
+      }
+    }
 
     return container;
   },
   onRemove: function(map) {
-    map.attributionControl.removeAttribution(GeocoderControl.ATTRIBUTIONS[this.options.provider.toUpperCase()]);
+    var attribution = GeocoderControl.ATTRIBUTIONS[this.options.provider.toUpperCase()];
+
+    if (attribution) {
+      if (L.Util.isArray(attribution)) {
+        for (var i = 0; i < attribution.length; i++) {
+          map.attributionControl.removeAttribution(attribution[i]);
+        }
+      } else {
+        map.attributionControl.removeAttribution(attribution);
+      }
+    }
   }
 });
 

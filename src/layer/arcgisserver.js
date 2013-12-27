@@ -72,6 +72,8 @@ var ArcGisServerLayer = L.TileLayer.extend({
           }
         }
 
+        console.log(capabilities);
+
         me._metadata = response;
         me.fire('metadata', response);
       },
