@@ -1,4 +1,30 @@
 {
+  "bing": {
+    "aerial": {
+      "icon": "aerial",
+      "layer": "aerial",
+      "maxZoom": 19,
+      "minZoom": 0,
+      "name": "Bing Aerial",
+      "type": "bing"
+    },
+    "aerialLabels": {
+      "icon": "aerial",
+      "layer": "aerialwithlabels",
+      "maxZoom": 19,
+      "minZoom": 0,
+      "name": "Bing Aerial w/Labels",
+      "type": "bing"
+    },
+    "roads": {
+      "icon": "street",
+      "layer": "road",
+      "maxZoom": 19,
+      "minZoom": 0,
+      "name": "Bing Roads",
+      "type": "bing"
+    }
+  },
   "esri": {
     "gray": {
       "attribution": "Copyright: &copy;2013 Esri, DeLorme, NAVTEQ",
