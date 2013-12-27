@@ -47,7 +47,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
           x = tilePoint.x,
           y = tilePoint.y,
           z = tilePoint.z,
-          u = options.url + '/export?transparent=true&f=image&format=png24&bbox=' + ((x * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - ((y + 1) * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - ((y + 1) * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + ',' + (((x + 1) * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - (y * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - (y * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + '&bboxSR=3875&imageSR=3875&size=' + hW + ',' + hW;
+          u = options.url + '/export?transparent=true&f=image&format=png24&bbox=' + ((x * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - ((y + 1) * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - ((y + 1) * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + ',' + (((x + 1) * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - (y * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - (y * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + '&bboxSR=4326&imageSR=4326&size=' + hW + ',' + hW;
 
         if (typeof options.editable === 'object' || options.editable === true) {
           u += '&nocache=' + new Date().getTime();
@@ -80,6 +80,33 @@ var ArcGisServerLayer = L.TileLayer.extend({
     });
 
     return this;
+  },
+  onAdd: function(map) {
+    this._map = map;
+
+    if (this.options.dynamicAttribution && this.options.dynamicAttribution.indexOf('http://') === 0) {
+      var me = this;
+
+      reqwest({
+        success: function(response) {
+          me._dynamicAttributionData = response.contributors;
+          me._map.on('viewreset zoomend dragend', me._updateAttribution, me);
+          me.on('load', me._updateAttribution, me);
+        },
+        type: 'jsonp',
+        url: this.options.dynamicAttribution
+      });
+    }
+
+    L.TileLayer.prototype.onAdd.call(this, map);
+  },
+  onRemove: function(map) {
+    if (this._dynamicAttributionData) {
+      this.off('load', this._updateAttribution);
+      this._map.off('viewreset zoomend dragend', this._updateAttribution);
+    }
+
+    L.TileLayer.prototype.onRemove.call(this, map);
   },
   _dataToHtml: function(data) {
     // TODO: Also need to display the name of the layer, if defined.
@@ -174,7 +201,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
         f: 'json',
         geometry: json3.stringify({
           spatialReference: {
-            wkid: 3857
+            wkid: 4326
           },
           x: latLng.lng,
           y: latLng.lat
@@ -202,41 +229,6 @@ var ArcGisServerLayer = L.TileLayer.extend({
       type: 'jsonp',
       url: this.options.url + '/identify'
     });
-  },
-  onAdd: function(map) {
-    this._map = map;
-
-    /*
-    if (map.options.crs && map.options.crs.code) {
-      var sr = map.options.crs.code.split(':')[1];
-      this._layerParams.bboxSR = sr;
-      this._layerParams.imageSR = sr;
-    }
-    */
-
-    if (this.options.dynamicAttribution && this.options.dynamicAttribution.indexOf('http://') === 0) {
-      var me = this;
-
-      reqwest({
-        success: function(response) {
-          me._dynamicAttributionData = response.contributors;
-          me._map.on('viewreset zoomend dragend', me._updateAttribution, me);
-          me.on('load', me._updateAttribution, me);
-        },
-        type: 'jsonp',
-        url: this.options.dynamicAttribution
-      });
-    }
-
-    L.TileLayer.prototype.onAdd.call(this, map);
-  },
-  onRemove: function(map) {
-    if (this._dynamicAttributionData) {
-      this.off('load', this._updateAttribution);
-      this._map.off('viewreset zoomend dragend', this._updateAttribution);
-    }
-
-    L.TileLayer.prototype.onRemove.call(this, map);
   }
 });
 
