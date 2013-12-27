@@ -57,6 +57,8 @@ You can also (optionally) provide any of the options supported by [`L.TileLayer`
       url: 'http://services.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Unemployment_Rate/MapServer'
     });
 
+### L.npmap.layer.bing(config: object)
+
 ### L.npmap.layer.cartodb(config: object)
 
 ### L.npmap.layer.csv(config: object)
