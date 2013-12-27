@@ -13,74 +13,70 @@ var ArcGisServerLayer = L.TileLayer.extend({
   statics: {
     TILED_TEMPLATE: '{{url}}/tile/{z}/{y}/{x}'
   },
-  _defaultLayerParams: {
-    bboxSR: 3875,
-    f: 'image',
-    format: 'png24',
-    imageSR: 3875,
-    layers: '',
-    transparent: true
-  },
-  initialize: function(config) {
+  initialize: function(options) {
     var me = this;
 
-    util.strict(config.tiled, 'boolean');
-    util.strict(config.url, 'string');
+    options = L.setOptions(this, options);
 
-    this._layerParams = L.Util.extend({}, this._defaultLayerParams);
+    util.strict(options.tiled, 'boolean');
+    util.strict(options.url, 'string');
 
-    for (var prop in config) {
-      if (config.hasOwnProperty(prop) && this._defaultLayerParams.hasOwnProperty(prop)) {
-        this._layerParams[prop] = config[prop];
-      }
+    if (typeof options.layers !== 'string') {
+      options.layers = '';
     }
 
-    if (config.tiled) {
+    if (options.tiled) {
       var u;
 
-      if (config.url.indexOf('{s}') === -1 && config.url.indexOf('://tiles.arcgis.com')) {
-        config.subdomains = [
+      if (options.url.indexOf('{s}') === -1 && options.url.indexOf('://tiles.arcgis.com')) {
+        options.subdomains = [
           '1',
           '2',
           '3',
           '4'
         ];
-        u = config.url.replace('://tiles.arcgis.com', '://tiles{s}.arcgis.com');
+        u = options.url.replace('://tiles.arcgis.com', '://tiles{s}.arcgis.com');
       } else {
-        u = config.url;
+        u = options.url;
       }
 
-      L.TileLayer.prototype.initialize.call(this, ArcGisServerLayer.TILED_TEMPLATE.replace('{{url}}', u), config);
+      L.TileLayer.prototype.initialize.call(this, ArcGisServerLayer.TILED_TEMPLATE.replace('{{url}}', u), options);
     } else {
       this.getTileUrl = function(tilePoint) {
         var hW = 256,
           x = tilePoint.x,
           y = tilePoint.y,
           z = tilePoint.z,
-          u = config.url + '/export?dpi=96&transparent=true&format=png8&bbox=' + ((x * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - ((y + 1) * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - ((y + 1) * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + ',' + (((x + 1) * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - (y * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - (y * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + '&bboxSR=4326&imageSR=102100&size=256,256&f=image';
+          u = options.url + '/export?transparent=true&f=image&format=png24&bbox=' + ((x * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - ((y + 1) * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - ((y + 1) * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + ',' + (((x + 1) * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - (y * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - (y * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + '&bboxSR=3875&imageSR=3875&size=' + hW + ',' + hW;
 
-        if (me._layerParams.layers && me._layerParams.layers.length) {
-          u += '&layers=show:' + me._layerParams.layers;
-          console.log('here');
+        if (typeof options.editable === 'object' || options.editable === true) {
+          u += '&nocache=' + new Date().getTime();
         }
 
-        if (me._editable) {
-          u += 'nocache=' + new Date().getTime();
+        if (typeof options.layers === 'string' && options.layers.length) {
+          u += '&layers=show:' + options.layers;
         }
 
         return u;
       };
-      L.TileLayer.prototype.initialize.call(this, undefined, config);
+      L.TileLayer.prototype.initialize.call(this, undefined, options);
     }
 
     reqwest({
       success: function(response) {
-        // TODO: If not identifiable, set _hasInteractivity to false. Is this info available in the service?
+        var capabilities = response.capabilities;
+
+        if (typeof capabilities === 'string') {
+          if (capabilities.toLowerCase().indexOf('query') === -1) {
+            me._hasInteractivity = false;
+          }
+        }
+
         me._metadata = response;
         me.fire('metadata', response);
       },
       type: 'jsonp',
-      url: config.url + '?f=json'
+      url: options.url + '?f=json'
     });
 
     return this;
@@ -130,11 +126,6 @@ var ArcGisServerLayer = L.TileLayer.extend({
       }
     });
   },
-  _removeAttribution: function() {
-    if (this.options.attribution) {
-      this._map.attributionControl.removeAttribution(this.options.attribution);
-    }
-  },
   _toEsriBounds: function(bounds) {
     return {
       spatalReference: {
@@ -152,7 +143,9 @@ var ArcGisServerLayer = L.TileLayer.extend({
       include = [],
       zoom = map.getZoom();
 
-    this._removeAttribution();
+    if (this.options.attribution) {
+      this._map.attributionControl.removeAttribution(this.options.attribution);
+    }
 
     for (var i = 0; i < this._dynamicAttributionData.length; i++) {
       var contributor = this._dynamicAttributionData[i];
@@ -175,10 +168,6 @@ var ArcGisServerLayer = L.TileLayer.extend({
       map.attributionControl.addAttribution(this.options.attribution);
     }
   },
-  addSublayer: function(sublayer) {
-    this._layerParams.layers = this._layerParams.layers + ',' + sublayer;
-    this.redraw();
-  },
   identify: function(latLng, callback) {
     var container = this._map.getContainer(),
       params = {
@@ -195,12 +184,12 @@ var ArcGisServerLayer = L.TileLayer.extend({
         layers: 'visible',
         mapExtent: json3.stringify(this._toEsriBounds(this._map.getBounds())),
         returnGeometry: false,
-        sr: '4265',
+        sr: 4326,
         tolerance: 3
       };
 
-    if (this._layerParams.layers && this._layerParams.layers.length) {
-      params.layers += ':' + this._layerParams.layers;
+    if (typeof this.options.layers === 'string' && this.options.layers.length) {
+      this.options.layers += ':' + this.options.layers;
     }
 
     reqwest({
@@ -217,11 +206,13 @@ var ArcGisServerLayer = L.TileLayer.extend({
   onAdd: function(map) {
     this._map = map;
 
+    /*
     if (map.options.crs && map.options.crs.code) {
       var sr = map.options.crs.code.split(':')[1];
       this._layerParams.bboxSR = sr;
       this._layerParams.imageSR = sr;
     }
+    */
 
     if (this.options.dynamicAttribution && this.options.dynamicAttribution.indexOf('http://') === 0) {
       var me = this;
@@ -246,23 +237,9 @@ var ArcGisServerLayer = L.TileLayer.extend({
     }
 
     L.TileLayer.prototype.onRemove.call(this, map);
-  },
-  removeSublayer: function(sublayer) {
-    var layers = this._layerParams.layers.split(','),
-      index = (function() {
-        for (var i = 0; i < layers.length; i++) {
-          if (sublayer.toString() === layers[i]) {
-            return i;
-          }
-        }
-      })();
-
-    layers.splice(index, 1);
-    this._layerParams.layers = layers.join(',');
-    this.redraw();
   }
 });
 
-module.exports = function(config) {
-  return new ArcGisServerLayer(config);
+module.exports = function(options) {
+  return new ArcGisServerLayer(options);
 };
