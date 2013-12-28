@@ -16,8 +16,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
   initialize: function(options) {
     var me = this;
 
-    options = L.setOptions(this, options);
-
+    L.Util.setOptions(this, options);
     util.strict(options.tiled, 'boolean');
     util.strict(options.url, 'string');
 
@@ -71,8 +70,6 @@ var ArcGisServerLayer = L.TileLayer.extend({
             me._hasInteractivity = false;
           }
         }
-
-        console.log(capabilities);
 
         me._metadata = response;
         me.fire('metadata', response);
