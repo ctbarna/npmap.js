@@ -1,4 +1,5 @@
 /* globals grunt */
+/* jshint camelcase: false */
 
 module.exports = function(grunt) {
   'use strict';
@@ -72,13 +73,12 @@ module.exports = function(grunt) {
       },
       production: {
         files: [{
-          dest: '',
+          cwd: './dist/',
+          dest: 'npmap.js/<%= pkg.version %>/',
           expand: true,
           filter: 'isFile',
           src: [
-            'dist/*',
-            'dist/images/*',
-            'dist/images/icons/*'
+            '**/*'
           ]
         }]
       }
@@ -101,11 +101,9 @@ module.exports = function(grunt) {
         secret: '<%= aws.secret %>'
       },
       production: {
-        /*
         del: [{
           src: 'npmap.js/<%= pkg.version %>/*'
         }],
-        */
         upload: [{
           dest: 'npmap.js/<%= pkg.version %>/images/',
           src: 'dist/images/*'
@@ -131,6 +129,12 @@ module.exports = function(grunt) {
           },
           src: 'dist/npmap-standalone.css'
         },{
+          dest: 'npmap.js/<%= pkg.version %>/npmap-standalone.min.css',
+          options: {
+            gzip: true
+          },
+          src: 'dist/npmap-standalone.min.css'
+        },{
           dest: 'npmap.js/<%= pkg.version %>/npmap-standalone.js',
           options: {
             gzip: true
@@ -148,6 +152,12 @@ module.exports = function(grunt) {
             gzip: true
           },
           src: 'dist/npmap.css'
+        },{
+          dest: 'npmap.js/<%= pkg.version %>/npmap.min.css',
+          options: {
+            gzip: true
+          },
+          src: 'dist/npmap.min.css'
         },{
           dest: 'npmap.js/<%= pkg.version %>/npmap.js',
           options: {
