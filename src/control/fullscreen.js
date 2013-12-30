@@ -8,8 +8,7 @@ var FullscreenControl = L.Control.extend({
   initialize: function(options) {
     // TODO: Also add ARIA attributes.
     this._button = document.createElement('button');
-    this._button.className = 'npmap-toolbar-button last-child pull-right';
-    this._button.innerHTML = '<span class="ico-fullscreen"></span>';
+    this._button.innerHTML = '<span class="icon-fullscreen"></span>';
     this._button.title = 'Toggle fullscreen';
     L.DomEvent.addListener(this._button, 'click', this.fullscreen, this);
 
@@ -27,7 +26,7 @@ var FullscreenControl = L.Control.extend({
   addTo: function(map) {
     var toolbar = util.getChildElementsByClassName(map.getContainer().parentNode.parentNode, 'npmap-toolbar')[0];
 
-    toolbar.appendChild(this._button);
+    toolbar.childNodes[1].appendChild(this._button);
     toolbar.style.display = 'block';
     this._container = toolbar.parentNode.parentNode;
     this._isFullscreen = false;
@@ -36,7 +35,8 @@ var FullscreenControl = L.Control.extend({
     return this;
   },
   fullscreen: function() {
-    var body = document.body;
+    var body = document.body,
+      span = this._button.childNodes[0];
 
     if (this._isFullscreen) {
       body.style.margin = this._bodyMargin;
@@ -47,6 +47,8 @@ var FullscreenControl = L.Control.extend({
       this._container.style.position = 'relative';
       L.DomEvent.removeListener(document, 'keyup', this._onKeyUp);
       this._isFullscreen = false;
+      L.DomUtil.removeClass(span, 'icon-fullscreen-close');
+      L.DomUtil.addClass(span, 'icon-fullscreen');
       this._map.fire('exitfullscreen');
     } else {
       this._bodyMargin = body.style.margin;
@@ -60,6 +62,8 @@ var FullscreenControl = L.Control.extend({
       this._container.style.position = 'fixed';
       L.DomEvent.addListener(document, 'keyup', this._onKeyUp, this);
       this._isFullscreen = true;
+      L.DomUtil.removeClass(span, 'icon-fullscreen');
+      L.DomUtil.addClass(span, 'icon-fullscreen-close');
       this._map.fire('enterfullscreen');
     }
 
