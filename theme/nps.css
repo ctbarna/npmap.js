@@ -78,11 +78,6 @@
     .npmap-toolbar button:last-child {
       border-right: solid 1px transparent;
     }
-    .npmap-toolbar button .icon-fullscreen, .npmap-toolbar button .icon-fullscreen-close {
-      left: 9px;
-      position: absolute;
-      top: 7px;
-    }
 
 /* Buttons */
 button, input, select, textarea {
@@ -238,7 +233,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 
 /* Icons */
 .npmap [class^="icon-"], [class*=" icon-"] {
-  background-image: url('images/icons/sprite.png');
+  background-image: url('images/icon/sprite.png');
   background-repeat: no-repeat;
   display: inline-block;
   height: 14px;
@@ -252,47 +247,28 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   height: 15px;
   width: 16px;
 }
-.npmap .icon-working-black {
-  background-image: url('images/loading.gif');
-  height: 16px;
-  margin-left: -2px;
-  margin-top: -3px;
-  width: 16px;
-}
 .ico-aerial {
-  background-image: url('images/icon-aerial.png');
+  background-image: url('images/icon/aerial.png');
   height: 22px;
   position: absolute;
   width: 17px;
 }
 .ico-aerial-small {
-  background-image: url('images/icon-aerial-small.png');
+  background-image: url('images/icon/aerial-small.png');
   height: 13px;
   margin-left: 11px;
   margin-top: 7px;
   position: absolute;
   width: 13px;
 }
-.npmap .icon-fullscreen {
-  background-image: url('images/fullscreen-toggle.png');
-  height: 12px;
-  position: absolute;
-  width: 13px;
-}
-.npmap .icon-fullscreen-close {
-  background-image: url('images/fullscreen-toggle-close.png');
-  height: 12px;
-  position: absolute;
-  width: 13px;
-}
 .ico-generic {
-  background-image: url('images/icon-eye.png');
+  background-image: url('images/icon/eye.png');
   height: 22px;
   position: absolute;
   width: 17px;
 }
 .ico-generic-small {
-  background-image: url('images/icon-eye-small.png');
+  background-image: url('images/icon/eye-small.png');
   height: 10px;
   margin-top: 9px;
   margin-left: 8px;
@@ -300,13 +276,13 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   width: 17px;
 }
 .ico-nps {
-  background-image: url('images/icon-nps.png');
+  background-image: url('images/icon/nps.png');
   height: 22px;
   position: absolute;
   width: 17px;
 }
 .ico-nps-small {
-  background-image: url('images/icon-nps-small.png');
+  background-image: url('images/icon/nps-small.png');
   height: 15px;
   margin-left: 12px;
   margin-top: 6px;
@@ -314,13 +290,13 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   width: 12px;
 }
 .ico-street {
-  background-image: url('images/icon-street.png');
+  background-image: url('images/icon/street.png');
   height: 22px;
   position: absolute;
   width: 17px;
 }
 .ico-street-small {
-  background-image: url('images/icon-street-small.png');
+  background-image: url('images/icon/street-small.png');
   height: 13px;
   margin-left: 9px;
   margin-top: 8px;
@@ -328,13 +304,13 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   width: 17px;
 }
 .ico-topo {
-  background-image: url('images/icon-topo.png');
+  background-image: url('images/icon/topo.png');
   height: 22px;
   position: absolute;
   width: 17px;
 }
 .ico-topo-small {
-  background-image: url('images/icon-topo-small.png');
+  background-image: url('images/icon/topo-small.png');
   height: 13px;
   margin-left: 9px;
   margin-top: 8px;
@@ -588,14 +564,14 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 }
 
 /* Draw Control */
-.leaflet-control-draw {
+.leaflet-draw {
   -webkit-box-shadow: none;
      -moz-box-shadow: none;
       -ms-box-shadow: none;
        -o-box-shadow: none;
           box-shadow: none;
 }
-  .leaflet-control-draw a {
+  .leaflet-draw a {
     display: block;
     text-align: center;
     text-decoration: none;
@@ -621,14 +597,13 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   border-bottom-right-radius: 0;
 }
 .leaflet-draw-toolbar a {
-  background-image: url('images/controls/draw/spritesheet.png');
+  background-image: url('images/control/draw/spritesheet.png');
   background-repeat: no-repeat;
 }
 .leaflet-retina .leaflet-draw-toolbar a {
-  background-image: url('images/controls/draw/spritesheet@2x.png');
+  background-image: url('images/control/draw/spritesheet@2x.png');
   background-size: 270px 30px;
 }
-
 .leaflet-draw-actions {
   display: none;
   list-style: none;
@@ -821,9 +796,37 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   line-height: 27px;
 }
 
+/* Fullscreen Control */
+.npmap-toolbar button .icon-fullscreen-enter, .npmap-toolbar button .icon-fullscreen-exit {
+  left: 9px;
+  position: absolute;
+  top: 7px;
+}
+.npmap .icon-fullscreen-enter {
+  background-image: url('images/control/fullscreen/enter.png');
+  height: 12px;
+  position: absolute;
+  width: 13px;
+}
+.npmap .icon-fullscreen-exit {
+  background-image: url('images/control/fullscreen/exit.png');
+  height: 12px;
+  position: absolute;
+  width: 13px;
+}
+
+/* Geocoder Control */
+.npmap .icon-working-black {
+  background-image: url('images/control/geocoder/loading.gif');
+  height: 16px;
+  margin-left: -2px;
+  margin-top: -3px;
+  width: 16px;
+}
+
 /* Home Control */
 .leaflet-control-home a {
-  background-image: url('images/icon-fa-home.png');
+  background-image: url('images/icon/fa-home.png');
 }
 
 /* Legend Control */
@@ -869,7 +872,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
     z-index: 99999;
   }
   .leaflet-control-overview button span {
-    background-image: url('images/overview-toggle.png');
+    background-image: url('images/control/overview/toggle.png');
     background-repeat: no-repeat;
     bottom: 10px;
     height: 10px;
@@ -1006,7 +1009,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
     width: 25px;
   }
   .npmap-control-switcher div:first-child span:last-child {
-    background-image: url('images/switcher-toggle.png');
+    background-image: url('images/control/switcher/toggle.png');
     background-position: 6px;
     background-repeat: no-repeat;
     height: 100%;
@@ -1014,6 +1017,10 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
     right: 0;
     top: 0;
     width: 25px;
+  }
+  .leaflet-retina .npmap-control-switcher div:first-child span:last-child {
+    background-image: url('images/control/switcher/toggle@2x.png');
+    background-size: 10px 5px;
   }
   .npmap-control-switcher div:first-child span:last-child.open {
     -webkit-transform: rotate(180deg);
@@ -1040,7 +1047,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
     overflow-y: auto;
     padding-left: 0;
     position: absolute;
-    width: 215px;
+    width: 213px;
   }
   .npmap-control-switcher li {
     border-bottom: solid 1px #f2f1ef;

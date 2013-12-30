@@ -178,7 +178,7 @@ var Map = L.Map.extend({
       for (var layerId in me._layers) {
         layer = me._layers[layerId];
 
-        if ((typeof layer.options.popup === 'undefined' || layer.options.popup !== false) && typeof layer._handleClick === 'function' && layer._hasInteractivity !== false) {
+        if (typeof layer.options === 'object' && (typeof layer.options.popup === 'undefined' || layer.options.popup !== false) && typeof layer._handleClick === 'function' && layer._hasInteractivity !== false) {
           queryable.push(layer);
         }
       }

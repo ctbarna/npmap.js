@@ -14,7 +14,7 @@ var NpmakiIcon = L.Icon.extend({
     CSS_TEMPLATE: 'url(https://a.tiles.mapbox.com/v3/marker/pin-{{size}}+{{color}}{{retina}}.png)'
   },
   initialize: function(options) {
-    util.appendCssFile('/theme/images/icons/npmaki/npmaki-sprite.css');
+    util.appendCssFile('images/icon/npmaki/npmaki.css');
     options = options || {};
 
     var size = options.size || 'medium',
