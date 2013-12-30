@@ -43,7 +43,7 @@ module.exports = function(grunt) {
         dest: 'dist/images',
         expand: true,
         src: [
-          '**'
+          '**/*'
         ]
       },
       javascript: {
