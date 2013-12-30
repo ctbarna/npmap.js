@@ -8,8 +8,8 @@ var FullscreenControl = L.Control.extend({
   initialize: function(options) {
     // TODO: Also add ARIA attributes.
     this._button = document.createElement('button');
-    this._button.innerHTML = '<span class="icon-fullscreen"></span>';
-    this._button.title = 'Toggle fullscreen';
+    this._button.innerHTML = '<span class="icon-fullscreen-enter"></span>';
+    this._button.title = 'Enter fullscreen';
     L.DomEvent.addListener(this._button, 'click', this.fullscreen, this);
 
     return this;
@@ -47,8 +47,9 @@ var FullscreenControl = L.Control.extend({
       this._container.style.position = 'relative';
       L.DomEvent.removeListener(document, 'keyup', this._onKeyUp);
       this._isFullscreen = false;
-      L.DomUtil.removeClass(span, 'icon-fullscreen-close');
-      L.DomUtil.addClass(span, 'icon-fullscreen');
+      L.DomUtil.removeClass(span, 'icon-fullscreen-exit');
+      L.DomUtil.addClass(span, 'icon-fullscreen-enter');
+      this._button.title = 'Enter fullscreen';
       this._map.fire('exitfullscreen');
     } else {
       this._bodyMargin = body.style.margin;
@@ -62,8 +63,9 @@ var FullscreenControl = L.Control.extend({
       this._container.style.position = 'fixed';
       L.DomEvent.addListener(document, 'keyup', this._onKeyUp, this);
       this._isFullscreen = true;
-      L.DomUtil.removeClass(span, 'icon-fullscreen');
-      L.DomUtil.addClass(span, 'icon-fullscreen-close');
+      L.DomUtil.removeClass(span, 'icon-fullscreen-enter');
+      L.DomUtil.addClass(span, 'icon-fullscreen-exit');
+      this._button.title = 'Exit fullscreen';
       this._map.fire('enterfullscreen');
     }
 
