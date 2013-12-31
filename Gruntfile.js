@@ -14,7 +14,6 @@ module.exports = function(grunt) {
         accessKeyId: '<%= aws.key %>',
         bucket: 'npmap',
         //differential: true,
-        region: 'us-east-1',
         secretAccessKey: '<%= aws.secret %>',
         sslEnabled: true,
         uploadConcurrency: 5
@@ -30,14 +29,23 @@ module.exports = function(grunt) {
         options: {
           params: {
             CacheControl: 'max-age=630720000, public',
-            ContentEncoding: 'gzip',
             Expires: new Date(Date.now() + 63072000000).toISOString()
           }
         },
         files: [{
-          cwd: 'dist/',
+          cwd: 'dist/images/',
+          dest: 'npmap.js/<%= pkg.version %>/images/',
+          expand: true,
+          src: [
+            '**'
+          ]
+        },{
+          cwd: 'dist/gzip/',
           dest: 'npmap.js/<%= pkg.version %>/',
           expand: true,
+          params: {
+            ContentEncoding: 'gzip'
+          },
           src: [
             '**'
           ]
@@ -57,6 +65,46 @@ module.exports = function(grunt) {
         src: [
           'dist/**/*'
         ]
+      }
+    },
+    compress: {
+      production: {
+        options: {
+          mode: 'gzip'
+        },
+        files: [{
+          cwd: 'dist/',
+          dest: 'dist/gzip/',
+          expand: true,
+          ext: '.css',
+          src: [
+            '*.css'
+          ]
+        },{
+          cwd: 'dist/',
+          dest: 'dist/gzip/',
+          expand: true,
+          ext: '.min.css',
+          src: [
+            '*.min.css'
+          ]
+        },{
+          cwd: 'dist/',
+          dest: 'dist/gzip/',
+          expand: true,
+          ext: '.js',
+          src: [
+            '*.js'
+          ]
+        },{
+          cwd: 'dist/',
+          dest: 'dist/gzip/',
+          expand: true,
+          ext: '.min.js',
+          src: [
+            '*.min.js'
+          ]
+        }]
       }
     },
     concat: {
@@ -158,6 +206,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-banner');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-clean');
+  grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-csslint');
@@ -166,7 +215,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-invalidate-cloudfront');
   grunt.loadNpmTasks('grunt-mocha-phantomjs');
   grunt.registerTask('build', ['clean', 'copy', 'concat', 'browserify', 'uglify', 'cssmin', 'usebanner']); //TODO: csscomb, validation
-  grunt.registerTask('deploy', ['aws_s3', 'invalidate_cloudfront']);
+  grunt.registerTask('deploy', ['compress', 'aws_s3', 'invalidate_cloudfront']);
   grunt.registerTask('lint', ['csslint']); //TODO: jshint
   grunt.registerTask('test', ['mocha_phantomjs']);
 };
