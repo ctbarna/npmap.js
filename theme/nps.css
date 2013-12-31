@@ -637,7 +637,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
           border-radius: 4px 0 0 4px;
 }
 .leaflet-draw-actions a {
-  background-color: #919187;
+  background-color: #828171;
   border-left: 1px solid #aaa;
   color: #fff;
   font: 11px/19px;

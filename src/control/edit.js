@@ -30,7 +30,26 @@ var EditControl = L.Control.Draw.extend({
   initialize: function(options) {
     // TODO: Create a toolbar with a dropdown (layer 1, layer 2, create new layer...) and a save button.
     L.Util.setOptions(this, options);
+
     this._featureGroup = options.edit.featureGroup;
+    L.drawLocal.draw.toolbar.buttons.polyline = 'Draw a line';
+
+    /*
+    if (typeof options.overlayTools === 'undefined' || options.overlayTools === true) {
+      var overlayTools = L.Toolbar.extend({
+        initialize: function(options) {
+
+        },
+        addToolbar: function(map) {
+
+        },
+        removeToolbar: function(map) {
+
+        }
+      });
+    }
+    */
+
     L.Control.Draw.prototype.initialize.call(this, options);
   },
   addTo: function(map) {
@@ -79,15 +98,7 @@ var EditControl = L.Control.Draw.extend({
     });
     map.on('draw:created', function(e) {
       me._featureGroup.addLayer(e.layer);
-    });
-    map.on('draw:drawstart', function() {
-      if (editShape) {
-        editShape.editing.disable();
-        editId = null;
-        editShape = null;
-      }
-    });
-    map.on('draw:created', function(e) {
+
       if (e.layerType === 'marker') {
         e.layer.dragging.enable();
         e.layer.on('dragstart', function() {
@@ -99,8 +110,47 @@ var EditControl = L.Control.Draw.extend({
         });
       }
     });
+    map.on('draw:drawstart', function() {
+      if (editShape) {
+        editShape.editing.disable();
+        editId = null;
+        editShape = null;
+      }
+    });
+
     L.Control.Draw.prototype.addTo.call(this, map);
+    this._container.removeChild(this._container.childNodes[1]);
+    //this._container.appendChild(L.DomUtil.create('div', 'leaflet-draw-section'));
   }
+  /*,
+  onAdd: function() {
+    var container = L.DomUtil.create('div', 'leaflet-control-edit-overlays leaflet-bar');
+
+    this._overlaysButton = this._createButton('+', 'Switch edit overlay', null, container, function() {
+
+    }, this);
+    this._saveButton = this._createButton('-', 'Zoom out', null, container, function() {
+
+    }, this);
+  },
+  _createButton: function(html, title, clsName, container, handler, context) {
+    var link = L.DomUtil.create('a', clsName, container),
+      stop = L.DomEvent.stopPropagation;
+
+    link.href = '#';
+    link.innerHTML = html;
+    link.title = title;
+
+    L.DomEvent
+      .on(link, 'click', stop)
+      .on(link, 'mousedown', stop)
+      .on(link, 'dblclick', stop)
+      .on(link, 'click', L.DomEvent.preventDefault)
+      .on(link, 'click', handler, context);
+
+    return link;
+  }
+  */
 });
 
 L.Map.addInitHook(function() {
