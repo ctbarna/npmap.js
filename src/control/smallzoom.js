@@ -12,7 +12,7 @@ var SmallZoomControl = L.Control.extend({
   },
   _createButton: function(html, title, clsName, container, handler, context) {
     var link = L.DomUtil.create('a', clsName, container),
-        stop = L.DomEvent.stopPropagation;
+      stop = L.DomEvent.stopPropagation;
 
     link.href = '#';
     link.innerHTML = html;
@@ -29,7 +29,7 @@ var SmallZoomControl = L.Control.extend({
   },
   _updateDisabled: function() {
     var clsName = 'leaflet-disabled',
-        map = this._map;
+      map = this._map;
 
     L.DomUtil.removeClass(this._zoomInButton, clsName);
     L.DomUtil.removeClass(this._zoomOutButton, clsName);
@@ -49,7 +49,7 @@ var SmallZoomControl = L.Control.extend({
   },
   onAdd: function(map) {
     var clsName = 'leaflet-control-zoom',
-        container = L.DomUtil.create('div', clsName + ' leaflet-bar');
+      container = L.DomUtil.create('div', clsName + ' leaflet-bar');
 
     this._zoomInButton = this._createButton('+', 'Zoom in', clsName + '-in', container, this._zoomIn, this);
     this._zoomOutButton = this._createButton('-', 'Zoom out', clsName + '-out', container, this._zoomOut, this);

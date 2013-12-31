@@ -1,4 +1,5 @@
 /* global L */
+/* jshint camelcase: false */
 
 'use strict';
 

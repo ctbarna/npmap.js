@@ -25,7 +25,6 @@ var LegendControl = L.Control.extend({
       }
     }
 
-    this._map = map;
     return this._container;
   },
   /*
