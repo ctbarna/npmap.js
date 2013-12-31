@@ -1,19 +1,21 @@
 /* global L */
 
-window.L.Icon.Default.imagePath = 'http://www.nps.gov/npmap/npmap.js/' + require('./package.json').version + '/images';
+var version = require('./package.json').version;
+
+window.L.Icon.Default.imagePath = 'http://d1smq4hh6dg11v.cloudfront.net/npmap.js/' + version + '/images';
 
 L.npmap = module.exports = {
-  VERSION: require('./package.json').version,
+  VERSION: version,
   control: {
-    edit: require('./src/control/edit'),
+    home: require('./src/control/home'),
+    smallzoom: require('./src/control/smallzoom'),
     fullscreen: require('./src/control/fullscreen'),
     geocoder: require('./src/control/geocoder'),
-    home: require('./src/control/home'),
+    switcher: require('./src/control/switcher'),
     legend: require('./src/control/legend'),
+    edit: require('./src/control/edit'),
     overview: require('./src/control/overview'),
-    scale: require('./src/control/scale'),
-    smallzoom: require('./src/control/smallzoom'),
-    switcher: require('./src/control/switcher')
+    scale: require('./src/control/scale')
   },
   icon: {
     maki: require('./src/icon/maki'),
