@@ -117,17 +117,14 @@ NPMap = {
     }
   }
 
-  if (script.readyState) {
+  if (window.attachEvent && document.all) {
     script.onreadystatechange = function() {
-      if (script.readyState === 'loaded' || script.readyState === 'complete') {
-        script.onreadystatechange = null;
+      if (this.readyState === 'complete' || this.readyState === 'loaded') {
         callback();
       }
     };
   } else {
-    script.onload = function() {
-      callback();
-    };
+    script.onload = callback;
   }
 
   document.body.appendChild(script);
