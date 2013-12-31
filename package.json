@@ -19,7 +19,7 @@
   }],
   "dependencies": {
     "csv2geojson": "3.6.1",
-    "handlebars": "1.1.2",
+    "handlebars": "1.2.1",
     "json3": "3.2.6",
     "leaflet": "0.7.1",
     "leaflet-draw": "0.2.2",
