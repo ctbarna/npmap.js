@@ -9,6 +9,41 @@ module.exports = function(grunt) {
   grunt.util.linefeed = '\n';
   grunt.initConfig({
     aws: grunt.file.readJSON('aws.json'),
+    aws_s3: {
+      options: {
+        accessKeyId: '<%= aws.key %>',
+        bucket: 'npmap',
+        //differential: true,
+        region: 'us-east-1',
+        secretAccessKey: '<%= aws.secret %>',
+        sslEnabled: true,
+        uploadConcurrency: 5
+      },
+      clean_production: {
+        files: [{
+          action: 'delete',
+          cwd: 'dist/',
+          dest: 'npmap.js/<%= pkg.version %>/'
+        }]
+      },
+      production: {
+        options: {
+          params: {
+            CacheControl: 'max-age=630720000, public',
+            ContentEncoding: 'gzip',
+            Expires: new Date(Date.now() + 63072000000).toISOString()
+          }
+        },
+        files: [{
+          cwd: 'dist/',
+          dest: 'npmap.js/<%= pkg.version %>/',
+          expand: true,
+          src: [
+            '**'
+          ]
+        }]
+      }
+    },
     browserify: {
       all: {
         files: {
@@ -89,90 +124,6 @@ module.exports = function(grunt) {
       ]
     },
     pkg: pkg,
-    s3: {
-      options: {
-        access: 'public-read',
-        bucket: '<%= aws.bucket %>',
-        headers: {
-          "Cache-Control": "max-age=630720000, public",
-          "Expires": new Date(Date.now() + 63072000000).toUTCString()
-        },
-        key: '<%= aws.key %>',
-        secret: '<%= aws.secret %>'
-      },
-      production: {
-        del: [{
-          src: 'npmap.js/<%= pkg.version %>/*'
-        }],
-        upload: [{
-          dest: 'npmap.js/<%= pkg.version %>/images/',
-          src: 'dist/images/*'
-        },{
-          dest: 'npmap.js/<%= pkg.version %>/images/icons/',
-          src: 'dist/images/icons/*'
-        },{
-          dest: 'npmap.js/<%= pkg.version %>/npmap-bootstrap.js',
-          options: {
-            gzip: true
-          },
-          src: 'dist/npmap-bootstrap.js'
-        },{
-          dest: 'npmap.js/<%= pkg.version %>/npmap-bootstrap.min.js',
-          options: {
-            gzip: true
-          },
-          src: 'dist/npmap-bootstrap.min.js'
-        },{
-          dest: 'npmap.js/<%= pkg.version %>/npmap-standalone.css',
-          options: {
-            gzip: true
-          },
-          src: 'dist/npmap-standalone.css'
-        },{
-          dest: 'npmap.js/<%= pkg.version %>/npmap-standalone.min.css',
-          options: {
-            gzip: true
-          },
-          src: 'dist/npmap-standalone.min.css'
-        },{
-          dest: 'npmap.js/<%= pkg.version %>/npmap-standalone.js',
-          options: {
-            gzip: true
-          },
-          src: 'dist/npmap-standalone.js'
-        },{
-          dest: 'npmap.js/<%= pkg.version %>/npmap-standalone.min.js',
-          options: {
-            gzip: true
-          },
-          src: 'dist/npmap-standalone.min.js'
-        },{
-          dest: 'npmap.js/<%= pkg.version %>/npmap.css',
-          options: {
-            gzip: true
-          },
-          src: 'dist/npmap.css'
-        },{
-          dest: 'npmap.js/<%= pkg.version %>/npmap.min.css',
-          options: {
-            gzip: true
-          },
-          src: 'dist/npmap.min.css'
-        },{
-          dest: 'npmap.js/<%= pkg.version %>/npmap.js',
-          options: {
-            gzip: true
-          },
-          src: 'dist/npmap.js'
-        },{
-          dest: 'npmap.js/<%= pkg.version %>/npmap.min.js',
-          options: {
-            gzip: true
-          },
-          src: 'dist/npmap.min.js'
-        }]
-      }
-    },
     uglify: {
       npmap: {
         dest: 'dist/npmap.min.js',
@@ -203,6 +154,7 @@ module.exports = function(grunt) {
     }
   });
 
+  grunt.loadNpmTasks('grunt-aws-s3');
   grunt.loadNpmTasks('grunt-banner');
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-clean');
@@ -213,9 +165,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-invalidate-cloudfront');
   grunt.loadNpmTasks('grunt-mocha-phantomjs');
-  grunt.loadNpmTasks('grunt-s3');
   grunt.registerTask('build', ['clean', 'copy', 'concat', 'browserify', 'uglify', 'cssmin', 'usebanner']); //TODO: csscomb, validation
-  grunt.registerTask('deploy', ['s3', 'invalidate_cloudfront']);
+  grunt.registerTask('deploy', ['aws_s3', 'invalidate_cloudfront']);
   grunt.registerTask('lint', ['csslint']); //TODO: jshint
   grunt.registerTask('test', ['mocha_phantomjs']);
 };
