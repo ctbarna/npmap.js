@@ -78,7 +78,8 @@ module.exports = function(grunt) {
           expand: true,
           ext: '.css',
           src: [
-            '*.css'
+            'npmap-standalone.css',
+            'npmap.css'
           ]
         },{
           cwd: 'dist/',
@@ -86,7 +87,8 @@ module.exports = function(grunt) {
           expand: true,
           ext: '.min.css',
           src: [
-            '*.min.css'
+            'npmap-standalone.min.css',
+            'npmap.min.css'
           ]
         },{
           cwd: 'dist/',
@@ -94,7 +96,9 @@ module.exports = function(grunt) {
           expand: true,
           ext: '.js',
           src: [
-            '*.js'
+            'npmap-bootstrap.js',
+            'npmap-standalone.js',
+            'npmap.js'
           ]
         },{
           cwd: 'dist/',
@@ -102,7 +106,9 @@ module.exports = function(grunt) {
           expand: true,
           ext: '.min.js',
           src: [
-            '*.min.js'
+            'npmap-bootstrap.min.js',
+            'npmap-standalone.min.js',
+            'npmap.min.js'
           ]
         }]
       }
