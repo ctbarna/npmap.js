@@ -12,18 +12,14 @@ var HomeControl = L.Control.extend({
   },
   onAdd: function() {
     var container = L.DomUtil.create('div', 'leaflet-control-home leaflet-bar leaflet-control'),
-      link = L.DomUtil.create('a', 'leaflet-bar-single', container),
-      stop = L.DomEvent.stopPropagation;
+      button = L.DomUtil.create('button', 'leaflet-bar-single', container);
 
-    link.href = '#';
-    link.title = 'Pan/zoom to initial extent';
+    button.title = 'Pan/zoom to initial extent';
 
+    L.DomEvent.disableClickPropagation(button);
     L.DomEvent
-      .on(link, 'click', stop)
-      .on(link, 'mousedown', stop)
-      .on(link, 'dblclick', stop)
-      .on(link, 'click', L.DomEvent.preventDefault)
-      .on(link, 'click', this.toHome, this);
+      .on(button, 'click', L.DomEvent.preventDefault)
+      .on(button, 'click', this.toHome, this);
 
     return container;
   },

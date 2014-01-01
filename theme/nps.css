@@ -502,7 +502,13 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 }
 
 /* Leaflet Bar */
-.leaflet-bar a, .leaflet-bar a:hover {
+.leaflet-bar button {
+  display: inherit;
+}
+.leaflet-bar a, .leaflet-bar button {
+  border-radius: 4px;
+}
+.leaflet-bar a, .leaflet-bar a:hover, .leaflet-bar button, .leaflet-bar button:hover {
   -webkit-text-shadow: 0px 2px 2px #757571;
      -moz-text-shadow: 0px 2px 2px #757571;
       -ms-text-shadow: 0px 2px 2px #757571;
@@ -513,15 +519,20 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   border-left: 1px solid #1a2423;
   border-right: 1px solid #1a2423;
   color: #fff;
+  height: 26px;
+  line-height: 26px;
+  padding: 0;
+  text-align: center;
   text-decoration: none;
+  width: 26px;
 }
-.leaflet-bar a:hover {
+.leaflet-bar a:hover, .leaflet-bar button:hover {
   background-color: #626159;
 }
-.leaflet-bar a:active {
+.leaflet-bar a:active, .leaflet-bar button:active {
   background-color: #53534a;
 }
-.leaflet-bar a.leaflet-disabled, .leaflet-bar a.leaflet-disabled:hover {
+.leaflet-bar a.leaflet-disabled, .leaflet-bar a.leaflet-disabled:hover, .leaflet-bar button.leaflet-disabled, .leaflet-bar button.leaflet-disabled:hover {
   -webkit-text-shadow: none;
      -moz-text-shadow: none;
       -ms-text-shadow: none;
@@ -530,14 +541,18 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   background-color: #4b4B44;
   color: #bbb;
 }
-.leaflet-bar a:first-child {
+.leaflet-bar a:first-child, .leaflet-bar button:first-child {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
   border-top: 1px solid #1a2423;
 }
-.leaflet-bar a:last-child {
+.leaflet-bar a:last-child, .leaflet-bar button:last-child {
   border-bottom: 1px solid #1a2423;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
   border-top: none;
 }
-.leaflet-bar a.leaflet-bar-single {
+.leaflet-bar a.leaflet-bar-single, .leaflet-bar button.leaflet-bar-single {
   border-radius: 4px;
   border-top: solid 1px #1a2423;
 }
@@ -825,8 +840,10 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 }
 
 /* Home Control */
-.leaflet-control-home a {
+.leaflet-control-home button {
   background-image: url('images/icon/fa-home.png');
+  background-position: 5px 4px;
+  background-repeat: no-repeat;
 }
 
 /* Legend Control */

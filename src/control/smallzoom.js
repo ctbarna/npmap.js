@@ -11,21 +11,17 @@ var SmallZoomControl = L.Control.extend({
     return this;
   },
   _createButton: function(html, title, clsName, container, handler, context) {
-    var link = L.DomUtil.create('a', clsName, container),
-      stop = L.DomEvent.stopPropagation;
+    var button = L.DomUtil.create('button', clsName, container);
 
-    link.href = '#';
-    link.innerHTML = html;
-    link.title = title;
+    button.innerHTML = html;
+    button.title = title;
 
+    L.DomEvent.disableClickPropagation(button);
     L.DomEvent
-      .on(link, 'click', stop)
-      .on(link, 'mousedown', stop)
-      .on(link, 'dblclick', stop)
-      .on(link, 'click', L.DomEvent.preventDefault)
-      .on(link, 'click', handler, context);
+      .on(button, 'click', L.DomEvent.preventDefault)
+      .on(button, 'click', handler, context);
 
-    return link;
+    return button;
   },
   _updateDisabled: function() {
     var clsName = 'leaflet-disabled',
