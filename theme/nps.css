@@ -506,11 +506,11 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   display: inherit;
 }
 .leaflet-bar a, .leaflet-bar a:hover, .leaflet-bar button, .leaflet-bar button:hover {
-  -webkit-text-shadow: 0px 2px 2px #757571;
-     -moz-text-shadow: 0px 2px 2px #757571;
-      -ms-text-shadow: 0px 2px 2px #757571;
-       -o-text-shadow: 0px 2px 2px #757571;
-          text-shadow: 0px 2px 2px #757571;
+  -webkit-text-shadow: 0 2px 2px #757571;
+     -moz-text-shadow: 0 2px 2px #757571;
+      -ms-text-shadow: 0 2px 2px #757571;
+       -o-text-shadow: 0 2px 2px #757571;
+          text-shadow: 0 2px 2px #757571;
   background-color: #74746a;
   border-bottom: 1px solid #1a2423;
   border-left: 1px solid #1a2423;
