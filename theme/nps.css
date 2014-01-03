@@ -515,8 +515,9 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   border-bottom: 1px solid #1a2423;
   border-left: 1px solid #1a2423;
   border-right: 1px solid #1a2423;
+  border-top: none;
   color: #fff;
-  height: 26px;
+  height: 27px;
   line-height: 26px;
   padding: 0;
   text-align: center;
@@ -526,7 +527,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 .leaflet-bar a:hover, .leaflet-bar button:hover {
   background-color: #626159;
 }
-.leaflet-bar a:active, .leaflet-bar button:active {
+.leaflet-bar a:active, .leaflet-bar a.pressed, .leaflet-bar button:active, .leaflet-bar button.pressed {
   background-color: #53534a;
 }
 .leaflet-bar a.leaflet-disabled, .leaflet-bar a.leaflet-disabled:hover, .leaflet-bar button.leaflet-disabled, .leaflet-bar button.leaflet-disabled:hover {
@@ -542,6 +543,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   border-top: 1px solid #1a2423;
+  height: 26px;
 }
 .leaflet-bar a:last-child, .leaflet-bar button:last-child {
   border-bottom: 1px solid #1a2423;
@@ -577,8 +579,9 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   white-space: nowrap;
 }
 
-/* Draw Control */
-.leaflet-draw {
+/* Edit Control */
+/*
+.leaflet-control-draw {
   -webkit-box-shadow: none;
      -moz-box-shadow: none;
       -ms-box-shadow: none;
@@ -610,14 +613,17 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 .leaflet-draw-toolbar-nobottom a:last-child {
   border-bottom-right-radius: 0;
 }
-.leaflet-draw-toolbar a {
+
+*/
+.leaflet-control-edit button {
   background-image: url('images/control/draw/spritesheet.png');
   background-repeat: no-repeat;
 }
-.leaflet-retina .leaflet-draw-toolbar a {
+.leaflet-retina .leaflet-control-edit button {
   background-image: url('images/control/draw/spritesheet@2x.png');
   background-size: 270px 30px;
 }
+/*
 .leaflet-draw-actions {
   display: none;
   list-style: none;
@@ -682,33 +688,35 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   height: 26px;
   line-height: 26px;
 }
-.leaflet-draw-toolbar .leaflet-draw-draw-polyline {
+*/
+.leaflet-control-edit .line {
   background-position: -2px -2px;
 }
-.leaflet-draw-toolbar .leaflet-draw-draw-polygon {
+.leaflet-control-edit .polygon {
   background-position: -31px -2px;
 }
-.leaflet-draw-toolbar .leaflet-draw-draw-rectangle {
+.leaflet-control-edit .rectangle {
   background-position: -62px -2px;
 }
-.leaflet-draw-toolbar .leaflet-draw-draw-circle {
+.leaflet-control-edit .circle {
   background-position: -92px -2px;
 }
-.leaflet-draw-toolbar .leaflet-draw-draw-marker {
+.leaflet-control-edit .marker {
   background-position: -122px -2px;
 }
-.leaflet-draw-toolbar .leaflet-draw-edit-edit {
+.leaflet-control-edit .edit {
   background-position: -152px -2px;
 }
-.leaflet-draw-toolbar .leaflet-draw-edit-remove {
+.leaflet-control-edit .remove {
   background-position: -182px -2px;
 }
-.leaflet-draw-toolbar .leaflet-draw-edit-edit.leaflet-disabled {
+.leaflet-control-edit .edit.leaflet-disabled {
   background-position: -212px -2px;
 }
-.leaflet-draw-toolbar .leaflet-draw-edit-remove.leaflet-disabled {
+.leaflet-control-edit .remove.leaflet-disabled {
   background-position: -242px -2px;
 }
+/*
 .leaflet-mouse-marker {
   background-color: #fff;
   cursor: crosshair;
@@ -809,7 +817,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   height: 27px;
   line-height: 27px;
 }
-
+*/
 /* Fullscreen Control */
 .npmap-toolbar button .icon-fullscreen-enter, .npmap-toolbar button .icon-fullscreen-exit {
   left: 9px;

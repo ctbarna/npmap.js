@@ -3,59 +3,62 @@
 
 'use strict';
 
-var MakiIcon = require('../icon/maki');
+var Maki = require('../icon/maki');
 
 require('leaflet-draw');
 
-var EditControl = L.Control.Draw.extend({
+var EditControl = L.Control.extend({
+  includes: L.Mixin.Events,
   options: {
-    draw: {
-      circle: {
-        metric: false
-      },
-      marker: {
-        icon: new MakiIcon()
-      },
-      polygon: {
-        metric: false
-      },
-      polyline: {
-        metric: false
-      },
-      rectangle: {
-        metric: false
-      }
+    circle: {
+      metric: false
+    },
+    marker: {
+      icon: new Maki()
+    },
+    polygon: {
+      metric: false
+    },
+    polyline: {
+      metric: false
+    },
+    position: 'topleft',
+    rectangle: {
+      metric: false
     }
   },
   initialize: function(options) {
-    // TODO: Create a toolbar with a dropdown (layer 1, layer 2, create new layer...) and a save button.
     L.Util.setOptions(this, options);
-
-    this._featureGroup = options.edit.featureGroup;
-    L.drawLocal.draw.toolbar.buttons.polyline = 'Draw a line';
-
-    /*
-    if (typeof options.overlayTools === 'undefined' || options.overlayTools === true) {
-      var overlayTools = L.Toolbar.extend({
-        initialize: function(options) {
-
-        },
-        addToolbar: function(map) {
-
-        },
-        removeToolbar: function(map) {
-
-        }
-      });
-    }
-    */
-
-    L.Control.Draw.prototype.initialize.call(this, options);
+    this._activeMode = null;
+    this._featureGroup = new L.FeatureGroup();
+    this._modes = {};
+    return this;
   },
-  addTo: function(map) {
-    var editId = null,
-      editShape = null,
+  onAdd: function(map) {
+    var container = L.DomUtil.create('div', 'leaflet-control-edit leaflet-bar'),
+      editId,
+      editShape,
       me = this;
+
+    if (this.options.marker) {
+      this._initMode(container, new L.Draw.Marker(map, this.options.marker), 'Draw a marker');
+    }
+
+    if (this.options.polyline) {
+      this._initMode(container, new L.Draw.Polyline(map, this.options.polyline), 'Draw a line');
+    }
+
+    if (this.options.polygon) {
+      this._initMode(container, new L.Draw.Polygon(map, this.options.polygon), 'Draw a polygon');
+    }
+
+    if (this.options.rectangle) {
+      this._initMode(container, new L.Draw.Rectangle(map, this.options.rectangle), 'Draw a rectangle');
+    }
+
+    if (this.options.circle) {
+      this._initMode(container, new L.Draw.Circle(map, this.options.circle), 'Draw a circle');
+    }
 
     this._featureGroup.on('click', function(e) {
       var editing = e.layer.editing,
@@ -89,6 +92,7 @@ var EditControl = L.Control.Draw.extend({
         }
       }
     });
+    map.addLayer(this._featureGroup);
     map.on('click', function() {
       if (editShape) {
         editShape.editing.disable();
@@ -118,56 +122,56 @@ var EditControl = L.Control.Draw.extend({
       }
     });
 
-    L.Control.Draw.prototype.addTo.call(this, map);
-    this._container.removeChild(this._container.childNodes[1]);
-    //this._container.appendChild(L.DomUtil.create('div', 'leaflet-draw-section'));
-  }
-  /*,
-  onAdd: function() {
-    var container = L.DomUtil.create('div', 'leaflet-control-edit-overlays leaflet-bar');
-
-    this._overlaysButton = this._createButton('+', 'Switch edit overlay', null, container, function() {
-
-    }, this);
-    this._saveButton = this._createButton('-', 'Zoom out', null, container, function() {
-
-    }, this);
+    return container;
   },
-  _createButton: function(html, title, clsName, container, handler, context) {
-    var link = L.DomUtil.create('a', clsName, container),
-      stop = L.DomEvent.stopPropagation;
+  _handlerActivated: function(e) {
+    if (this._activeMode && this._activeMode.handler.enabled()) {
+      this._activeMode.handler.disable();
+    }
 
-    link.href = '#';
-    link.innerHTML = html;
-    link.title = title;
+    this._activeMode = this._modes[e.handler];
+    L.DomUtil.addClass(this._activeMode.button, 'pressed');
+    this.fire('enable');
+  },
+  _handlerDeactivated: function() {
+    L.DomUtil.removeClass(this._activeMode.button, 'pressed');
+    this._activeMode = null;
+    this.fire('disable');
+  },
+  _initMode: function(container, handler, title) {
+    var type = handler.type,
+      button = L.DomUtil.create('button', type, container),
+      me = this;
 
-    L.DomEvent
-      .on(link, 'click', stop)
-      .on(link, 'mousedown', stop)
-      .on(link, 'dblclick', stop)
-      .on(link, 'click', L.DomEvent.preventDefault)
-      .on(link, 'click', handler, context);
-
-    return link;
+    button.title = title;
+    this._modes[type] = {};
+    this._modes[type].button = button;
+    this._modes[type].handler = handler;
+    this._modes[type].handler
+      .on('disabled', this._handlerDeactivated, this)
+      .on('enabled', this._handlerActivated, this);
+    L.DomEvent.disableClickPropagation(button);
+    L.DomEvent.on(button, 'click', function() {
+      if (me._activeMode && me._activeMode.handler.type === type) {
+        me._modes[type].handler.disable();
+      } else {
+        me._modes[type].handler.enable();
+      }
+    }, this._modes[type].handler);
   }
-  */
 });
 
+L.Map.mergeOptions({
+  editControl: false
+});
 L.Map.addInitHook(function() {
   if (this.options.editControl) {
-    var featureGroup = new L.FeatureGroup(),
-      options = {};
+    var options = {};
 
     if (typeof this.options.drawControl === 'object') {
       options = this.options.drawControl;
     }
 
-    this.addLayer(featureGroup);
-    options.edit = {
-      edit: false,
-      featureGroup: featureGroup,
-      remove: false
-    };
     this.editControl = L.npmap.control.edit(options).addTo(this);
   }
 });
