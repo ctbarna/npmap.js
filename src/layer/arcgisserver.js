@@ -20,6 +20,10 @@ var ArcGisServerLayer = L.TileLayer.extend({
     util.strict(options.tiled, 'boolean');
     util.strict(options.url, 'string');
 
+    if (options.clickable === false) {
+      this._hasInteractivity = false;
+    }
+
     if (typeof options.layers !== 'string') {
       options.layers = '';
     }

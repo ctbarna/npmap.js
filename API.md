@@ -40,11 +40,13 @@ The first, and only, argument is required. It must be a layer config object with
 - (Required) `tiled` (Boolean): Should be `true` if the service is tiled and `false` if it is not.
 - (Required) `url` (String): A URL string ending with "MapServer" for the ArcGIS Server service.
 - (Optional) `attribution` (String): An attribution string for the layer. HTML is allowed.
+- (Optinoal) `clickable` (Boolean): Is the layer "clickable"?
 - (Optional) `description` (String): Descriptive text for the layer. Used in legends, modules, and controls.
 - (Optional) `dynamicAttribution` (String): The URL of a [dynamic attribution](http://blogs.esri.com/esri/arcgis/2012/08/15/dynamic-attribution-is-here/) endpoint for the service.
 - (Optional) `layers` (String): A comma-delimited string of the ArcGIS Server integer layer identifiers to bring into the NPMap.js layer.
 - (Optional) `name` (String): A name for the layer. Used in legends, modules, and controls.
 - (Optional) `opacity` (Float): An opacity value for the layer. Defaults to `1.0`.
+- (Optional) `popup` (String OR Function): Configures the contents of the popup for an overlay. Either a Handlebars HTML template string or a function that is passed the data properties for a shape and returns an HTML string.
 
 You can also (optionally) provide any of the options supported by [`L.TileLayer`](http://leafletjs.com/reference.html#tilelayer).
 

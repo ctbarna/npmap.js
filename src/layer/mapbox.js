@@ -139,10 +139,12 @@ var MapBoxLayer = L.TileLayer.extend({
       tms: json.scheme === 'tms'
     };
 
-    this._hasInteractivity = typeof json.grids === 'object';
+    if (this.options.clickable !== false) {
+      this._hasInteractivity = typeof json.grids === 'object';
 
-    if (this._hasInteractivity) {
-      this._grid = new utfGrid(this);
+      if (this._hasInteractivity) {
+        this._grid = new utfGrid(this);
+      }
     }
 
     if (typeof this.options.attribution === 'undefined') {
