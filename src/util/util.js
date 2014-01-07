@@ -50,7 +50,7 @@ module.exports = {
    * @return {String}
    */
   _buildAttributeTable: function(name, data) {
-    var div = L.DomUtil.create('div', 'layer');
+    var div = L.DomUtil.create('div', 'result');
 
     if (!L.Util.isArray(data)) {
       data = [data];
@@ -58,11 +58,10 @@ module.exports = {
 
     for (var index in data) {
       var dataLayer = data[index],
-        divTitle = L.DomUtil.create('div', null),
+        divTitle = L.DomUtil.create('div', 'title'),
         tableResults = L.DomUtil.create('table', null),
         tableResultsBody = L.DomUtil.create('tbody', null);
 
-      divTitle.setAttribute('class', 'title');
       divTitle.textContent = name;
 
       for (var fieldName in dataLayer) {
@@ -83,7 +82,7 @@ module.exports = {
       div.appendChild(tableResults);
     }
 
-    return this.getOuterHtml(div);
+    return div;
   },
   /**
    *

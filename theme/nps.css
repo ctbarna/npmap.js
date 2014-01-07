@@ -121,7 +121,7 @@ button, input, select[multiple], textarea {
   border-radius: 4px;
   cursor: pointer;
   display: inline-block;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: bold;
   line-height: 1.428571429;
   margin-bottom: 0;
@@ -130,11 +130,6 @@ button, input, select[multiple], textarea {
   vertical-align: middle;
   white-space: nowrap;
 }
-  .btn:focus {
-    outline: thin dotted #333;
-    outline: 5px auto rgba(89, 114, 52, 0.8);
-    outline-offset: -2px;
-  }
   .btn:hover, .btn:focus {
     color: #333333;
     text-decoration: none;
@@ -224,6 +219,7 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 }
   .leaflet-container a {
     color: #b28000;
+    cursor: pointer;
     text-decoration: none;
   }
     .leaflet-container a:hover {
@@ -416,12 +412,20 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   .leaflet-popup-content p {
     margin: 10px 0 18px 0;
   }
+  .leaflet-popup-content .actions {
+    border-top: solid 1px #b1b0a7;
+    margin-top: 4px;
+    padding-top: 15px;
+  }
   .leaflet-popup-content .layer {
     margin-bottom: 10px;
   }
   .leaflet-popup-content .layer:last-child {
     margin-bottom: 0;
   }
+    .leaflet-popup-content .layer ul {
+      padding-left: 25px;
+    }
   .leaflet-popup-content .title {
     font-size: 13px;
     font-weight: bold;
@@ -433,6 +437,15 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
     margin-top: 13px;
     padding-top: 17px;
   }
+  .leaflet-popup-content .result {
+    margin-bottom: 8px;
+  }
+  .leaflet-popup-content .result:last-child {
+    margin-bottom: 0;
+  }
+    .leaflet-popup-content .result .title {
+      font-size: 13px;
+    }
   .leaflet-popup-content table {
     border: none;
     border-collapse: collapse;
@@ -663,12 +676,8 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
 .leaflet-control-legend {
   background-color: #fff;
   background-color: rgba(255,255,255,.8);
-  min-width: 140px;
   padding: 5px;
 }
-  .leaflet-control-legend h4 {
-    margin: 0;
-  }
   .leaflet-control-legend ul {
     margin: 0;
     padding-left: 0;

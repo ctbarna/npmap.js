@@ -7,7 +7,6 @@ var baselayerPresets = require('./preset/baselayers.json'),
   overlayPresets = require('./preset/overlays.json'),
   util = require('./util/util');
 
-// Override and setup defaults.
 (function() {
   var style = colorPresets.gold;
 
@@ -196,16 +195,18 @@ var Map = L.Map.extend({
           layer = queryable[i];
           layer._handleClick(latLng, layer, function(l, data) {
             if (data) {
-              var result;
-
-              if (typeof data === 'string') {
-                result = data;
-              } else {
-                result = util.dataToHtml(l.options, data);
-              }
+              var result = data;
 
               if (result) {
-                results.push(result);
+                if (typeof result === 'string') {
+                  var divResult = document.createElement('div');
+                  divResult.innerHTML = result;
+                  results.push(divResult);
+                } else if ('nodeType' in result) {
+                  results.push(result);
+                } else {
+                  results.push(util.dataToHtml(l.options, data));
+                }
               }
             }
 
@@ -231,7 +232,7 @@ var Map = L.Map.extend({
                 .off('zoomstart', mapChanged);
 
               if (results.length) {
-                var html = '',
+                var div = L.DomUtil.create('div', null),
                   popup = L.popup({
                     autoPanPaddingTopLeft: util._getAutoPanPaddingTopLeft(me.getContainer())
                   });
@@ -240,13 +241,15 @@ var Map = L.Map.extend({
                   var result = results[i];
 
                   if (typeof result === 'string') {
-                    html += results[i];
+                    var divResult = document.createElement('div');
+                    divResult.innerHTML = result;
+                    div.appendChild(divResult);
                   } else {
-                    html += util.getOuterHtml(results[i]);
+                    div.appendChild(result);
                   }
                 }
 
-                popup.setContent(html).setLatLng(latLng).openOn(me);
+                popup.setContent(div).setLatLng(latLng).openOn(me);
               }
 
               me._setCursor(lastCursor);

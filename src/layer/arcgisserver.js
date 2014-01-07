@@ -13,6 +13,8 @@ var ArcGisServerLayer = L.TileLayer.extend({
   statics: {
     TILED_TEMPLATE: '{{url}}/tile/{z}/{y}/{x}'
   },
+  _backHtml: null,
+  _clickResults: null,
   initialize: function(options) {
     var me = this;
 
@@ -52,7 +54,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
           z = tilePoint.z,
           u = options.url + '/export?transparent=true&f=image&format=png24&bbox=' + ((x * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - ((y + 1) * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - ((y + 1) * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + ',' + (((x + 1) * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - (y * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - (y * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + '&bboxSR=4326&imageSR=4326&size=' + hW + ',' + hW;
 
-        if (typeof options.editable === 'object' || options.editable === true) {
+        if (typeof options.edit === 'object' || options.edit === true) {
           u += '&nocache=' + new Date().getTime();
         }
 
@@ -111,52 +113,10 @@ var ArcGisServerLayer = L.TileLayer.extend({
 
     L.TileLayer.prototype.onRemove.call(this, map);
   },
-  _dataToHtml: function(data) {
-    // TODO: Also need to display the name of the layer, if defined.
-    return  util._buildAttributeTable(data.layerName, data.attributes);
+  _back: function() {
+    this._map._popup.setContent(this._backHtml).update();
   },
-  _handleClick: function(latLng, layer, callback) {
-    var me = this;
-
-    me.identify(latLng, function(response) {
-      if (response) {
-        var results = response.results;
-
-        if (results && results.length) {
-          var i = 0,
-            html = '';
-
-          if (me.options.popup) {
-            switch (typeof me.options.popup) {
-            case 'function':
-              for (i = 0; i < results.length; i++) {
-                html += me.options.popup(results[i].attributes);
-              }
-
-              break;
-            case 'string':
-              for (i = 0; i < results.length; i++) {
-                html += util.handlebars(me.options.popup, results[i].attributes);
-              }
-
-              break;
-            }
-          } else {
-            for (i = 0; i < results.length; i++) {
-              html += me._dataToHtml(results[i]);
-            }
-          }
-
-          callback(layer, html);
-        } else {
-          callback(layer, null);
-        }
-      } else {
-        callback(layer, null);
-      }
-    });
-  },
-  _toEsriBounds: function(bounds) {
+  _boundsToEsri: function(bounds) {
     return {
       spatalReference: {
         wkid: 4326
@@ -166,6 +126,100 @@ var ArcGisServerLayer = L.TileLayer.extend({
       xmin: bounds.getSouthWest().lng,
       ymin: bounds.getSouthWest().lat
     };
+  },
+  _dataToHtml: function(data) {
+    var html;
+
+    if (this.options.popup) {
+      switch (typeof this.options.popup) {
+      case 'function':
+        html = this.options.popup(data.attributes);
+        break;
+      case 'string':
+        html = util.handlebars(this.options.popup, data.attributes);
+        break;
+      }
+    } else {
+      html = util._buildAttributeTable(data.value, data.attributes);
+    }
+
+    if (typeof this.options.edit === 'object') {
+      // TODO: Add edit actions.
+      //html = html.slice(0, html.length - 6) + '<div class="actions">Testing</div></div>';
+    }
+
+    if (typeof html === 'string') {
+      var div = L.DomUtil.create('div', null);
+      div.innerHTML = html;
+      return div;
+    } else {
+      return html;
+    }
+  },
+  _handleClick: function(latLng, layer, callback) {
+    var me = this;
+
+    me._clickResults = {};
+    me.identify(latLng, function(response) {
+      if (response) {
+        var results = response.results;
+
+        if (results && results.length) {
+          var divLayer = L.DomUtil.create('div', 'layer'),
+            divTitle = L.DomUtil.create('div', 'title'),
+            i = 0,
+            ul = L.DomUtil.create('ul', null);
+
+          divTitle.textContent = me.options.name ? me.options.name : results[0].layerName;
+          divLayer.appendChild(divTitle);
+
+          for (i; i < results.length; i++) {
+            var div = me._dataToHtml(results[i]),
+              li = L.DomUtil.create('li', null),
+              link = L.DomUtil.create('a', null),
+              value = results[i].value;
+
+            for (var j = 0; j < div.childNodes.length; j++) {
+              var node = div.childNodes[j];
+
+              if (L.DomUtil.hasClass(node, 'title')) {
+                value = node.innerHTML;
+                break;
+              }
+            }
+
+            L.DomEvent.on(link, 'click', function() {
+              me._more(this);
+            });
+            link.textContent = value;
+            li.appendChild(link);
+            ul.appendChild(li);
+            me._clickResults[value] = div;
+          }
+
+          divLayer.appendChild(ul);
+          callback(layer, divLayer);
+        } else {
+          callback(layer, null);
+        }
+      } else {
+        callback(layer, null);
+      }
+    });
+  },
+  _more: function(el) {
+    var actions = L.DomUtil.create('div', 'actions'),
+      back = L.DomUtil.create('button', 'btn btn-default'),
+      div = L.DomUtil.create('div', null),
+      popup = this._map._popup;
+
+    div.appendChild(this._clickResults[el.innerHTML]);
+    this._backHtml = popup.getContent();
+    L.DomEvent.on(back, 'click', this._back, this);
+    back.innerHTML = '« Back to Results';
+    actions.appendChild(back);
+    div.appendChild(actions);
+    popup.setContent(div).update();
   },
   _updateAttribution: function() {
     var map = this._map,
@@ -212,7 +266,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
         geometryType: 'esriGeometryPoint',
         imageDisplay: container.offsetWidth + ',' + container.offsetHeight + ',96',
         layers: 'visible',
-        mapExtent: json3.stringify(this._toEsriBounds(this._map.getBounds())),
+        mapExtent: json3.stringify(this._boundsToEsri(this._map.getBounds())),
         returnGeometry: false,
         sr: 4326,
         tolerance: 3
