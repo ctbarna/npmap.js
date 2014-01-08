@@ -22,24 +22,13 @@ var KmlLayer = L.GeoJSON.extend({
       var url = config.url;
 
       util.strict(url, 'string');
-
-      if (util.isLocalUrl(url)) {
-        var request = new XMLHttpRequest();
-
-        request.onload = function() {
-          me._create(config, this.responseText);
-        };
-        request.open('get', url, true);
-        request.send();
-      } else {
-        reqwest({
-          success: function(response) {
-            me._create(config, response);
-          },
-          type: 'jsonp',
-          url: 'http://npmap-xml2jsonp.herokuapp.com/?callback=?&url=' + url
-        });
-      }
+      util.loadFile(url, 'xml', function(response) {
+        if (response) {
+          me._create(config, response);
+        } else {
+          // TODO: Display load error.
+        }
+      });
     }
   },
   _create: function(config, data) {

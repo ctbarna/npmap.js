@@ -442,6 +442,62 @@ module.exports = {
   /**
    *
    */
+  loadFile: function(url, type, callback) {
+    if (this.isLocalUrl(url)) {
+      if (type === 'xml') {
+        var request = new XMLHttpRequest();
+
+        request.onload = function() {
+          var text = this.responseText;
+
+          if (text) {
+            callback(text);
+          } else {
+            callback(false);
+          }
+        };
+        request.open('get', url, true);
+        request.send();
+      } else {
+        reqwest({
+          error: function() {
+            callback(false);
+          },
+          success: function(response) {
+            if (response) {
+              if (type === 'text') {
+                callback(response.responseText);
+              } else {
+                callback(response);
+              }
+            } else {
+              callback(false);
+            }
+          },
+          type: type,
+          url: url
+        });
+      }
+    } else {
+      reqwest({
+        error: function() {
+          callback(false);
+        },
+        success: function(response) {
+          if (response) {
+            callback(response);
+          } else {
+            callback(false);
+          }
+        },
+        type: 'jsonp',
+        url: 'http://localhost:8000?callback=?&type=' + type + '&url=' + url
+      });
+    }
+  },
+  /**
+   *
+   */
   putCursorAtEndOfInput: function(input) {
     if (input.setSelectionRange) {
       var length = input.value.length * 2;

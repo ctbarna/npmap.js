@@ -22,18 +22,15 @@ var CsvLayer = L.GeoJSON.extend({
       var url = config.url;
 
       util.strict(url, 'string');
+      util.loadFile(url, 'text', function(response) {
+        console.log(response);
 
-      if (util.isLocalUrl(url)) {
-        reqwest({
-          success: function(response) {
-            me._create(config, response.responseText);
-          },
-          type: 'text',
-          url: url
-        });
-      } else {
-        console.error('CSV files must be local.');
-      }
+        if (response) {
+          me._create(config, response);
+        } else {
+          // TODO: Display load error.
+        }
+      });
     }
   },
   _create: function(config, csv) {

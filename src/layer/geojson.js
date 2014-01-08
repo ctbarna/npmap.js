@@ -19,30 +19,13 @@ var GeoJsonLayer = L.GeoJSON.extend({
         url = config.url;
 
       util.strict(url, 'string');
-
-      if (util.isLocalUrl(url)) {
-        reqwest({
-          error: function() {
-            console.log('There was an error loading the GeoJSON.');
-          },
-          success: function(response) {
-            me._create(config, response);
-          },
-          type: 'json',
-          url: url
-        });
-      } else {
-        reqwest({
-          error: function() {
-            console.log('There was an error loading the GeoJSON.');
-          },
-          success: function(response) {
-            me._create(config, response);
-          },
-          type: 'jsonp',
-          url: 'http://npmap-json2jsonp.herokuapp.com/?callback=?&url=' + url
-        });
-      }
+      util.loadFile(url, 'json', function(response) {
+        if (response) {
+          me._create(config, response);
+        } else {
+          // TODO: Display load error.
+        }
+      });
     }
   },
   _create: function(config, data) {

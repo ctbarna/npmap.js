@@ -21,31 +21,26 @@
     <div id="map"></div>
     <script>
       var NPMap = {
-        center: {
-          lat: 45.3058,
-          lng: -116.7187
-        },
         div: 'map',
         overlays: [{
           filter: function(feature) {
             return feature.properties.park === 'Yellowstone';
           },
-          maki: {
-            name: 'star'
-          },
           popup: '<div class="title">{{name}}</div><p>This is {{#if type \'!==\' \'community\'}}not {{/if}}a community.</p>',
+          styles: {
+            'marker-name': 'star'
+          },
           type: 'geojson',
           url: 'data/gateway_points_of_interest.geojson'
         },{
-          maki: {
-            color: '#609321',
-            name: 'park'
-          },
           popup: '<div class="title">{{Name}}</div><p>The alpha code is {{Code}}.</p>',
+          styles: {
+            'marker-color': '#609321',
+            'marker-symbol': 'park'
+          },
           type: 'geojson',
           url: 'data/national_parks.geojson'
-        }],
-        zoom: 6
+        }]
       };
 
       (function() {
