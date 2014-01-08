@@ -23,8 +23,6 @@ var CsvLayer = L.GeoJSON.extend({
 
       util.strict(url, 'string');
       util.loadFile(url, 'text', function(response) {
-        console.log(response);
-
         if (response) {
           me._create(config, response);
         } else {

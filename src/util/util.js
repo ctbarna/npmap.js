@@ -491,7 +491,7 @@ module.exports = {
           }
         },
         type: 'jsonp',
-        url: 'http://localhost:8000?callback=?&type=' + type + '&url=' + url
+        url: 'http://npmap-proxy.herokuapp.com?callback=?&type=' + type + '&url=' + url
       });
     }
   },
