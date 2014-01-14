@@ -13,14 +13,17 @@ var LegendControl = L.Control.extend({
     if (options.html) {
       if (typeof options.html === 'string') {
         this._html = options.html;
+        this._container.innerHTML = this._html;
       } else if (typeof options.html === 'function') {
         this._html = options.html();
+        this._container.innerHTML = this._html;
+      } else {
+        // A DOM object.
+        this._html = options.html;
+        this._container.appendChild(this._html);
       }
     } else if (options.overlays) {
       this._html = this._createLegend(options.overlays);
-    }
-
-    if (this._html) {
       this._container.innerHTML = this._html;
     }
   },
