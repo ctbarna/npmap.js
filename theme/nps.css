@@ -336,6 +336,9 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
   overflow: auto;
   text-align: left;
 }
+  .leaflet-popup-content-wrapper li {
+    list-style: initial;
+  }
 .leaflet-popup-pane {
   pointer-events: none;
 }
