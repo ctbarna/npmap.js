@@ -128,7 +128,12 @@ var Map = L.Map.extend({
       baseLayer.zIndex = 0;
 
       if (baseLayer.visible === true) {
-        baseLayer.L = L.npmap.layer[baseLayer.type](baseLayer);
+        if (baseLayer.type === 'arcgisserver') {
+          baseLayer.L = L.npmap.layer[baseLayer.type][baseLayer.tiled === true ? 'tiled' : 'dynamic'](baseLayer);
+        } else {
+          baseLayer.L = L.npmap.layer[baseLayer.type](baseLayer);
+        }
+
         me.addLayer(baseLayer.L);
         break;
       }
@@ -143,7 +148,13 @@ var Map = L.Map.extend({
         if (overlay.visible || typeof overlay.visible === 'undefined') {
           overlay.visible = true;
           overlay.zIndex = zIndex;
-          overlay.L = L.npmap.layer[overlay.type](overlay);
+
+          if (overlay.type === 'arcgisserver') {
+            overlay.L = L.npmap.layer[overlay.type][overlay.tiled === true ? 'tiled' : 'dynamic'](overlay);
+          } else {
+            overlay.L = L.npmap.layer[overlay.type](overlay);
+          }
+
           me.addLayer(overlay.L);
           zIndex++;
         } else {

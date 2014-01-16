@@ -32,10 +32,19 @@
         maxZoom: 13,
         overlays: [{
           attribution: 'Esri',
+          layers: '2',
+          name: 'National Parks',
           opacity: 0.5,
-          tiled: true,
+          tiled: false,
           type: 'arcgisserver',
-          url: 'http://services.arcgisonline.com/ArcGIS/rest/services/Demographics/USA_Unemployment_Rate/MapServer'
+          url: 'http://mapservices.nps.gov/arcgis/rest/services/LandResourcesDivisionTractAndBoundaryService/MapServer'
+        },{
+          attribution: 'Esri',
+          name: 'Hurricanes',
+          opacity: 1,
+          tiled: false,
+          type: 'arcgisserver',
+          url: 'http://sampleserver6.arcgisonline.com/arcgis/rest/services/Hurricanes/MapServer'
         }]
       };
 

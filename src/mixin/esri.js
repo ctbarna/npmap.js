@@ -6,126 +6,49 @@ var json3 = require('json3'),
   reqwest = require('reqwest'),
   util = require('../util/util');
 
-var ArcGisServerLayer = L.TileLayer.extend({
-  options: {
-    errorTileUrl: L.Util.emptyImageUrl
-  },
-  statics: {
-    TILED_TEMPLATE: '{{url}}/tile/{z}/{y}/{x}'
-  },
+module.exports = {
   _backHtml: null,
   _clickResults: null,
-  initialize: function(options) {
-    var me = this;
+  util: {
+    boundsToExtent: function(bounds) {
+      return {
+        spatalReference: {
+          wkid: 4326
+        },
+        xmax: bounds.getNorthEast().lng,
+        xmin: bounds.getSouthWest().lng,
+        ymax: bounds.getNorthEast().lat,
+        ymin: bounds.getSouthWest().lat
+      };
+    },
+    cleanUrl: function(url) {
+      url = this.trim(url);
 
-    L.Util.setOptions(this, options);
-    util.strict(options.tiled, 'boolean');
-    util.strict(options.url, 'string');
-
-    if (options.clickable === false) {
-      this._hasInteractivity = false;
-    }
-
-    if (typeof options.layers !== 'string') {
-      options.layers = '';
-    }
-
-    if (options.tiled) {
-      var u;
-
-      if (options.url.indexOf('{s}') === -1 && options.url.indexOf('://tiles.arcgis.com')) {
-        options.subdomains = [
-          '1',
-          '2',
-          '3',
-          '4'
-        ];
-        u = options.url.replace('://tiles.arcgis.com', '://tiles{s}.arcgis.com');
-      } else {
-        u = options.url;
+      if (url[url.length-1] !== '/') {
+        url += '/';
       }
 
-      L.TileLayer.prototype.initialize.call(this, ArcGisServerLayer.TILED_TEMPLATE.replace('{{url}}', u), options);
-    } else {
-      this.getTileUrl = function(tilePoint) {
-        var hW = 256,
-          x = tilePoint.x,
-          y = tilePoint.y,
-          z = tilePoint.z,
-          u = options.url + '/export?transparent=true&f=image&format=png24&bbox=' + ((x * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - ((y + 1) * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - ((y + 1) * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + ',' + (((x + 1) * hW) * 360 / (hW * Math.pow(2, z)) - 180) + ',' + (Math.asin((Math.exp((0.5 - (y * hW) / (hW) / Math.pow(2, z)) * 4 * Math.PI) - 1) / (Math.exp((0.5 - (y * hW) / 256 / Math.pow(2, z)) * 4 * Math.PI) + 1)) * 180 / Math.PI) + '&bboxSR=4326&imageSR=4326&size=' + hW + ',' + hW;
+      return url;
+    },
+    debounce: function(fn, delay) {
+      var timer = null;
 
-        if (typeof options.edit === 'object' || options.edit === true) {
-          u += '&nocache=' + new Date().getTime();
-        }
+      return function() {
+        var context = this || context, args = arguments;
 
-        if (typeof options.layers === 'string' && options.layers.length) {
-          u += '&layers=show:' + options.layers;
-        }
+        clearTimeout(timer);
 
-        return u;
+        timer = setTimeout(function () {
+          fn.apply(context, args);
+        }, delay);
       };
-      L.TileLayer.prototype.initialize.call(this, undefined, options);
+    },
+    trim: function(str) {
+      return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
     }
-
-    reqwest({
-      success: function(response) {
-        var capabilities = response.capabilities;
-
-        if (typeof capabilities === 'string') {
-          if (capabilities.toLowerCase().indexOf('query') === -1) {
-            me._hasInteractivity = false;
-          }
-        }
-
-        me._metadata = response;
-        me.fire('metadata', response);
-      },
-      type: 'jsonp',
-      url: options.url + '?f=json'
-    });
-
-    return this;
-  },
-  onAdd: function(map) {
-    this._map = map;
-
-    if (this.options.dynamicAttribution && this.options.dynamicAttribution.indexOf('http://') === 0) {
-      var me = this;
-
-      reqwest({
-        success: function(response) {
-          me._dynamicAttributionData = response.contributors;
-          me._map.on('viewreset zoomend dragend', me._updateAttribution, me);
-          me.on('load', me._updateAttribution, me);
-        },
-        type: 'jsonp',
-        url: this.options.dynamicAttribution
-      });
-    }
-
-    L.TileLayer.prototype.onAdd.call(this, map);
-  },
-  onRemove: function(map) {
-    if (this._dynamicAttributionData) {
-      this.off('load', this._updateAttribution);
-      this._map.off('viewreset zoomend dragend', this._updateAttribution);
-    }
-
-    L.TileLayer.prototype.onRemove.call(this, map);
   },
   _back: function() {
     this._map._popup.setContent(this._backHtml).update();
-  },
-  _boundsToEsri: function(bounds) {
-    return {
-      spatalReference: {
-        wkid: 4326
-      },
-      xmax: bounds.getNorthEast().lng,
-      ymax: bounds.getNorthEast().lat,
-      xmin: bounds.getSouthWest().lng,
-      ymin: bounds.getSouthWest().lat
-    };
   },
   _dataToHtml: function(data) {
     var html;
@@ -155,6 +78,28 @@ var ArcGisServerLayer = L.TileLayer.extend({
     } else {
       return html;
     }
+  },
+  _getMetadata: function() {
+    var me = this;
+
+    reqwest({
+      success: function(response) {
+        if (!response.error) {
+          var capabilities = response.capabilities;
+
+          if (typeof capabilities === 'string') {
+            if (capabilities.toLowerCase().indexOf('query') === -1) {
+              me._hasInteractivity = false;
+            }
+          }
+
+          me._metadata = response;
+          //me.fire('metadata', response);
+        }
+      },
+      type: 'jsonp',
+      url: me.serviceUrl + '?f=json'
+    });
   },
   _handleClick: function(latLng, layer, callback) {
     var me = this;
@@ -215,7 +160,7 @@ var ArcGisServerLayer = L.TileLayer.extend({
 
     div.appendChild(this._clickResults[el.innerHTML]);
     this._backHtml = popup.getContent();
-    L.DomEvent.on(back, 'click', this._back, this);
+    L.DomEvent.addListener(back, 'click', this._back, this);
     back.innerHTML = '« Back to Results';
     actions.appendChild(back);
     div.appendChild(actions);
@@ -253,7 +198,8 @@ var ArcGisServerLayer = L.TileLayer.extend({
     }
   },
   identify: function(latLng, callback) {
-    var container = this._map.getContainer(),
+    var map = this._map,
+      size = map.getSize(),
       params = {
         f: 'json',
         geometry: json3.stringify({
@@ -264,16 +210,16 @@ var ArcGisServerLayer = L.TileLayer.extend({
           y: latLng.lat
         }),
         geometryType: 'esriGeometryPoint',
-        imageDisplay: container.offsetWidth + ',' + container.offsetHeight + ',96',
+        imageDisplay: size.x + ',' + size.y + ',96',
         layers: 'visible',
-        mapExtent: json3.stringify(this._boundsToEsri(this._map.getBounds())),
+        mapExtent: json3.stringify(this.util.boundsToExtent(map.getBounds())),
         returnGeometry: false,
-        sr: 4326,
-        tolerance: 3
+        sr: '4326',
+        tolerance: 5
       };
 
-    if (typeof this.options.layers === 'string' && this.options.layers.length) {
-      this.options.layers += ':' + this.options.layers;
+    if (this.options.layers) {
+      params.layers = this.options.layers;
     }
 
     reqwest({
@@ -287,8 +233,4 @@ var ArcGisServerLayer = L.TileLayer.extend({
       url: this.options.url + '/identify'
     });
   }
-});
-
-module.exports = function(options) {
-  return new ArcGisServerLayer(options);
 };

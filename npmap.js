@@ -23,7 +23,10 @@ L.npmap = module.exports = {
   },
   layer: {
     _cluster: require('./src/layer/cluster'),
-    arcgisserver: require('./src/layer/arcgisserver'),
+    arcgisserver: {
+      dynamic: require('./src/layer/arcgisserver/dynamic'),
+      tiled: require('./src/layer/arcgisserver/tiled')
+    },
     bing: require('./src/layer/bing'),
     csv: require('./src/layer/csv'),
     geojson: require('./src/layer/geojson'),
