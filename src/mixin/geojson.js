@@ -2,30 +2,51 @@
 
 'use strict';
 
-var colorPresets = require('../preset/colors.json'),
-  topojson = require('../util/topojson'),
+var topojson = require('../util/topojson'),
   util = require('../util/util');
 
 module.exports = {
-  _addAttribution: function() {
-    if (this.options.attribution && this._map.attributionControl) {
-      this._map.attributionControl.addAttribution(this.options.attribution);
+  addData: function(feature) {
+    if (/\btopology\b/i.test(feature.type)) {
+      for (var prop in feature.objects) {
+        L.GeoJSON.prototype.addData.call(this, topojson.feature(feature, feature.objects[prop]));
+      }
+    } else {
+      L.GeoJSON.prototype.addData.call(this, feature);
     }
   },
+  _addAttribution: function() {
+    var attribution = this.options.attribution;
+
+    if (attribution && this._map && this._map.attributionControl) {
+      this._map.attributionControl.addAttribution(attribution);
+    }
+  },
+  _complete: function() {
+    // If clustered layer, need to set this._map up. Probably a better way to do this.
+    if (!this._map) {
+      this._map = this.getLayers()[0].options.L._map;
+    }
+
+    this._addAttribution();
+    this.fire('ready');
+  },
   _removeAttribution: function() {
-    if (this.options.attribution && this._map.attributionControl) {
-      this._map.attributionControl.removeAttribution(this.options.attribution);
+    var attribution = this.options.attribution;
+
+    if (attribution && this._map && this._map.attributionControl) {
+      this._map.attributionControl.removeAttribution(attribution);
     }
   },
   _toLeaflet: function(config) {
     var configStyles = config.styles || {},
       match = {
-      'fill': 'fillColor',
-      'fill-opacity': 'fillOpacity',
-      'stroke': 'color',
-      'stroke-opacity': 'opacity',
-      'stroke-width': 'weight'
-    };
+        'fill': 'fillColor',
+        'fill-opacity': 'fillOpacity',
+        'stroke': 'color',
+        'stroke-opacity': 'opacity',
+        'stroke-width': 'weight'
+      };
 
     if (typeof config.clickable === 'undefined' || config.clickable === true) {
       var activeTip, lastTarget;
@@ -207,17 +228,5 @@ module.exports = {
     };
 
     return config;
-  },
-  _complete: function() {
-    this.fire('ready');
-  },
-  addData: function(feature) {
-    if (/\btopology\b/i.test(feature.type)) {
-      for (var prop in feature.objects) {
-        L.GeoJSON.prototype.addData.call(this, topojson.feature(feature, feature.objects[prop]));
-      }
-    } else {
-      L.GeoJSON.prototype.addData.call(this, feature);
-    }
   }
 };

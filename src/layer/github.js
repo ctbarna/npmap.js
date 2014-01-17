@@ -13,10 +13,7 @@ var GitHubLayer = L.GeoJSON.extend({
     config = this._toLeaflet(config);
 
     if (typeof config.data === 'object') {
-      L.GeoJSON.prototype.initialize.call(this, config.data, config);
-      this._addAttribution();
-      this._complete();
-      return this;
+      this._create(config, config.data);
     } else {
       var branch = config.branch || 'master',
         me = this;
@@ -25,21 +22,20 @@ var GitHubLayer = L.GeoJSON.extend({
       util.strict(config.repo, 'string');
       util.strict(config.user, 'string');
 
-
-
-
       // TODO: Support CORS here for "modern" browsers.
       reqwest({
         success: function(response) {
-          L.GeoJSON.prototype.initialize.call(me, JSON.parse(util.base64.decode(response.data.content.replace(/\n|\r/g, ''))), config);
-          me._addAttribution();
-          me._complete();
-          return me;
+          me._create(config, JSON.parse(util.base64.decode(response.data.content.replace(/\n|\r/g, ''))));
         },
         type: 'jsonp',
         url: 'https://api.github.com/repos/' + config.user + '/' + config.repo + '/contents/' + config.path + '?ref=' + branch
       });
     }
+  },
+  _create: function(config, data) {
+    L.GeoJSON.prototype.initialize.call(this, data, config);
+    this._complete();
+    return this;
   }
 });
 

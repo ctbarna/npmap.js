@@ -9,7 +9,7 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
     showCoverageOnHover: false
   },
   initialize: function(config) {
-    var that = this;
+    var me = this;
 
     if (config.cluster === true) {
       config.cluster = {};
@@ -29,8 +29,8 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
     this._nonPointGroup = L.featureGroup();
     this._nonPointGroup.on(L.FeatureGroup.EVENTS, this._propagateEvent, this);
     this._queue = [];
-    this.L.on('ready', function(me) {
-      that.addLayer(me.target);
+    this.L.on('ready', function(that) {
+      me.addLayer(that.target);
     }, this);
 
     return this;
@@ -60,25 +60,25 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
     }];
 
     function addStyles() {
-      var styleElement = document.createElement('style');
+      var style = document.createElement('style');
 
-      styleElement.type = 'text/css';
+      style.type = 'text/css';
 
       for (var i = 0; i < defaultSettings.length; i++) {
         var currStyle = createStyle(defaultSettings[i]);
 
         for (var styleType in currStyle) {
-          styleElement.textContent += '.' + 'marker-cluster-custom-' + defaultSettings[i].maxNodes.toString() + ' ' + (styleType === 'main' ? '' : styleType)  + ' {' + currStyle[styleType]  + '}\n';
+          style.textContent += '.' + 'marker-cluster-custom-' + defaultSettings[i].maxNodes.toString() + ' ' + (styleType === 'main' ? '' : styleType)  + ' {' + currStyle[styleType]  + '}\n';
         }
       }
 
-      styleElement.textContent += '.leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {';
-      styleElement.textContent += '-webkit-transition: -webkit-transform 0.2s ease-out, opacity 0.2s ease-in;';
-      styleElement.textContent += '-moz-transition: -moz-transform 0.2s ease-out, opacity 0.2s ease-in;';
-      styleElement.textContent += '-o-transition: -o-transform 0.2s ease-out, opacity 0.2s ease-in;';
-      styleElement.textContent += 'transition: transform 0.2s ease-out, opacity 0.2s ease-in;';
-      styleElement.textContent += '}';
-      document.getElementsByTagName('head')[0].appendChild(styleElement);
+      style.textContent += '.leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {';
+      style.textContent += '-webkit-transition: -webkit-transform 0.2s ease-out, opacity 0.2s ease-in;';
+      style.textContent += '-moz-transition: -moz-transform 0.2s ease-out, opacity 0.2s ease-in;';
+      style.textContent += '-o-transition: -o-transform 0.2s ease-out, opacity 0.2s ease-in;';
+      style.textContent += 'transition: transform 0.2s ease-out, opacity 0.2s ease-in;';
+      style.textContent += '}';
+      document.getElementsByTagName('head')[0].appendChild(style);
     }
     function autoTextColor(rgb) {
       if (Object.prototype.toString.call(rgb) !== '[object Array]') {
