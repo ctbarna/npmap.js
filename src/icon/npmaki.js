@@ -53,27 +53,6 @@ var NpmakiIcon = L.Icon.extend({
     });
     divMarker.appendChild(divIcon);
     return divMarker;
-
-
-
-    /*
-    var div = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div'),
-      options = this.options,
-      overlayDiv = document.createElement('div');
-
-    overlayDiv.setAttribute('class', 'maki-icon ' + (typeof options.symbol === 'string' && options.symbol.length ? options.symbol : '') + ' leaflet-zoom-animated');
-    overlayDiv.setAttribute('style', 'margin-left:5px;margin-top:6px;');
-    options.className = null;
-    options.html = null;
-    this._setIconStyles(div, 'icon');
-    div.style.backgroundImage = util.handlebars(NpmakiIcon.CSS_TEMPLATE, {
-      color: options.color.replace('#', ''),
-      retina: L.Browser.retina ? '@2x' : '',
-      size: options.size.slice(0, 1)
-    });
-    div.appendChild(overlayDiv);
-    return div;
-    */
   },
   createShadow: function() {
     return null;
