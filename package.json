@@ -8,15 +8,18 @@
     "email": "npmap@nps.gov",
     "url": "https://github.com/nationalparkservice/npmap.js/issues"
   },
-  "contributors": [{
-    "email": "james_mcandrew@partner.nps.gov",
-    "name": "Jim McAndrew",
-    "url": "http://www.nps.gov/npmap/team/jim-mcandrew.html"
-  },{
-    "email": "mamata_akella@partner.nps.gov",
-    "name": "Mamata Akella",
-    "url": "http://www.nps.gov/npmap/team/mamata-akella.html"
-  }],
+  "contributors": [
+    {
+      "email": "james_mcandrew@partner.nps.gov",
+      "name": "Jim McAndrew",
+      "url": "http://www.nps.gov/npmap/team/jim-mcandrew.html"
+    },
+    {
+      "email": "mamata_akella@partner.nps.gov",
+      "name": "Mamata Akella",
+      "url": "http://www.nps.gov/npmap/team/mamata-akella.html"
+    }
+  ],
   "dependencies": {
     "csv2geojson": "3.6.1",
     "handlebars": "1.3.0",
@@ -24,6 +27,8 @@
     "leaflet": "0.7.1",
     "leaflet-draw": "0.2.2",
     "leaflet-markercluster": "https://github.com/Leaflet/Leaflet.markercluster/archive/0.4.tar.gz",
+    "maki": "~0.4.0",
+    "npmaki": "~0.4.0",
     "reqwest": "0.9.6",
     "togeojson": "0.4.2"
   },
@@ -65,10 +70,12 @@
     "US Government",
     "Web Map"
   ],
-  "licenses": [{
-    "type": "MIT",
-    "url": "https://github.com/nationalparkservice/npmap.js/blob/master/LICENSE.md"
-  }],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/nationalparkservice/npmap.js/blob/master/LICENSE.md"
+    }
+  ],
   "main": "main.js",
   "name": "npmap.js",
   "repository": {

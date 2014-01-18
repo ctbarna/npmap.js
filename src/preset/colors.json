@@ -122,5 +122,8 @@
     "opacity": 0.5,
     "stroke": true,
     "weight": 3
+  },
+  "black": {
+    "color": "#000000"
   }
 }

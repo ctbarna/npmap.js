@@ -11,10 +11,9 @@ var NpmakiIcon = L.Icon.extend({
     symbol: null
   },
   statics: {
-    CSS_TEMPLATE: 'url(https://a.tiles.mapbox.com/v3/marker/pin-{{size}}+{{color}}{{retina}}.png)'
+    MAKI_TEMPLATE: 'url(https://a.tiles.mapbox.com/v3/marker/pin-{{size}}+{{color}}{{retina}}.png)'
   },
   initialize: function(options) {
-    util.appendCssFile('images/icon/npmaki/npmaki.css');
     options = options || {};
 
     var size = options.size || 'medium',
@@ -40,12 +39,30 @@ var NpmakiIcon = L.Icon.extend({
     L.Util.setOptions(this, options);
   },
   createIcon: function(oldIcon) {
+    var options = this.options,
+      divIcon = L.DomUtil.create('div', 'npmaki-icon ' + options.size + ' ' + options.symbol + '-' + options.size + (L.Browser.retina ? '-2x': '')),
+      divMarker = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div');
+
+    options.className = null;
+    options.html = null;
+    this._setIconStyles(divMarker, 'icon');
+    divMarker.style.backgroundImage = util.handlebars(NpmakiIcon.MAKI_TEMPLATE, {
+      color: options.color.replace('#', ''),
+      retina: L.Browser.retina ? '@2x' : '',
+      size: options.size.slice(0, 1)
+    });
+    divMarker.appendChild(divIcon);
+    return divMarker;
+
+
+
+    /*
     var div = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div'),
       options = this.options,
       overlayDiv = document.createElement('div');
 
-    overlayDiv.setAttribute('class', 'npmaki-icon ' + (typeof options.symbol === 'string' && options.symbol.length ? options.symbol : '') + ' leaflet-zoom-animated');
-    overlayDiv.setAttribute('style', 'margin-left: 5px; margin-top: 6px;');
+    overlayDiv.setAttribute('class', 'maki-icon ' + (typeof options.symbol === 'string' && options.symbol.length ? options.symbol : '') + ' leaflet-zoom-animated');
+    overlayDiv.setAttribute('style', 'margin-left:5px;margin-top:6px;');
     options.className = null;
     options.html = null;
     this._setIconStyles(div, 'icon');
@@ -56,6 +73,7 @@ var NpmakiIcon = L.Icon.extend({
     });
     div.appendChild(overlayDiv);
     return div;
+    */
   },
   createShadow: function() {
     return null;

@@ -228,6 +228,27 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
     }
 
 /* Icons */
+.npmaki-icon.large {
+  background-size: 24px 24px;
+  height: 24px;
+  margin-left: 5px;
+  margin-top: 7px;
+  width: 24px;
+}
+.npmaki-icon.medium {
+  background-size: 18px 18px;
+  height: 18px;
+  margin-left: 5px;
+  margin-top: 4px;
+  width: 18px;
+}
+.npmaki-icon.small {
+  background-size: 12px 12px;
+  height: 12px;
+  margin-left: 5px;
+  margin-top: 4px;
+  width: 12px;
+}
 .npmap [class^="icon-"], [class*=" icon-"] {
   background-image: url('images/icon/sprite.png');
   background-repeat: no-repeat;

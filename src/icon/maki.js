@@ -6,7 +6,7 @@ var util = require('../util/util');
 
 var MakiIcon = L.Icon.extend({
   options: {
-    color: '#000',
+    color: '#000000',
     size: 'medium',
     symbol: null
   },

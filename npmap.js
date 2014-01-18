@@ -41,7 +41,9 @@ L.npmap = module.exports = {
   preset: {
     baselayers: require('./src/preset/baselayers.json'),
     colors: require('./src/preset/colors.json'),
-    layers: require('./src/preset/overlays.json')
+    layers: require('./src/preset/overlays.json'),
+    maki: require('./node_modules/maki/_includes/maki.json'),
+    npmaki: require('./node_modules/npmaki/_includes/maki.json')
   },
   tooltip: require('./src/tooltip'),
   util: {

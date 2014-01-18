@@ -4,7 +4,23 @@
 module.exports = function(grunt) {
   'use strict';
 
-  var pkg = require('./package.json');
+  var cssNpmaki = '',
+    npmaki = require('./node_modules/npmaki/_includes/maki.json'),
+    pkg = require('./package.json'),
+    sizes = {
+      large: 24,
+      medium: 18,
+      small: 12
+    };
+
+  for (var i = 0; i < npmaki.length; i++) {
+    var icon = npmaki[i];
+
+    for (var prop in sizes) {
+      cssNpmaki += '.' + icon.icon + '-' + prop + ' {background-image: url(images/icon/npmaki/' + icon.icon + '-' + sizes[prop] + '.png);}\n';
+      cssNpmaki += '.' + icon.icon + '-' + prop + '-2x {background-image: url(images/icon/npmaki/' + icon.icon + '-' + sizes[prop] + '@2x.png);}\n';
+    }
+  }
 
   grunt.util.linefeed = '\n';
   grunt.initConfig({
@@ -116,6 +132,9 @@ module.exports = function(grunt) {
     concat: {
       css: {
         dest: 'dist/npmap.css',
+        options: {
+          banner: cssNpmaki
+        },
         src: [
           'node_modules/leaflet/dist/leaflet.css',
           'theme/nps.css'
@@ -138,6 +157,14 @@ module.exports = function(grunt) {
       javascript: {
         dest: 'dist/npmap-bootstrap.js',
         src: 'src/bootstrap.js'
+      },
+      npmaki: {
+        cwd: 'node_modules/npmaki/renders/',
+        dest: 'dist/images/icon/npmaki',
+        expand: true,
+        src: [
+          '**/*'
+        ]
       }
     },
     csslint: {
