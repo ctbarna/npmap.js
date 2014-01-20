@@ -3,84 +3,117 @@
 
 'use strict';
 
-var reqwest = require('../util/cachedreqwest')().cachedReqwest,
+var json3 = require('json3'),
+  reqwest = require('reqwest'),
   utfGrid = require('../util/utfgrid'),
   util = require('../util/util');
 
 var CartoDbLayer = L.TileLayer.extend({
   options: {
     errorTileUrl: L.Util.emptyImageUrl,
-    format: 'png'
+    format: 'png',
+    subdomains: [
+      0,
+      1,
+      2,
+      3
+    ]
   },
   initialize: function(options) {
     L.Util.setOptions(this, options);
     util.strict(this.options.table, 'string');
     util.strict(this.options.user, 'string');
-
-    var root = document.location.protocol + '//' + this.options.user + '.cartodb.com',
-      rootTile = root + '/tiles/' + this.options.table + '/{z}/{x}/{y}';
-
-    this.options.grids = rootTile + '.grid.json';
-    this.options.url = rootTile + '.' + this.options.format;
-    this.options.urls = {
-      root: root
-    };
-    this._getQuery();
-    L.TileLayer.prototype.initialize.call(this, this.options.url, this.options);
-    this._grid = new utfGrid(this, {
-      crossOrigin: true,
-      type: 'jsonp'
-    });
-    return this;
+    L.TileLayer.prototype.initialize.call(this, undefined, this.options);
+    this._build();
   },
-  _getGridData: function(latLng, layer, callback) {
-    this._grid.getTileGrid(this._getTileGridUrl(latLng), latLng, function(resultData, gridData) {
-      callback(layer, gridData);
-    });
+  _update: function() {
+    if (this._urlTile) {
+      L.TileLayer.prototype._update.call(this);
+    }
   },
-  _getQuery: function() {
+  _build: function() {
     var me = this;
 
-    me.options.urls.api = me.options.urls.root.replace('http://', 'https://') + '/api/v2/sql';
-
+    this._urlApi = 'https://' + this.options.user + '.cartodb.com/api/v2/sql';
     reqwest({
       success: function(response) {
-        var interactivity = [],
-          theGeom;
+        var interactiveFields = [];
 
-        if (me.options.clickable !== false && response.response.fields) {
-          me._hasInteractivity = true;
+        if (me.options.clickable !== false && response.fields) {
+          for (var field in response.fields) {
+            var type = response.fields[field].type;
 
-          for (var field in response.response.fields) {
-            if (response.response.fields[field].type === 'string' || response.response.fields[field].type === 'number') {
-              interactivity.push(field);
+            if (type === 'date' || type === 'number' || type === 'string') {
+              interactiveFields.push(field);
             }
+          }
+
+          if (interactiveFields.length) {
+            me._hasInteractivity = true;
+            me._interactivity = interactiveFields.join(',');
+          } else {
+            me._hasInteractivity = false;
+            me._interactivity = null;
           }
         } else {
           me._hasInteractivity = false;
+          me._interactivity = null;
         }
 
-        me.options.interactivity = me.options.interactivity ?  me.options.interactivity : interactivity.join(',');
-        theGeom = response.response.fields.the_geom_webmercator ? 'the_geom_webmercator' : 'the_geom as the_geom_webmercator';
-        me.options.sql = me.options.sql ? me.options.sql : 'SELECT ' + me.options.interactivity + ',' + theGeom + ' FROM ' + me.options.table + ';';
+        me._cartocss = '#layer{polygon-fill:#F00;polygon-opacity:0.3;line-color:#F00;}';
+        me._sql = ('SELECT ' + (me._interactivity ? me._interactivity : '') + ',' + (response.fields.the_geom_webmercator ? 'the_geom_webmercator' : 'the_geom as the_geom_webmercator') + ' FROM ' + me.options.table + ';');
+
+        reqwest({
+          success: function(response) {
+            var root = 'http://{s}.api.cartocdn.com/' + me.options.user + '/tiles/layergroup/' + response.layergroupid + '/{z}/{x}/{y}';
+
+            if (me._hasInteractivity) {
+              //me._urlGrid = root + '.grid.json';
+              me._urlGrid = 'http://' + me.options.user + '.cartodb.com/tiles/' + me.options.table + '/{z}/{x}/{y}.grid.json';
+              me._grid = new utfGrid(me, {
+                crossOrigin: true,
+                type: 'jsonp'
+              });
+            }
+            
+            me._urlTile = root + '.png';
+            me.setUrl(me._urlTile);
+            me.redraw();
+            return me;
+          },
+          type: 'jsonp',
+          url: util.buildUrl('http://' + me.options.user + '.cartodb.com/tiles/layergroup', {
+            config: json3.stringify({
+              layers: [{
+                options: {
+                  cartocss: me._cartocss,
+                  cartocss_version: '2.1.0',
+                  interactivity: me._interactivity ? me._interactivity : null,
+                  sql: me._sql
+                },
+                type: 'cartodb'
+              }],
+              version: '1.0.0'
+            })
+          })
+        });
       },
       type: 'jsonp',
-      url: util.buildUrl(me.options.urls.api, {
-        q: 'SELECT * FROM ' + me.options.table + ' LIMIT 1;'
+      url: util.buildUrl(this._urlApi, {
+        q: 'SELECT * FROM ' + this.options.table + ' LIMIT 1;'
       })
     });
   },
-  _getTileGridUrl: function(latLng) {
-    var params = {
-      interactivity: this.options.interactivity,
-      sql: this.options.sql
-    };
-
-    if (this.options.style) {
-      params.style = this.options.style;
+  _getGridData: function(latLng, layer, callback) {
+    if (this._urlGrid) {
+      this._grid.getTileGrid(L.Util.template(this._urlGrid, L.Util.extend({
+        s: this.options.subdomains[Math.floor(Math.random() * this.options.subdomains.length)]
+      }, this._grid.getTileCoords(latLng))), latLng, function(resultData, gridData) {
+        callback(layer, gridData);
+      });
+    } else {
+      callback(layer, null);
     }
-
-    return util.buildUrl(L.Util.template(this.options.grids, this._grid.getTileCoords(latLng)), params);
   },
   _handleClick: function(latLng, layer, callback) {
     this._getGridData(latLng, layer, callback);
