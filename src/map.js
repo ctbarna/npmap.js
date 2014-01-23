@@ -84,9 +84,6 @@ var baselayerPresets = require('./preset/baselayers.json'),
 })();
 
 var Map = L.Map.extend({
-  options: {
-    zoomControl: false
-  },
   initialize: function(config) {
     var container = L.DomUtil.create('div', 'npmap-container'),
       map = L.DomUtil.create('div', 'npmap-map'),
@@ -110,17 +107,17 @@ var Map = L.Map.extend({
     container.appendChild(mapWrapper);
     mapWrapper.appendChild(map);
     config.div = map;
+    config.zoomControl = false;
     L.Map.prototype.initialize.call(me, config.div, config);
-
-    if (!me._loaded) {
-      me.setView(config.center, config.zoom);
-    }
-
     me._setupPopup();
     me._setupTooltip();
     me.on('autopanstart', function() {
       me._setCursor('default');
     });
+
+    if (!me._loaded) {
+      me.setView(config.center, config.zoom);
+    }
 
     for (var i = 0; i < config.baseLayers.length; i++) {
       var baseLayer = config.baseLayers[i];
@@ -338,8 +335,10 @@ var Map = L.Map.extend({
     });
   },
   _toLeaflet: function(config) {
-    if (!config.div || (typeof config.div !== 'string' && typeof config.div !== 'object')) {
+    if (!config.div) {
       throw new Error('The map config object must have a div property');
+    } else if (typeof config.div !== 'string' && typeof config.div !== 'object') {
+      throw new Error('The map config object must be either a string or object');
     }
 
     if (typeof config.div === 'string') {
@@ -348,11 +347,11 @@ var Map = L.Map.extend({
 
     if (config.layers && L.Util.isArray(config.layers) && config.layers.length) {
       config.overlays = config.layers;
-    } else if (!config.overlays && !L.Util.isArray(config.overlays)) {
+    } else if (!config.overlays || !L.Util.isArray(config.overlays)) {
       config.overlays = [];
     }
 
-    config.layers = [];
+    delete config.layers;
 
     if (config.baseLayers !== false) {
       config.baseLayers = (function() {
@@ -365,10 +364,8 @@ var Map = L.Map.extend({
             if (typeof baseLayer === 'string') {
               var name = baseLayer.split('-');
 
-              baseLayer = config.baseLayers[i] = baselayerPresets[name[0]][name[1]];
+              baseLayer = baselayerPresets[name[0]][name[1]];
             }
-
-            baseLayer.zIndex = 0;
 
             if (baseLayer.visible === true || typeof baseLayer.visible === 'undefined') {
               if (visible) {
@@ -380,6 +377,9 @@ var Map = L.Map.extend({
             } else {
               baseLayer.visible = false;
             }
+
+            baseLayer.zIndex = 0;
+            config.baseLayers[i] = baseLayer;
           }
         }
 
@@ -389,7 +389,9 @@ var Map = L.Map.extend({
           var active = baselayerPresets.nps.lightStreets;
           active.visible = true;
           active.zIndex = 0;
-          return [active];
+          return [
+            active
+          ];
         }
       })();
     }
@@ -408,9 +410,9 @@ var Map = L.Map.extend({
       var c = config.center;
 
       if (c) {
-        return L.latLng(c.lat, c.lng);
+        return new L.LatLng(c.lat, c.lng);
       } else {
-        return L.latLng(39, -96);
+        return new L.LatLng(39, -96);
       }
     })();
     config.zoom = typeof config.zoom === 'number' ? config.zoom : 4;
