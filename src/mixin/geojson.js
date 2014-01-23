@@ -18,14 +18,15 @@ module.exports = {
   _addAttribution: function() {
     var attribution = this.options.attribution;
 
-    if (attribution && this._map && this._map.attributionControl) {
+    if (attribution && this._map.attributionControl) {
       this._map.attributionControl.addAttribution(attribution);
     }
   },
   _complete: function() {
     // If clustered layer, need to set this._map up. Probably a better way to do this.
     if (!this._map) {
-      this._map = this.getLayers()[0].options.L._map;
+      //this._map = this.getLayers()[0].options.L._map;
+      this._map = this.options.L._map;
     }
 
     this._addAttribution();
@@ -34,13 +35,13 @@ module.exports = {
   _removeAttribution: function() {
     var attribution = this.options.attribution;
 
-    if (attribution && this._map && this._map.attributionControl) {
+    if (attribution && this._map.attributionControl) {
       this._map.attributionControl.removeAttribution(attribution);
     }
   },
   _toLeaflet: function(config) {
     var configStyles = config.styles || {},
-      match = {
+      matchSimpleStyles = {
         'fill': 'fillColor',
         'fill-opacity': 'fillOpacity',
         'stroke': 'color',
@@ -109,9 +110,9 @@ module.exports = {
       // TODO: Support handlebars templates.
       var fromFeature = {},
         icon = {
-          color: '#000',
-          library: 'maki',
+          color: '#000000',
           size: 'medium',
+          library: 'maki',
           symbol: null
         },
         properties = feature.properties,
@@ -119,10 +120,10 @@ module.exports = {
 
       if (!configStyles.ignoreFeatureStyles) {
         for (prop in icon) {
-          var a = properties['marker-' + prop];
+          var value = properties['marker-' + prop];
 
-          if (typeof a !== 'undefined' && a !== null && a.length) {
-            fromFeature[prop] = properties['marker-' + prop];
+          if (value) {
+            fromFeature[prop] = value;
           }
         }
       }
@@ -132,29 +133,24 @@ module.exports = {
           icon[prop] = fromFeature[prop];
         }
 
-        config.icon = L.npmap.icon[icon.library](icon);
+        icon = L.npmap.icon[icon.library](icon);
       } else {
-        var c = typeof config.styles === 'function' ? config.styles(properties) : config.styles;
+        var c = typeof config.styles === 'function' ? config.styles(properties).marker : config.styles.marker;
 
         if (c) {
-          if (c.leaflet === true) {
-            for (prop in fromFeature) {
-              icon[prop] = fromFeature[prop];
-            }
+          c.type = c.type || 'maki';
 
-            for (prop in c) {
-              if (prop !== 'leaflet' && typeof fromFeature[prop] === 'undefined') {
-                icon[prop] = c[prop];
-              }
-            }
-
-            config.icon = new L.Icon(icon);
+          if (c.type === 'circle') {
+            return new L.CircleMarker(latLng, c);
+          } else if (c.leaflet || c.icon) {
+            // TODO: c.leaflet is "legacy" (used in PNW Mapper)
+            icon = new L.Icon(latLng, c);
           } else {
             for (prop in icon) {
-              if (typeof c['marker-' + prop] === 'string') {
-                icon[prop] = util.handlebars(c['marker-' + prop], properties);
-              } else if (typeof c['marker-' + prop] === 'function') {
-                icon[prop] = c['marker-' + prop](properties);
+              if (typeof c[prop] === 'string') {
+                icon[prop] = util.handlebars(c[prop], properties);
+              } else if (typeof c[prop] === 'function') {
+                icon[prop] = c[prop](properties);
               }
             }
 
@@ -162,18 +158,20 @@ module.exports = {
               icon[prop] = fromFeature[prop];
             }
 
-            config.icon = L.npmap.icon[icon.library](icon);
+            icon = L.npmap.icon[c.type](icon);
           }
         } else {
           for (prop in fromFeature) {
             icon[prop] = fromFeature[prop];
           }
 
-          config.icon = L.npmap.icon[icon.library](icon);
+          icon = L.npmap.icon[icon.library](icon);
         }
       }
 
-      return L.marker(latLng, config);
+      return new L.Marker(latLng, {
+        icon: icon
+      });
     };
     config.style = function(feature) {
       // TODO: Support preset colors.
@@ -185,9 +183,9 @@ module.exports = {
           prop;
 
         if (!configStyles.ignoreFeatureStyles) {
-          for (prop in match) {
-            if (typeof properties[prop] !== 'undefined' && properties[prop] !== '') {
-              style[match[prop]] = properties[prop];
+          for (prop in matchSimpleStyles) {
+            if (typeof properties[prop] !== 'undefined' && properties[prop] !== null && properties[prop] !== '') {
+              style[matchSimpleStyles[prop]] = properties[prop];
             }
           }
         }
@@ -196,21 +194,9 @@ module.exports = {
           var c = typeof config.styles === 'function' ? config.styles(properties) : config.styles;
 
           if (c) {
-            if (c.leaflet === true) {
-              for (prop in c) {
-                if (prop !== 'leaflet' && typeof style[prop] === 'undefined') {
-                  style[prop] = c[prop];
-                }
-              }
-            } else {
-              if (typeof c === 'object') {
-                for (prop in match) {
-                  if (typeof c[prop] !== 'undefined' && c[prop] !== '' && typeof style[match[prop]] === 'undefined') {
-                    style[match[prop]] = c[prop];
-                  }
-                }
-              } else if (typeof c === 'string') {
-
+            for (prop in c) {
+              if (typeof style[prop] === 'undefined') {
+                style[prop] = c[prop];
               }
             }
           }

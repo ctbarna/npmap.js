@@ -1,3 +1,96 @@
+<!--
+
+For styles set in data source, support simplestyle spec, with the "marker-library" (maki is default, and maki/npmaki are currently supported) extension.
+For styles set in NPMap.js config, support Leaflet styles, set in the "styles" property:
+
+    styles: {
+      color: '#03f',
+      fill: true,
+      fillColor: '#03f',
+      fillOpacity: 0.2,
+      marker: {
+        color: '#000000',
+        size: 'small',
+        type: 'maki', // If 'icon', the marker object is treated like a Leaflet Icon. If 'circle', it is treated like a Leaflet CircleMarker. If 'maki' or 'npmaki', 
+        symbol: 'park'
+      },
+      opacity: 0.5,
+      stroke: false,
+      width: 5
+    }
+
+Any one of the configs above can either be a string/boolean/number of a function. If a config is a function, the function is called, with the properties for the feature that is getting symbolized passed in. It should return a valid value for the config. The "styles" config can also be a function. If it is, it should return the entire, or some subset, of the "styles" object.
+
+// Run all style strings through Handlebars.
+// TODO: What about preset colors?
+
+NPMap = {
+  baseLayers: [
+    'mapbox-light',
+  {
+    attribution: '',
+    name: 'Aerial',
+    tiled: true,
+    type: 'arcgisserver',
+    url: ''
+  }],
+  controls: {
+    geocoder: true,
+    home: true,
+    smallzoom: true
+  },
+  overlays: [{
+    clickable: true,
+    clustered: false,
+    styles: {
+      color: '#03f',
+      fill: true,
+      fillColor: '#03f',
+      fillOpacity: 0.2,
+      marker: {
+        color: '#000000',
+        size: 'small',
+        type: 'maki',
+        symbol: 'park'
+      },
+      opacity: 0.5,
+      stroke: false,
+      width: 5
+    }
+    type: 'geojson',
+    url: ''
+  },{
+    clickable: true,
+    clustered: true,
+    styles: {
+      color: 'gold',
+      fill: false
+    },
+    type: 'kml',
+    url: ''
+  }]
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-->
+
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -31,22 +124,43 @@
           popup: '<div class="title"><a href="http://www.nps.gov/{{toLowerCase Code}}">{{Name}}</a></div>',
           styles: function(data) {
             return {
-              'marker-size': 'small',
-              'marker-symbol': data.Code.slice(0, 1).toLowerCase()
+              marker: {
+                size: 'small',
+                symbol: data.Code.slice(0, 1).toLowerCase()
+              }
             };
           },
           type: 'geojson',
           url: 'data/national_parks.geojson'
         },{
+          cluster: true,
           styles: {
-            'marker-color': '#5e9fd5',
-            'marker-size': 'small'
+            marker: {
+              color: '#5e9fd5',
+              size: 'small'
+            }
           },
           type: 'csv',
           url: 'data/colorado_cities_simplestyle.csv'
         },{
           type: 'geojson',
-          url: 'data/demo.geojson'
+          url: 'data/simplestyle.geojson'
+        },{
+          styles: {
+            color: '#03f',
+            fill: true,
+            fillColor: '#03f',
+            fillOpacity: 0.2,
+            marker: {
+              color: '#fd9126',
+              size: 'small'
+            },
+            opacity: 0.5,
+            stroke: false,
+            width: 5
+          },
+          type: 'geojson',
+          url: 'data/utah_vectors.geojson'
         }],
         zoom: 6
       };

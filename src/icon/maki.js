@@ -7,8 +7,7 @@ var util = require('../util/util');
 var MakiIcon = L.Icon.extend({
   options: {
     color: '#000000',
-    size: 'medium',
-    symbol: null
+    size: 'medium'
   },
   statics: {
     CSS_TEMPLATE: 'url(https://a.tiles.mapbox.com/v3/marker/pin-{{size}}{{symbol}}+{{color}}{{retina}}.png)'
@@ -36,7 +35,7 @@ var MakiIcon = L.Icon.extend({
       };
 
     L.Util.extend(options, sizes[size]);
-    L.Util.setOptions(this, options);
+    L.setOptions(this, options);
   },
   createIcon: function(oldIcon) {
     var div = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div'),
