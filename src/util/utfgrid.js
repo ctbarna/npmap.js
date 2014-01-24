@@ -1,10 +1,12 @@
 /**
  * Forked from https://github.com/danzel/Leaflet.utfgrid/blob/master/src/leaflet.utfgrid.js.
  */
-var reqwest = require('../util/cachedreqwest')(),
-    tileMath = require('../util/tilemath');
+var reqwest = require('reqwest'),
+  tileMath = require('../util/tilemath');
 
-module.exports = function(layer, options) {
+module.exports = function(layer) {
+  var cache = {};
+
   return {
     getTileCoords: function(latLng) {
       var zoom = layer._map.getZoom();
@@ -15,28 +17,38 @@ module.exports = function(layer, options) {
         z: zoom
       };
     },
-    getTileGrid: function (tileUrl, latLng, callback) {
-      var me = this,
-        request;
+    getTileGrid: function (url, latLng, callback) {
+      if (cache[url]) {
+        var response = cache[url];
 
-      request = {
-        error: function(response) {
-          callback(response.response, null);
-        },
-        success: function(response) {
-          callback(response.response, me.getTileGridPoint(latLng, response.response));
-        },
-        type: 'jsonp',
-        url: tileUrl
-      };
-
-      if (options) {
-        for (var option in options) {
-          request[option] = options[option];
+        if (response === 'empty' || response === 'loading') {
+          callback(null, null);
+        } else {
+          callback(response, this.getTileGridPoint(latLng, response));
         }
-      }
+      } else {
+        var me = this;
 
-      reqwest.cachedReqwest(request);
+        cache[url] = 'loading';
+        reqwest({
+          error: function() {
+            cache[url] = 'empty';
+            callback(null, null);
+          },
+          success: function(response) {
+            if (response) {
+              cache[url] = response;
+              callback(response, me.getTileGridPoint(latLng, response));
+            } else {
+              cache[url] = 'empty';
+              callback(null, null);
+            }
+          },
+          timeout: 2000,
+          type: 'jsonp',
+          url: url
+        });
+      }
     },
     getTileGridPoint: function(latLng, response) {
       var point = layer._map.project(latLng),
@@ -65,7 +77,7 @@ module.exports = function(layer, options) {
 
       return returnValue;
     },
-    utfDecode: function _utfDecode(key) {
+    utfDecode: function(key) {
       if (key >= 93) {
         key--;
       }

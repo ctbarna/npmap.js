@@ -80,10 +80,7 @@ var CartoDbLayer = L.TileLayer.extend({
             if (me._hasInteractivity && me._interactivity.length) {
               //me._urlGrid = root + '.grid.json';
               me._urlGrid = 'http://' + me.options.user + '.cartodb.com/tiles/' + me.options.table + '/{z}/{x}/{y}.grid.json?interactivity=' + me._interactivity.join(',') + '&sql=' + me._sql;
-              me._grid = new utfGrid(me, {
-                crossOrigin: true,
-                type: 'jsonp'
-              });
+              me._grid = new utfGrid(me);
             }
 
             me._urlTile = root + '.png';

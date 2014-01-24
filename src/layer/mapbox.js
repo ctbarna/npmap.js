@@ -31,7 +31,7 @@ var MapBoxLayer = L.TileLayer.extend({
     ]
   },
   initialize: function(options) {
-    var _;
+    var load;
 
     L.Util.setOptions(this, options);
     L.TileLayer.prototype.initialize.call(this, undefined, options);
@@ -43,18 +43,19 @@ var MapBoxLayer = L.TileLayer.extend({
     if (L.Browser.retina && options.retinaVersion) {
       if (typeof options.detectRetina === 'undefined' || options.detectRetina === true) {
         options.detectRetina = true;
-        _ = options.retinaVersion;
+        load = options.retinaVersion;
       }
     } else {
       options.detectRetina = false;
-      _ = options.tileJson || options.id;
+      load = options.tileJson || options.id;
     }
 
     this._hasInteractivity = false;
-    this._loadTileJson(_);
+    this._loadTileJson(load);
   },
   _getGridData: function(latLng, layer, callback) {
     this._grid.getTileGrid(this._getTileGridUrl(latLng), latLng, function(resultData, gridData) {
+      //console.log(gridData);
       callback(layer, gridData);
     });
   },
@@ -70,12 +71,12 @@ var MapBoxLayer = L.TileLayer.extend({
   _handleMousemove: function (latLng, layer, callback) {
     this._getGridData(latLng, layer, callback);
   },
-  _loadTileJson: function(_) {
-    if (typeof _ === 'string') {
+  _loadTileJson: function(from) {
+    if (typeof from === 'string') {
       var me = this;
 
-      if (_.indexOf('/') === -1) {
-        _ = (function(hash) {
+      if (from.indexOf('/') === -1) {
+        from = (function(hash) {
           var urls = (function() {
             var endpoints = [
               'a.tiles.mapbox.com/v3/',
@@ -96,23 +97,21 @@ var MapBoxLayer = L.TileLayer.extend({
           } else {
             return urls[hash % urls.length];
           }
-        })() + _ + '.json';
+        })() + from + '.json';
       }
 
-      // TODO: Need to return errors from reqwest.
       reqwest({
-        jsonpCallbackName: 'grid',
-        success: L.bind(function(json, error) {
-          if (error) {
-            util.log('could not load TileJSON at ' + _);
-            me.fire('error', {
-              error: error
-            });
-          } else if (json) {
-            me._setTileJson(json);
+        error: function(error) {
+          me.fire('error', {
+            error: error
+          });
+        },
+        success: function(response) {
+          if (response) {
+            me._setTileJson(response);
             me.fire('ready');
           }
-        }),
+        },
         type: 'jsonp',
         url: (function(url) {
           if ('https:' !== document.location.protocol) {
@@ -124,10 +123,10 @@ var MapBoxLayer = L.TileLayer.extend({
           } else {
             return url + '?secure';
           }
-        })(_)
+        })(from)
       });
     } else if (typeof _ === 'object') {
-      this._setTileJson(_);
+      this._setTileJson(from);
     }
   },
   _setTileJson: function(json) {
@@ -176,7 +175,7 @@ var MapBoxLayer = L.TileLayer.extend({
   },
   getTileUrl: function(tilePoint) {
     var tiles = this.options.tiles,
-        templated = L.Util.template(tiles[Math.floor(Math.abs(tilePoint.x + tilePoint.y) % tiles.length)], tilePoint);
+      templated = L.Util.template(tiles[Math.floor(Math.abs(tilePoint.x + tilePoint.y) % tiles.length)], tilePoint);
 
     if (templated) {
       return templated.replace('.png', '.' + this.options.format);
