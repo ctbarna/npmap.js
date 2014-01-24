@@ -55,7 +55,6 @@ var MapBoxLayer = L.TileLayer.extend({
   },
   _getGridData: function(latLng, layer, callback) {
     this._grid.getTileGrid(this._getTileGridUrl(latLng), latLng, function(resultData, gridData) {
-      //console.log(gridData);
       callback(layer, gridData);
     });
   },
