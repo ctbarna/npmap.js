@@ -31,7 +31,6 @@ var ArcGisServerDynamicLayer = L.Class.extend({
     }
 
     this._parseLayers();
-    this._parseLayerDefs();
     L.Util.setOptions(this, options);
 
     if (!this._layerParams.transparent) {
@@ -86,39 +85,7 @@ var ArcGisServerDynamicLayer = L.Class.extend({
       layerParams.token = options.token;
     }
 
-    //console.log(layerParams.layers);
-
     return this._serviceUrl + 'export' + L.Util.getParamString(layerParams);
-  },
-  _parseLayerDefs: function () {
-    var defs = [],
-      layerDefs = this._layerParams.layerDefs,
-      layerDef;
-
-    if (typeof layerDefs === 'undefined') {
-      return;
-    }
-
-    if (L.Util.isArray(layerDefs)) {
-      for (var i = 0; i < layerDefs.length; i++) {
-        layerDef = layerDefs[i];
-
-        if (layerDef) {
-          defs.push(i + ':' + layerDef);
-        }
-      }
-    } else if (typeof layerDefs === 'object') {
-      for (layerDef in layerDefs) {
-        if (layerDefs.hasOwnProperty(layerDef)){
-          defs.push(layerDef + ':' + layerDefs[layerDef]);
-        }
-      }
-    } else {
-      delete this._layerParams.layerDefs;
-      return;
-    }
-
-    this._layerParams.layerDefs = defs.join(';');
   },
   _parseLayers: function () {
     if (typeof this._layerParams.layers === 'undefined') {
@@ -223,14 +190,14 @@ var ArcGisServerDynamicLayer = L.Class.extend({
     return this;
   },
   setLayers: function(layers) {
-    //console.log(layers);
+    if (typeof layers === 'number') {
+      layers = layers.toString();
+    }
 
     this._layerParams.layers = layers;
+    this._parseLayers();
     this._map.removeLayer(this._currentImage);
-    this._currentImage = new L.ImageOverlay(this._getImageUrl(), this._map.getBounds(), {
-      opacity: 0
-    });
-    this._map.addLayer(this._currentImage);
+    this._update();
   },
   setOpacity: function(opacity) {
     this.options.opacity = opacity;
