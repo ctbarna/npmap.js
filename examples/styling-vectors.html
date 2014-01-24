@@ -71,7 +71,27 @@ NPMap = {
   }]
 };
 
+OR?????
 
+Last thought before bed: I think the following is the way to go. You can easily differentiate between geometry types in the GeoJSON mixin (which accounts for all vector layers), and this should also work for CartoDB, as CartoDB supports multiple geometry types per "layer", as well. The split styles should be able to be easily converted into CartoCSS.
+
+You can still support "consolidated" styles (all the styles being specified together in a single styles object) too.
+
+overlays: [{
+  styles: {
+    line: {
+      leaflet: true
+    },
+    point: {
+      fill: '#e9a',
+      radius: 10,
+      type: 'circle' (defaults to 'marker')
+    },
+    polygon: {
+      leaflet: true
+    }
+  }
+}]
 
 
 
@@ -124,9 +144,9 @@ NPMap = {
           popup: '<div class="title"><a href="http://www.nps.gov/{{toLowerCase Code}}">{{Name}}</a></div>',
           styles: function(data) {
             return {
-              marker: {
-                size: 'small',
-                symbol: data.Code.slice(0, 1).toLowerCase()
+              point: {
+                'marker-size': 'small',
+                'marker-symbol': data.Code.slice(0, 1).toLowerCase()
               }
             };
           },
@@ -135,9 +155,9 @@ NPMap = {
         },{
           cluster: true,
           styles: {
-            marker: {
-              color: '#5e9fd5',
-              size: 'small'
+            point: {
+              'marker-color': '#5e9fd5',
+              'marker-size': 'small'
             }
           },
           type: 'csv',
@@ -147,17 +167,22 @@ NPMap = {
           url: 'data/simplestyle.geojson'
         },{
           styles: {
-            color: '#03f',
-            fill: true,
-            fillColor: '#03f',
-            fillOpacity: 0.2,
-            marker: {
-              color: '#fd9126',
-              size: 'small'
+            line: {
+              'stroke': '#03f',
+              'stroke-opacity': 0.8,
+              'stroke-width': 5
             },
-            opacity: 0.5,
-            stroke: false,
-            width: 5
+            point: {
+              'marker-color': '#fd9126',
+              'marker-size': 'small'
+            },
+            polygon: {
+              'fill': '#03f',
+              'fill-opacity': 0.2,
+              'stroke': '#000',
+              'stroke-opacity': 0.8,
+              'stroke-width': 8
+            }
           },
           type: 'geojson',
           url: 'data/utah_vectors.geojson'

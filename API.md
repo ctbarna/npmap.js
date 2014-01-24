@@ -196,7 +196,7 @@ The switcher control is used and controlled internally by NPMap.js, and is creat
 
 ### Styling Vectors
 
-NPMap.js uses the [simplestyle specification](https://github.com/mapbox/simplestyle-spec), which currently (at v1.1.0) includes the following:
+NPMap.js uses the [simplestyle specification](https://github.com/mapbox/simplestyle-spec), which currently (at v1.1.0) includes the following properties:
 
     fill
     fill-opacity
@@ -207,22 +207,22 @@ NPMap.js uses the [simplestyle specification](https://github.com/mapbox/simplest
     stroke-opacity
     stroke-width
 
-In addition, NPMap.js supports the following addition to the specification:
+In addition, NPMap.js supports the following property that is not supported by the simplestyle specification:
 
   marker-library
 
-This property defaults to "maki", and can be either "maki" or "npmaki".
+This property defaults to `maki`, and can (currently) be either `maki` or `npmaki`.
 
 Styles for vector shapes can be set in multiple ways. NPMap.js looks in the following order for styles:
 
-1. In the properties pulled in for each feature from the data source. You can tell NPMap.js to ignore feature styles by setting the "ignoreFeatureStyles" property to true. For example, if a GeoJSON Point feature has a "marker-symbol" property, it will be used to style the marker on the map unless "ignoreFeatureStyles" is set to true in the styles object of the overlay configuration.
-2. In the overlay configuration object, via a "styles" property:
-   1. As an object
-   2. As a function that is passed a data object for each feature and returns an object
+1. In the properties pulled in for each feature from the data source. You can tell NPMap.js to ignore feature styles by setting the "ignoreFeatureStyles" property to true. For example, if a GeoJSON Point feature has a "marker-symbol" property, it will be used to style the marker on the map unless "ignoreFeatureStyles" is set to true in the styles geometry (`line`, `point`, or `polygon`) object of an overlay's configuration.
+2. In an overlay's configuration object, via a "styles" property, with `line`, `point`, and/or `polygon` properties designated as:
+   1. an object
+   2. a function that is passed a data object for each feature and must returns a style object
 
-If no styles are found in these two places, NPMap.js falls back to a set of defaults.
+If no styles are found in these two places, NPMap.js falls back to a set of default styles.
 
-If you prefer not to use the simplestyle specification, you can utilize the Leaflet styles directly by adding <code>leaflet: true</code> to the <code>styles</code> object on your overlay configuration. NPMap.js will then pass the object directly to Leaflet.
+If you prefer not to use the simplestyle specification, you can utilize the out-of-the-box Leaflet styles for the `line` (L.Path), `point` (L.Icon), and `polygon` (L.Path) `styles` object on your overlay configuration. NPMap.js will then pass the object directly to Leaflet.
 
 **An important note**: Style properties cascade. This means that if a "marker-symbol" property is passed in via the data source (e.g. a GeoJSON feature's properties) and a "marker-color" property is passed in via the overlay config object, the geometry will be styled with both the "marker-symbol" AND "marker-color" properties unless the "ignoreFeatureStyles" property is present.
 

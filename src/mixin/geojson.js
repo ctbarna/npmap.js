@@ -15,22 +15,22 @@ module.exports = {
       L.GeoJSON.prototype.addData.call(this, feature);
     }
   },
+  onAdd: function(map) {
+    this._map = map;
+    this._addAttribution();
+    L.GeoJSON.prototype.onAdd.call(this, map);
+  },
+  onRemove: function() {
+    delete this._map;
+    this._removeAttribution();
+    L.GeoJSON.prototype.onRemove.call(this);
+  },
   _addAttribution: function() {
     var attribution = this.options.attribution;
 
     if (attribution && this._map.attributionControl) {
       this._map.attributionControl.addAttribution(attribution);
     }
-  },
-  _complete: function() {
-    // If clustered layer, need to set this._map up. Probably a better way to do this.
-    if (!this._map) {
-      //this._map = this.getLayers()[0].options.L._map;
-      this._map = this.options.L._map;
-    }
-
-    this._addAttribution();
-    this.fire('ready');
   },
   _removeAttribution: function() {
     var attribution = this.options.attribution;
@@ -40,7 +40,9 @@ module.exports = {
     }
   },
   _toLeaflet: function(config) {
-    var configStyles = config.styles || {},
+    // TODO: Support preset colors. Setup a "colorProperties" array that contains the name of the properties that can contain colors, then use those to pull in presets.
+    // TODO: Support handlebars templates.
+    var configStyles,
       matchSimpleStyles = {
         'fill': 'fillColor',
         'fill-opacity': 'fillOpacity',
@@ -106,66 +108,68 @@ module.exports = {
     }
 
     config.pointToLayer = function(feature, latLng) {
-      // TODO: Support preset colors.
-      // TODO: Support handlebars templates.
-      var fromFeature = {},
+      // TODO: Support L.CircleMarker and L.Icon
+      var configStyles,
         icon = {
-          color: '#000000',
-          size: 'medium',
-          library: 'maki',
-          symbol: null
+          'marker-color': '#000000',
+          'marker-size': 'medium',
+          'marker-library': 'maki',
+          'marker-symbol': null
         },
         properties = feature.properties,
-        prop;
+        property, value;
 
-      if (!configStyles.ignoreFeatureStyles) {
-        for (prop in icon) {
-          var value = properties['marker-' + prop];
+      configStyles = typeof config.styles === 'function' ? config.styles(properties) : config.styles;
+
+      if (!configStyles || !configStyles.point) {
+        for (property in icon) {
+          value = properties[property];
 
           if (value) {
-            fromFeature[prop] = value;
+            icon[property] = value;
           }
         }
-      }
 
-      if (typeof config.styles === 'undefined') {
-        for (prop in fromFeature) {
-          icon[prop] = fromFeature[prop];
-        }
-
-        icon = L.npmap.icon[icon.library](icon);
+        icon = L.npmap.icon[icon['marker-library']](icon);
       } else {
-        var c = typeof config.styles === 'function' ? config.styles(properties).marker : config.styles.marker;
+        configStyles = typeof configStyles.point === 'function' ? configStyles.point(properties) : configStyles.point;
 
-        if (c) {
-          c.type = c.type || 'maki';
-
-          if (c.type === 'circle') {
-            return new L.CircleMarker(latLng, c);
-          } else if (c.leaflet || c.icon) {
-            // TODO: c.leaflet is "legacy" (used in PNW Mapper)
-            icon = new L.Icon(latLng, c);
+        if (configStyles) {
+          if (typeof configStyles.iconUrl === 'string') {
+            icon = new L.Icon(configStyles);
           } else {
-            for (prop in icon) {
-              if (typeof c[prop] === 'string') {
-                icon[prop] = util.handlebars(c[prop], properties);
-              } else if (typeof c[prop] === 'function') {
-                icon[prop] = c[prop](properties);
+            for (property in icon) {
+              value = configStyles[property];
+
+              if (value) {
+                icon[property] = value;
               }
             }
 
-            for (prop in fromFeature) {
-              icon[prop] = fromFeature[prop];
+            if (!configStyles.ignoreFeatureStyles) {
+              for (property in icon) {
+                value = properties[property];
+
+                if (value) {
+                  icon[property] = value;
+                }
+              }
             }
 
-            icon = L.npmap.icon[c.type](icon);
+            icon = L.npmap.icon[icon['marker-library']](icon);
           }
         } else {
-          for (prop in fromFeature) {
-            icon[prop] = fromFeature[prop];
+          if (!configStyles.ignoreFeatureStyles) {
+            for (property in icon) {
+              value = properties[property];
+
+              if (value) {
+                icon[property] = value;
+              }
+            }
           }
 
-          icon = L.npmap.icon[icon.library](icon);
+          icon = L.npmap.icon[icon['marker-library']](icon);
         }
       }
 
@@ -174,35 +178,46 @@ module.exports = {
       });
     };
     config.style = function(feature) {
-      // TODO: Support preset colors.
-      // TODO: Support handlebars templates.
-      if (feature.geometry.type !== 'Point') {
+      var type = (function() {
+        var t = feature.geometry.type.toLowerCase();
+
+        if (t.indexOf('line') !== -1) {
+          return 'line';
+        } else if (t.indexOf('point') !== -1) {
+          return 'point';
+        } else if (t.indexOf('polygon') !== -1) {
+          return 'polygon';
+        }
+      })();
+
+      if (type !== 'point') {
+        // TODO: Add support for passing Leaflet styles in.
         var count = 0,
           properties = feature.properties,
           style = {},
-          prop;
+          property;
 
-        if (!configStyles.ignoreFeatureStyles) {
-          for (prop in matchSimpleStyles) {
-            if (typeof properties[prop] !== 'undefined' && properties[prop] !== null && properties[prop] !== '') {
-              style[matchSimpleStyles[prop]] = properties[prop];
-            }
+        for (property in matchSimpleStyles) {
+          if (typeof properties[property] !== 'undefined' && properties[property] !== null && properties[property] !== '') {
+            style[matchSimpleStyles[property]] = properties[property];
           }
         }
 
-        if (typeof config.styles !== 'undefined') {
-          var c = typeof config.styles === 'function' ? config.styles(properties) : config.styles;
+        configStyles = typeof config.styles === 'function' ? config.styles(properties) : config.styles;
 
-          if (c) {
-            for (prop in c) {
-              if (typeof style[prop] === 'undefined') {
-                style[prop] = c[prop];
+        if (configStyles) {
+          configStyles = typeof configStyles[type] === 'function' ? configStyles[type](properties) : configStyles[type];
+
+          if (configStyles) {
+            for (property in matchSimpleStyles) {
+              if (typeof configStyles[property] !== 'undefined' && configStyles[property] !== null && configStyles[property] !== '') {
+                style[matchSimpleStyles[property]] = configStyles[property];
               }
             }
           }
         }
 
-        for (prop in style) {
+        for (property in style) {
           count++;
           break;
         }

@@ -6,8 +6,8 @@ var util = require('../util/util');
 
 var MakiIcon = L.Icon.extend({
   options: {
-    color: '#000000',
-    size: 'medium'
+    'marker-color': '#000000',
+    'marker-size': 'medium'
   },
   statics: {
     CSS_TEMPLATE: 'url(https://a.tiles.mapbox.com/v3/marker/pin-{{size}}{{symbol}}+{{color}}{{retina}}.png)'
@@ -15,7 +15,7 @@ var MakiIcon = L.Icon.extend({
   initialize: function(options) {
     options = options || {};
 
-    var size = options.size || 'medium',
+    var size = options['marker-size'] || 'medium',
       sizes = {
         large: {
           iconAnchor: [17.5, 49],
@@ -45,10 +45,10 @@ var MakiIcon = L.Icon.extend({
     options.html = null;
     this._setIconStyles(div, 'icon');
     div.style.backgroundImage = util.handlebars(MakiIcon.CSS_TEMPLATE, {
-      color: options.color.replace('#', ''),
+      color: options['marker-color'].replace('#', ''),
       retina: L.Browser.retina ? '@2x' : '',
-      size: options.size.slice(0, 1),
-      symbol: options.symbol ? '-' + options.symbol : ''
+      size: options['marker-size'].slice(0, 1),
+      symbol: options['marker-symbol'] ? '-' + options['marker-symbol'] : ''
     });
     return div;
   },

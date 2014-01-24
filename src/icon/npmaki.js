@@ -6,9 +6,8 @@ var util = require('../util/util');
 
 var NpmakiIcon = L.Icon.extend({
   options: {
-    color: '#000000',
-    size: 'medium',
-    symbol: null
+    'marker-color': '#000000',
+    'marker-size': 'medium'
   },
   statics: {
     MAKI_TEMPLATE: 'url(https://a.tiles.mapbox.com/v3/marker/pin-{{size}}+{{color}}{{retina}}.png)'
@@ -16,7 +15,7 @@ var NpmakiIcon = L.Icon.extend({
   initialize: function(options) {
     options = options || {};
 
-    var size = options.size || 'medium',
+    var size = options['marker-size'] || 'medium',
       sizes = {
         large: {
           iconAnchor: [17.5, 49],
@@ -40,16 +39,16 @@ var NpmakiIcon = L.Icon.extend({
   },
   createIcon: function(oldIcon) {
     var options = this.options,
-      divIcon = L.DomUtil.create('div', 'npmaki-icon ' + options.size + ' ' + options.symbol + '-' + options.size + (L.Browser.retina ? '-2x': '')),
+      divIcon = L.DomUtil.create('div', 'npmaki-icon ' + options['marker-size'] + ' ' + options['marker-symbol'] + '-' + options['marker-size'] + (L.Browser.retina ? '-2x': '')),
       divMarker = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div');
 
     options.className = null;
     options.html = null;
     this._setIconStyles(divMarker, 'icon');
     divMarker.style.backgroundImage = util.handlebars(NpmakiIcon.MAKI_TEMPLATE, {
-      color: options.color.replace('#', ''),
+      color: options['marker-color'].replace('#', ''),
       retina: L.Browser.retina ? '@2x' : '',
-      size: options.size.slice(0, 1)
+      size: options['marker-size'].slice(0, 1)
     });
     divMarker.appendChild(divIcon);
     return divMarker;
