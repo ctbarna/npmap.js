@@ -66,11 +66,6 @@ module.exports = {
       html = util._buildAttributeTable(data.value, data.attributes);
     }
 
-    if (typeof this.options.edit === 'object') {
-      // TODO: Add edit actions.
-      //html = html.slice(0, html.length - 6) + '<div class="actions">Testing</div></div>';
-    }
-
     if (typeof html === 'string') {
       var div = L.DomUtil.create('div', null);
       div.innerHTML = html;
@@ -153,17 +148,55 @@ module.exports = {
     });
   },
   _more: function(el) {
-    var actions = L.DomUtil.create('div', 'actions'),
-      back = L.DomUtil.create('button', 'btn btn-default'),
+    var actionsDiv = L.DomUtil.create('div', 'actions'),
+      actionsUl = L.DomUtil.create('ul', null),
+      addActions = [],
+      back = L.DomUtil.create('a', null),
       div = L.DomUtil.create('div', null),
       popup = this._map._popup;
+
+    // Need to get layerId and ObjectID
 
     div.appendChild(this._clickResults[el.innerHTML]);
     this._backHtml = popup.getContent();
     L.DomEvent.addListener(back, 'click', this._back, this);
-    back.innerHTML = '« Back to Results';
-    actions.appendChild(back);
-    div.appendChild(actions);
+    back.innerHTML = '« Back';
+    addActions.push(back);
+
+    if (this.options.edit) {
+      var edit = L.DomUtil.create('a', null),
+        menu = L.DomUtil.create('div', 'menu edit');
+
+      function toggleEditMenu(e) {
+        console.log(e);
+
+        if (!menu.style.display || menu.style.display === 'none') {
+          var toElement = e.toElement;
+
+          menu.style.display = 'block';
+          menu.style.left = toElement.offsetLeft + 'px';
+          menu.style.top = (toElement.offsetTop + 18) + 'px';
+        } else {
+          menu.style.display = 'none';
+        }
+      }
+
+      edit.innerHTML = 'Edit &#9656;';
+      edit.style.cssText = 'margin-left:5px;';
+      addActions.push(edit);
+      menu.innerHTML = '<ul><li><a>Attributes</a></li><li><a>Geometry</a></li></ul>';
+      actionsDiv.appendChild(menu);
+      L.DomEvent.addListener(edit, 'click' , toggleEditMenu);
+    }
+
+    for (var i = 0; i < addActions.length; i++) {
+      var li = L.DomUtil.create('li', null);
+      li.appendChild(addActions[i]);
+      actionsUl.appendChild(li);
+    }
+
+    actionsDiv.appendChild(actionsUl);
+    div.appendChild(actionsDiv);
     popup.setContent(div).update();
   },
   _updateAttribution: function() {
