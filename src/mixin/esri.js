@@ -98,7 +98,7 @@ module.exports = {
         }
       },
       type: 'jsonp',
-      url: me.serviceUrl + '?f=json'
+      url: me._serviceUrl + '?f=json'
     });
   },
   _handleClick: function(latLng, layer, callback) {

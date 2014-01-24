@@ -14,7 +14,7 @@ var ArcGisServerTiledLayer = L.TileLayer.extend({
   initialize: function(options) {
     L.Util.setOptions(this, options);
     util.strict(options.url, 'string');
-    this.serviceUrl = this.util.cleanUrl(options.url);
+    this._serviceUrl = this.util.cleanUrl(options.url);
     this.tileUrl = this.util.cleanUrl(options.url) + 'tile/{z}/{y}/{x}';
 
     if (options.clickable === false) {
@@ -22,6 +22,7 @@ var ArcGisServerTiledLayer = L.TileLayer.extend({
     }
 
     L.TileLayer.prototype.initialize.call(this, this.tileUrl, options);
+    this._getMetadata();
   },
 });
 

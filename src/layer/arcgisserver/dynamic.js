@@ -20,12 +20,13 @@ var ArcGisServerDynamicLayer = L.Class.extend({
   },
   initialize: function(options) {
     util.strict(options.url, 'string');
-    this.serviceUrl = this.util.cleanUrl(options.url);
-    this._layerParams = L.Util.extend({}, this._defaultLayerParams);
 
-    for (var opt in options) {
-      if (options.hasOwnProperty(opt) && this._defaultLayerParams.hasOwnProperty(opt)) {
-        this._layerParams[opt] = options[opt];
+    this._layerParams = L.Util.extend({}, this._defaultLayerParams);
+    this._serviceUrl = this.util.cleanUrl(options.url);
+
+    for (var option in options) {
+      if (this._defaultLayerParams.hasOwnProperty(option)) {
+        this._layerParams[option] = options[option];
       }
     }
 
@@ -43,21 +44,18 @@ var ArcGisServerDynamicLayer = L.Class.extend({
 
     this._getMetadata();
   },
-  addTo: function(map) {
-    map.addLayer(this);
-    return this;
-  },
   onAdd: function(map) {
     this._map = map;
     this._moveHandler = this.util.debounce(this._update, 150, this);
-    map.on('moveend', this._moveHandler, this);
 
     if (map.options.crs && map.options.crs.code) {
       var sr = map.options.crs.code.split(':')[1];
+
       this._layerParams.bboxSR = sr;
       this._layerParams.imageSR = sr;
     }
 
+    map.on('moveend', this._moveHandler, this);
     this._update();
   },
   onRemove: function(map) {
@@ -80,7 +78,7 @@ var ArcGisServerDynamicLayer = L.Class.extend({
     layerParams.bbox = [sw.x, sw.y, ne.x, ne.y].join(',');
     layerParams.size = size.x + ',' + size.y;
 
-    if (typeof options.edit === 'object' || options.edit === true) {
+    if (options.edit) {
       layerParams.nocache = new Date().getTime();
     }
 
@@ -88,28 +86,31 @@ var ArcGisServerDynamicLayer = L.Class.extend({
       layerParams.token = options.token;
     }
 
-    return this.serviceUrl + 'export' + L.Util.getParamString(layerParams);
+    //console.log(layerParams.layers);
+
+    return this._serviceUrl + 'export' + L.Util.getParamString(layerParams);
   },
   _parseLayerDefs: function () {
     var defs = [],
-      layerDefs = this._layerParams.layerDefs;
+      layerDefs = this._layerParams.layerDefs,
+      layerDef;
 
     if (typeof layerDefs === 'undefined') {
       return;
     }
 
     if (L.Util.isArray(layerDefs)) {
-      var len = layerDefs.length;
+      for (var i = 0; i < layerDefs.length; i++) {
+        layerDef = layerDefs[i];
 
-      for (var i = 0; i < len; i++) {
-        if (layerDefs[i]) {
-          defs.push(i + ':' + layerDefs[i]);
+        if (layerDef) {
+          defs.push(i + ':' + layerDef);
         }
       }
     } else if (typeof layerDefs === 'object') {
-      for (var layer in layerDefs) {
-        if (layerDefs.hasOwnProperty(layer)){
-          defs.push(layer + ':' + layerDefs[layer]);
+      for (layerDef in layerDefs) {
+        if (layerDefs.hasOwnProperty(layerDef)){
+          defs.push(layerDef + ':' + layerDefs[layerDef]);
         }
       }
     } else {
@@ -128,18 +129,19 @@ var ArcGisServerDynamicLayer = L.Class.extend({
     var action = this._layerParams.layerOption || null,
       layers = this._layerParams.layers || null,
       verb = 'show',
-      verbs = ['show', 'hide', 'include', 'exclude'];
+      verbs = ['exclude', 'hide', 'include', 'show'];
 
     delete this._layerParams.layerOption;
 
     if (!action) {
-      if (layers instanceof Array) {
+      if (L.Util.isArray(layers)) {
         this._layerParams.layers = verb + ':' + layers.join(',');
       } else if (typeof layers === 'string') {
         var match = layers.match(':');
 
         if (match) {
           layers = layers.split(match[0]);
+
           if (Number(layers[1].split(',')[0])) {
             if (verbs.indexOf(layers[0]) !== -1) {
               verb = layers[0];
@@ -160,7 +162,7 @@ var ArcGisServerDynamicLayer = L.Class.extend({
     }
   },
   _update: function() {
-    var bounds, image;
+    var bounds, image, zoom;
 
     if (this._animatingZoom) {
       return;
@@ -170,7 +172,7 @@ var ArcGisServerDynamicLayer = L.Class.extend({
       return;
     }
 
-    var zoom = this._map.getZoom();
+    zoom = this._map.getZoom();
 
     if (zoom > this.options.maxZoom || zoom < this.options.minZoom) {
       return;
@@ -183,8 +185,8 @@ var ArcGisServerDynamicLayer = L.Class.extend({
       opacity: 0
     }).addTo(this._map);
     image.on('load', function(e){
-      var newImage = e.target;
-      var oldImage = this._currentImage;
+      var newImage = e.target,
+        oldImage = this._currentImage;
 
       if (newImage._bounds.equals(bounds)) {
         this._currentImage = newImage;
@@ -220,7 +222,17 @@ var ArcGisServerDynamicLayer = L.Class.extend({
     this._currentImage.bringToFront();
     return this;
   },
-  setOpacity: function(opacity){
+  setLayers: function(layers) {
+    //console.log(layers);
+
+    this._layerParams.layers = layers;
+    this._map.removeLayer(this._currentImage);
+    this._currentImage = new L.ImageOverlay(this._getImageUrl(), this._map.getBounds(), {
+      opacity: 0
+    });
+    this._map.addLayer(this._currentImage);
+  },
+  setOpacity: function(opacity) {
     this.options.opacity = opacity;
     this._currentImage.setOpacity(opacity);
   }
