@@ -9,38 +9,38 @@ var GeoJsonLayer = L.GeoJSON.extend({
   includes: [
     require('../mixin/geojson')
   ],
-  initialize: function(config) {
-    config = this._toLeaflet(config);
+  initialize: function(options) {
+    L.Util.setOptions(this, this._toLeaflet(options));
 
-    if (typeof config.data === 'object') {
-      this._create(config, config.data);
+    if (typeof options.data === 'object') {
+      this._create(options, options.data);
     } else {
       var me = this,
-        url = config.url;
+        url = options.url;
 
       util.strict(url, 'string');
       util.loadFile(url, 'json', function(response) {
         if (response) {
-          me._create(config, response);
+          me._create(options, response);
         } else {
           // TODO: Display load error.
         }
       });
     }
   },
-  _create: function(config, data) {
-    L.GeoJSON.prototype.initialize.call(this, data, config);
-    this._complete();
+  _create: function(options, data) {
+    L.GeoJSON.prototype.initialize.call(this, data, options);
+    this.fire('ready');
     return this;
   }
 });
 
-module.exports = function(config) {
-  config = config || {};
+module.exports = function(options) {
+  options = options || {};
 
-  if (config.cluster) {
-    return L.npmap.layer._cluster(config);
+  if (options.cluster) {
+    return L.npmap.layer._cluster(options);
   } else {
-    return new GeoJsonLayer(config);
+    return new GeoJsonLayer(options);
   }
 };

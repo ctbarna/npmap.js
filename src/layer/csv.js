@@ -10,44 +10,44 @@ var CsvLayer = L.GeoJSON.extend({
   includes: [
     require('../mixin/geojson')
   ],
-  initialize: function(config) {
+  initialize: function(options) {
     var me = this;
 
-    config = this._toLeaflet(config);
+    L.Util.setOptions(this, this._toLeaflet(options));
 
-    if (typeof config.data === 'string') {
-      me._create(config, config.data);
+    if (typeof options.data === 'string') {
+      me._create(options, options.data);
       return this;
     } else {
-      var url = config.url;
+      var url = options.url;
 
       util.strict(url, 'string');
       util.loadFile(url, 'text', function(response) {
         if (response) {
-          me._create(config, response);
+          me._create(options, response);
         } else {
           // TODO: Display load error.
         }
       });
     }
   },
-  _create: function(config, csv) {
+  _create: function(options, csv) {
     var me = this;
 
     csv2geojson.csv2geojson(csv, {}, function(error, data) {
-      L.GeoJSON.prototype.initialize.call(me, data, config);
-      me._complete();
+      L.GeoJSON.prototype.initialize.call(me, data, options);
+      me.fire('ready');
       return me;
     });
   }
 });
 
-module.exports = function(config) {
-  config = config || {};
+module.exports = function(options) {
+  options = options || {};
 
-  if (config.cluster) {
-    return L.npmap.layer._cluster(config);
+  if (options.cluster) {
+    return L.npmap.layer._cluster(options);
   } else {
-    return new CsvLayer(config);
+    return new CsvLayer(options);
   }
 };

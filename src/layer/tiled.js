@@ -8,13 +8,14 @@ var TiledLayer = L.TileLayer.extend({
   options: {
     errorTileUrl: L.Util.emptyImageUrl
   },
-  initialize: function(config) {
-    util.strict(config.url, 'string');
-    L.TileLayer.prototype.initialize.call(this, config.url, config);
+  initialize: function(options) {
+    util.strict(options.url, 'string');
+    L.Util.setOptions(this, options);
+    L.TileLayer.prototype.initialize.call(this, options.url, options);
     return this;
   }
 });
 
-module.exports = function(config) {
-  return new TiledLayer(config);
+module.exports = function(options) {
+  return new TiledLayer(options);
 };

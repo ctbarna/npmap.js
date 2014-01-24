@@ -33,6 +33,7 @@ var MapBoxLayer = L.TileLayer.extend({
   initialize: function(options) {
     var _;
 
+    L.Util.setOptions(this, options);
     L.TileLayer.prototype.initialize.call(this, undefined, options);
 
     if (options.format) {

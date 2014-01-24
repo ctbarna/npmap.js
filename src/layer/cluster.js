@@ -8,18 +8,20 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
   options: {
     showCoverageOnHover: false
   },
-  initialize: function(config) {
+  initialize: function(options) {
     var me = this;
 
-    if (config.cluster === true) {
-      config.cluster = {};
+    L.Util.setOptions(this, options);
+
+    if (options.cluster === true) {
+      options.cluster = {};
     }
 
-    config.cluster.iconCreateFunction = new this.createCustomIconFunction(config.cluster.clusterIcon);
-    L.Util.setOptions(this, config.cluster);
-    config.clustered = config.cluster.iconCreateFunction('getInfo');
-    delete config.cluster;
-    this.L = L.npmap.layer[config.type](config);
+    options.cluster.iconCreateFunction = new this.createCustomIconFunction(options.cluster.clusterIcon);
+    L.Util.setOptions(this, options.cluster);
+    options.clustered = options.cluster.iconCreateFunction('getInfo');
+    delete options.cluster;
+    this.L = L.npmap.layer[options.type](options);
     this._currentShownBounds = null;
     this._featureGroup = new L.FeatureGroup();
     this._featureGroup.on(L.FeatureGroup.EVENTS, this._propagateEvent, this);
@@ -34,6 +36,30 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
     }, this);
 
     return this;
+  },
+  onAdd: function(map) {
+    this._map = map;
+    this._addAttribution();
+    L.MarkerClusterGroup.prototype.onAdd.call(this, map);
+  },
+  onRemove: function() {
+    delete this._map;
+    this._removeAttribution();
+    L.MarkerClusterGroup.prototype.onRemove.call(this);
+  },
+  _addAttribution: function() {
+    var attribution = this.options.attribution;
+
+    if (attribution && this._map.attributionControl) {
+      this._map.attributionControl.addAttribution(attribution);
+    }
+  },
+  _removeAttribution: function() {
+    var attribution = this.options.attribution;
+
+    if (attribution && this._map.attributionControl) {
+      this._map.attributionControl.removeAttribution(attribution);
+    }
   },
   createCustomIconFunction: function(settings) {
     var defaultSettings = [{
@@ -62,8 +88,6 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
     function addStyles() {
       var style = document.createElement('style');
 
-      style.type = 'text/css';
-
       for (var i = 0; i < defaultSettings.length; i++) {
         var currStyle = createStyle(defaultSettings[i]);
 
@@ -72,6 +96,7 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
         }
       }
 
+      style.type = 'text/css';
       style.textContent += '.leaflet-cluster-anim .leaflet-marker-icon, .leaflet-cluster-anim .leaflet-marker-shadow {';
       style.textContent += '-webkit-transition: -webkit-transform 0.2s ease-out, opacity 0.2s ease-in;';
       style.textContent += '-moz-transition: -moz-transform 0.2s ease-out, opacity 0.2s ease-in;';
@@ -236,6 +261,6 @@ var ClusterLayer = L.MarkerClusterGroup.extend({
   }
 });
 
-module.exports = function(config) {
-  return new ClusterLayer(config);
+module.exports = function(options) {
+  return new ClusterLayer(options);
 };

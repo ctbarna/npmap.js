@@ -5,14 +5,15 @@
 var util = require('../util/util');
 
 var WmsLayer = L.TileLayer.WMS.extend({
-  initialize: function(config) {
-    util.strict(config.layers, 'string');
-    util.strict(config.url, 'string');
-    L.TileLayer.WMS.prototype.initialize.call(this, config.url, config);
+  initialize: function(options) {
+    util.strict(options.layers, 'string');
+    util.strict(options.url, 'string');
+    L.Util.setOptions(this, options);
+    L.TileLayer.WMS.prototype.initialize.call(this, options.url, options);
     return this;
   }
 });
 
-module.exports = function(config) {
-  return new WmsLayer(config);
+module.exports = function(options) {
+  return new WmsLayer(options);
 };
