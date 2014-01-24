@@ -189,6 +189,9 @@ var ArcGisServerDynamicLayer = L.Class.extend({
     this._currentImage.bringToFront();
     return this;
   },
+  getLayers: function() {
+    return this._layerParams.layers;
+  },
   setLayers: function(layers) {
     if (typeof layers === 'number') {
       layers = layers.toString();
