@@ -209,28 +209,26 @@ module.exports = {
           x: latLng.lng,
           y: latLng.lat
         }),
+        //geometryPrecision
         geometryType: 'esriGeometryPoint',
         imageDisplay: size.x + ',' + size.y + ',96',
-        layers: 'visible',
+        layers: 'visible:' + this.getLayers().split(':')[1],
         mapExtent: json3.stringify(this.util.boundsToExtent(map.getBounds())),
         returnGeometry: false,
         sr: '4326',
         tolerance: 5
       };
 
-    if (this.options.layers) {
-      params.layers = this.options.layers;
-    }
-
     reqwest({
       data: params,
+      error: function() {
+        callback(null);
+      },
       success: function(response) {
-        if (callback) {
-          callback(response);
-        }
+        callback(response);
       },
       type: 'jsonp',
-      url: this.options.url + '/identify'
+      url: this._serviceUrl + '/identify'
     });
   }
 };
