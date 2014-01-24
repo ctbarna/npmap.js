@@ -10,40 +10,40 @@ var KmlLayer = L.GeoJSON.extend({
   includes: [
     require('../mixin/geojson')
   ],
-  initialize: function(config) {
+  initialize: function(options) {
     var me = this;
 
-    config = this._toLeaflet(config);
+    L.Util.setOptions(this, this._toLeaflet(options));
 
-    if (typeof config.data === 'string') {
-      me._create(config, config.data);
+    if (typeof options.data === 'string') {
+      me._create(options, options.data);
       return this;
     } else {
-      var url = config.url;
+      var url = options.url;
 
       util.strict(url, 'string');
       util.loadFile(url, 'xml', function(response) {
         if (response) {
-          me._create(config, response);
+          me._create(options, response);
         } else {
           // TODO: Display load error.
         }
       });
     }
   },
-  _create: function(config, data) {
-    L.GeoJSON.prototype.initialize.call(this, togeojson.kml(new DOMParser().parseFromString(data, 'text/xml')), config);
-    this._complete();
+  _create: function(options, data) {
+    L.GeoJSON.prototype.initialize.call(this, togeojson.kml(new DOMParser().parseFromString(data, 'text/xml')), options);
+    this.fire('ready');
     return this;
   }
 });
 
-module.exports = function(config) {
-  config = config || {};
+module.exports = function(options) {
+  options = options || {};
 
-  if (config.cluster) {
-    return L.npmap.layer._cluster(config);
+  if (options.cluster) {
+    return L.npmap.layer._cluster(options);
   } else {
-    return new KmlLayer(config);
+    return new KmlLayer(options);
   }
 };
