@@ -19,6 +19,7 @@ var CartoDbLayer = L.TileLayer.extend({
       3
     ]
   },
+  // Leaflet overrides
   initialize: function(options) {
     L.Util.setOptions(this, options);
     util.strict(this.options.table, 'string');
@@ -31,51 +32,60 @@ var CartoDbLayer = L.TileLayer.extend({
       L.TileLayer.prototype._update.call(this);
     }
   },
+  // NPMap.js methods
   _build: function() {
     var me = this;
 
     this._urlApi = 'https://' + this.options.user + '.cartodb.com/api/v2/sql';
     reqwest({
       success: function(response) {
-        var interactiveFields = [];
+        var cartocss = '#layer{line-color:#d39800;line-opacity:0.8;line-width:3;marker-fill:#d39800;marker-height:8;polygon-fill:#d39800;polygon-opacity:0.2;}';
 
-        if (me.options.clickable !== false && response.fields) {
+        me._hasInteractivity = false;
+        me._interactivity = null;
+
+        if (me.options.interactivity) {
+          me._interactivity = me.options.interactivity.split(',');
+        } else if (me.options.clickable !== false && response.fields) {
+          me._interactivity = [];
+
           for (var field in response.fields) {
-            var type = response.fields[field].type;
-
-            if (type === 'date' || type === 'number' || type === 'string') {
-              interactiveFields.push(field);
+            if (response.fields[field].type !== 'geometry') {
+              me._interactivity.push(field);
             }
           }
 
-          if (interactiveFields.length) {
+          if (me._interactivity.length) {
             me._hasInteractivity = true;
-            me._interactivity = interactiveFields.join(',');
-          } else {
-            me._hasInteractivity = false;
-            me._interactivity = null;
           }
-        } else {
-          me._hasInteractivity = false;
-          me._interactivity = null;
         }
 
-        me._cartocss = '#layer{polygon-fill:#F00;polygon-opacity:0.3;line-color:#F00;}';
-        me._sql = ('SELECT ' + (me._interactivity ? me._interactivity : '') + ',' + (response.fields.the_geom_webmercator ? 'the_geom_webmercator' : 'the_geom as the_geom_webmercator') + ' FROM ' + me.options.table + ';');
+        if (me.options.cartocss) {
+          cartocss = me.options.cartocss;
+        } else if (me.options.styles) {
+          cartocss = me._simpleStyleToCartoCss(me.options.styles);
+        }
+
+        me._cartocss = cartocss;
+        me._sql = (me.options.sql || ('SELECT * FROM ' + me.options.table + ';'));
+
+//http://3.api.cartocdn.com/examples/tiles/layergroup/8a94563077cabc7a50905e2cfe779e07:0/1/3/3/4.grid.json?callback=grid // working
+//http://0.api.cartocdn.com/examples/tiles/layergroup/e7ea4213bdc5ce95050245459720b1b0:0/5/8/12.grid.json?callback=reqwest_1390265746703 // their layer
+//http://1.api.cartocdn.com/examples/tiles/layergroup/45f3fb03a8e8a5cc46c3af8ee5cc3edf:0/4/3/7.grid.json?callback=reqwest_1390265036675 // our layer
 
         reqwest({
           success: function(response) {
             var root = 'http://{s}.api.cartocdn.com/' + me.options.user + '/tiles/layergroup/' + response.layergroupid + '/{z}/{x}/{y}';
 
-            if (me._hasInteractivity) {
+            if (me._hasInteractivity && me._interactivity.length) {
               //me._urlGrid = root + '.grid.json';
-              me._urlGrid = 'http://' + me.options.user + '.cartodb.com/tiles/' + me.options.table + '/{z}/{x}/{y}.grid.json';
+              me._urlGrid = 'http://' + me.options.user + '.cartodb.com/tiles/' + me.options.table + '/{z}/{x}/{y}.grid.json?interactivity=' + me._interactivity.join(',') + '&sql=' + me._sql;
               me._grid = new utfGrid(me, {
                 crossOrigin: true,
                 type: 'jsonp'
               });
             }
-            
+
             me._urlTile = root + '.png';
             me.setUrl(me._urlTile);
             me.redraw();
@@ -88,9 +98,10 @@ var CartoDbLayer = L.TileLayer.extend({
                 options: {
                   cartocss: me._cartocss,
                   cartocss_version: '2.1.0',
-                  interactivity: me._interactivity ? me._interactivity : null,
+                  interactivity: me._interactivity,
                   sql: me._sql
                 },
+                stat_tag: 'API',
                 type: 'cartodb'
               }],
               version: '1.0.0'
@@ -100,7 +111,7 @@ var CartoDbLayer = L.TileLayer.extend({
       },
       type: 'jsonp',
       url: util.buildUrl(this._urlApi, {
-        q: 'SELECT * FROM ' + this.options.table + ' LIMIT 1;'
+        q: 'select * from ' + this.options.table + ' limit 1;'
       })
     });
   },
@@ -120,6 +131,61 @@ var CartoDbLayer = L.TileLayer.extend({
   },
   _handleMousemove: function(latLng, layer, callback) {
     this._getGridData(latLng, layer, callback);
+  },
+  _simpleStyleToCartoCss: function(styles) {
+    var obj = {};
+
+    for (var prop in styles) {
+      var value = styles[prop];
+
+      switch (prop) {
+      case 'fill':
+        obj['polygon-fill'] = value;
+        break;
+      case 'fill-opacity':
+        obj['polygon-opacity'] = value;
+        break;
+      case 'marker-color':
+        obj['marker-fill'] = value;
+        break;
+      case 'marker-size':
+        var size = (function() {
+          if (value === 'large') {
+            return 16;
+          } else if (value === 'medium') {
+            return 12;
+          } else {
+            return 8;
+          }
+        })();
+
+        obj['marker-height'] = size;
+        obj['marker-width'] = size;
+        break;
+      case 'marker-symbol':
+        break;
+      case 'stroke':
+        obj['line-color'] = value;
+        break;
+      case 'stroke-opacity':
+        obj['line-opacity'] = value;
+        break;
+      case 'stroke-width':
+        obj['line-width'] = value;
+        break;
+      }
+    }
+
+    return '#layer{' + json3.stringify(obj) + '}';
+  },
+  setCartoCss: function(cartoCss) {
+
+  },
+  setInteractivity: function(interactivity) {
+
+  },
+  setSql: function(sql) {
+
   }
 });
 
