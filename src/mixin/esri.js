@@ -9,6 +9,17 @@ var json3 = require('json3'),
 module.exports = {
   _backHtml: null,
   _clickResults: null,
+  _toggleMenu: function toggleMenu(menu, e) {
+    if (!menu.style.display || menu.style.display === 'none') {
+      var toElement = e.toElement;
+
+      menu.style.display = 'block';
+      menu.style.left = toElement.offsetLeft + 'px';
+      menu.style.top = (toElement.offsetTop + 18) + 'px';
+    } else {
+      menu.style.display = 'none';
+    }
+  },
   util: {
     boundsToExtent: function(bounds) {
       return {
@@ -49,6 +60,37 @@ module.exports = {
   },
   _back: function() {
     this._map._popup.setContent(this._backHtml).update();
+  },
+  _createAction: function(cls, text, menuItems, actionsDiv) {
+    var action = L.DomUtil.create('a', null);
+
+    action.innerHTML = text;
+    action.style.cssText = 'margin-left:5px;';
+
+    if (menuItems) {
+      var menu = L.DomUtil.create('ul', 'menu');
+
+      for (var i = 0; i < menuItems.length; i++) {
+        var a = L.DomUtil.create('a', null),
+          item = menuItems[i],
+          li = L.DomUtil.create('li', null);
+
+        a.innerHTML = item.text;
+        L.DomEvent.addListener(a, 'click', function() {
+          menu.style.display = 'none';
+          this.fn();
+        }, item);
+        li.appendChild(a);
+        menu.appendChild(li);
+      }
+
+      actionsDiv.appendChild(menu);
+      L.DomEvent.addListener(action, 'click' , function(e) {
+        this._toggleMenu(menu, e);
+      }, this);
+    }
+
+    return action;
   },
   _dataToHtml: function(data) {
     var html;
@@ -110,14 +152,18 @@ module.exports = {
             i = 0,
             ul = L.DomUtil.create('ul', null);
 
-          divTitle.textContent = me.options.name ? me.options.name : results[0].layerName;
+          divTitle.innerHTML = me.options.name ? me.options.name : results[0].layerName;
           divLayer.appendChild(divTitle);
 
           for (i; i < results.length; i++) {
-            var div = me._dataToHtml(results[i]),
+            var result = results[i],
+              div = me._dataToHtml(result),
               li = L.DomUtil.create('li', null),
               link = L.DomUtil.create('a', null),
-              value = results[i].value;
+              value = result.value;
+
+            link.setAttribute('data-layerid', result.layerId);
+            link.setAttribute('data-objectid', result.attributes.OBJECTID);
 
             for (var j = 0; j < div.childNodes.length; j++) {
               var node = div.childNodes[j];
@@ -131,7 +177,7 @@ module.exports = {
             L.DomEvent.on(link, 'click', function() {
               me._more(this);
             });
-            link.textContent = value;
+            link.innerHTML = value;
             li.appendChild(link);
             ul.appendChild(li);
             me._clickResults[value] = div;
@@ -153,40 +199,28 @@ module.exports = {
       addActions = [],
       back = L.DomUtil.create('a', null),
       div = L.DomUtil.create('div', null),
-      popup = this._map._popup;
-
-    // Need to get layerId and ObjectID
+      me = this,
+      popup = this._map._popup,
+      subLayerId = el.getAttribute('data-layerid');
 
     div.appendChild(this._clickResults[el.innerHTML]);
     this._backHtml = popup.getContent();
     L.DomEvent.addListener(back, 'click', this._back, this);
-    back.innerHTML = '« Back';
+    back.innerHTML = '&#171; Back';
     addActions.push(back);
 
-    if (this.options.edit) {
-      var edit = L.DomUtil.create('a', null),
-        menu = L.DomUtil.create('div', 'menu edit');
-
-      function toggleEditMenu(e) {
-        console.log(e);
-
-        if (!menu.style.display || menu.style.display === 'none') {
-          var toElement = e.toElement;
-
-          menu.style.display = 'block';
-          menu.style.left = toElement.offsetLeft + 'px';
-          menu.style.top = (toElement.offsetTop + 18) + 'px';
-        } else {
-          menu.style.display = 'none';
-        }
-      }
-
-      edit.innerHTML = 'Edit &#9656;';
-      edit.style.cssText = 'margin-left:5px;';
-      addActions.push(edit);
-      menu.innerHTML = '<ul><li><a>Attributes</a></li><li><a>Geometry</a></li></ul>';
-      actionsDiv.appendChild(menu);
-      L.DomEvent.addListener(edit, 'click' , toggleEditMenu);
+    if (this.options.edit && this.options.edit.layers.split(',').indexOf(subLayerId) !== -1) {
+      addActions.push(this._createAction('edit', 'Edit &#9656;', [{
+        fn: function() {
+          me.options.edit.handlers.editAttributes(parseInt(subLayerId, 10), parseInt(el.getAttribute('data-objectid'), 10));
+        },
+        text: 'Attributes'
+      },{
+        fn: function() {
+          me.options.edit.handlers.editGeometry(parseInt(subLayerId, 10), parseInt(el.getAttribute('data-objectid'), 10));
+        },
+        text: 'Geometry'
+      }], actionsDiv));
     }
 
     for (var i = 0; i < addActions.length; i++) {

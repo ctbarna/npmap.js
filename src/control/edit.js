@@ -41,23 +41,23 @@ var EditControl = L.Control.extend({
       me = this;
 
     if (this.options.marker) {
-      this._initMode(container, new L.Draw.Marker(map, this.options.marker), 'Draw a marker');
+      this._initializeMode(container, new L.Draw.Marker(map, this.options.marker), 'Draw a marker');
     }
 
     if (this.options.polyline) {
-      this._initMode(container, new L.Draw.Polyline(map, this.options.polyline), 'Draw a line');
+      this._initializeMode(container, new L.Draw.Polyline(map, this.options.polyline), 'Draw a line');
     }
 
     if (this.options.polygon) {
-      this._initMode(container, new L.Draw.Polygon(map, this.options.polygon), 'Draw a polygon');
+      this._initializeMode(container, new L.Draw.Polygon(map, this.options.polygon), 'Draw a polygon');
     }
 
     if (this.options.rectangle) {
-      this._initMode(container, new L.Draw.Rectangle(map, this.options.rectangle), 'Draw a rectangle');
+      this._initializeMode(container, new L.Draw.Rectangle(map, this.options.rectangle), 'Draw a rectangle');
     }
 
     if (this.options.circle) {
-      this._initMode(container, new L.Draw.Circle(map, this.options.circle), 'Draw a circle');
+      this._initializeMode(container, new L.Draw.Circle(map, this.options.circle), 'Draw a circle');
     }
 
     this._featureGroup.on('click', function(e) {
@@ -138,26 +138,30 @@ var EditControl = L.Control.extend({
     this._activeMode = null;
     this.fire('disable');
   },
-  _initMode: function(container, handler, title) {
+  _initializeMode: function(container, handler, title) {
     var type = handler.type,
-      button = L.DomUtil.create('button', type, container),
-      me = this;
+      me = this,
+      button = null;
 
-    button.title = title;
+    if (this.options.ui) {
+      button = L.DomUtil.create('button', type, container);
+      button.title = title;
+      L.DomEvent.disableClickPropagation(button);
+      L.DomEvent.on(button, 'click', function() {
+        if (me._activeMode && me._activeMode.handler.type === type) {
+          me._modes[type].handler.disable();
+        } else {
+          me._modes[type].handler.enable();
+        }
+      }, this._modes[type].handler);
+    }
+
     this._modes[type] = {};
     this._modes[type].button = button;
     this._modes[type].handler = handler;
     this._modes[type].handler
       .on('disabled', this._handlerDeactivated, this)
       .on('enabled', this._handlerActivated, this);
-    L.DomEvent.disableClickPropagation(button);
-    L.DomEvent.on(button, 'click', function() {
-      if (me._activeMode && me._activeMode.handler.type === type) {
-        me._modes[type].handler.disable();
-      } else {
-        me._modes[type].handler.enable();
-      }
-    }, this._modes[type].handler);
   }
 });
 
@@ -172,7 +176,23 @@ L.Map.addInitHook(function() {
       options = this.options.drawControl;
     }
 
+    options.ui = true;
     this.editControl = L.npmap.control.edit(options).addTo(this);
+  } else {
+    var edit = false;
+
+    for (var i = 0; i < this.options.overlays.length; i++) {
+      if (this.options.overlays[i].edit) {
+        edit = true;
+        break;
+      }
+    }
+
+    if (edit) {
+      this.editControl = L.npmap.control.edit({
+        ui: false
+      }).addTo(this);
+    }
   }
 });
 

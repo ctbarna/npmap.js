@@ -437,6 +437,12 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
     margin: 10px 0 18px 0;
   }
   .leaflet-popup-content .actions {
+    -webkit-touch-callout: none;
+      -webkit-user-select: none;
+       -khtml-user-select: none;
+         -moz-user-select: none;
+          -ms-user-select: none;
+              user-select: none;
     border-top: solid 1px #b1b0a7;
     margin-top: 4px;
     padding-top: 11px;
@@ -460,6 +466,9 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
       margin-right: 0;
     }
     .leaflet-popup-content .actions .menu {
+      -webkit-box-shadow: 0 2px 3px rgba(0,0,0,.12);
+         -moz-box-shadow: 0 2px 3px rgba(0,0,0,.12);
+              box-shadow: 0 2px 3px rgba(0,0,0,.12);
       background-color: #fff;
       display: none;
       position: absolute;
@@ -474,20 +483,20 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
       .leaflet-popup-content .actions .menu a:hover {
         background-color: #f1f1ef;
       }
-      .leaflet-popup-content .actions .menu ul {
+      .leaflet-popup-content .actions .menu {
         list-style-type: none;
         margin: 0;
         padding: 0;
         width: 100px;
       }
-      .leaflet-popup-content .actions .menu ul li {
+      .leaflet-popup-content .actions .menu li {
         border-top: 1px solid #f2f1ef;
         display: block;
         margin: 0;
         padding: 0;
         width: 100%;
       }
-      .leaflet-popup-content .actions .menu ul li:first-child {
+      .leaflet-popup-content .actions .menu li:first-child {
         border-top: 0;
       }
   .leaflet-popup-content .layer {
