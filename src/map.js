@@ -364,7 +364,11 @@ var Map = L.Map.extend({
             if (typeof baseLayer === 'string') {
               var name = baseLayer.split('-');
 
-              baseLayer = baselayerPresets[name[0]][name[1]];
+              if (name[1]) {
+                baseLayer = baselayerPresets[name[0]][name[1]];
+              } else {
+                baseLayer = baselayerPresets[name];
+              }
             }
 
             if (baseLayer.visible === true || typeof baseLayer.visible === 'undefined') {
