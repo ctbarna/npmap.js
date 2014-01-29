@@ -102,7 +102,13 @@ var SwitcherControl = L.Control.extend({
           delete baseLayer.L;
         } else if (target.layerId === baseLayer._leaflet_id) {
           baseLayer.visible = true;
-          baseLayer.L = L.npmap.layer[baseLayer.type](baseLayer);
+
+          if (baseLayer.type === 'arcgisserver') {
+            baseLayer.L = L.npmap.layer[baseLayer.type][baseLayer.tiled === true ? 'tiled' : 'dynamic'](baseLayer);
+          } else {
+            baseLayer.L = L.npmap.layer[baseLayer.type](baseLayer);
+          }
+
           this._map.addLayer(baseLayer.L, true);
           L.DomUtil.addClass(target, 'selected');
           this._setActive(baseLayer);
