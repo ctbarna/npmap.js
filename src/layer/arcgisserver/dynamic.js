@@ -155,6 +155,7 @@ var ArcGisServerDynamicLayer = L.Class.extend({
       var newImage = e.target,
         oldImage = this._currentImage;
 
+      
       if (newImage._bounds.equals(bounds)) {
         this._currentImage = newImage;
 
@@ -173,11 +174,6 @@ var ArcGisServerDynamicLayer = L.Class.extend({
         this._map.removeLayer(newImage);
       }
     }, this);
-    /*
-    this.fire('loading', {
-      bounds: bounds
-    });
-    */
   },
   bringToBack: function(){
     this.options.position = 'back';
@@ -191,6 +187,9 @@ var ArcGisServerDynamicLayer = L.Class.extend({
   },
   getLayers: function() {
     return this._layerParams.layers;
+  },
+  redraw: function() {
+    this._update();
   },
   setLayers: function(layers) {
     if (typeof layers === 'number') {
