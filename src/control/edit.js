@@ -130,11 +130,18 @@ var EditControl = L.Control.extend({
     }
 
     this._activeMode = this._modes[e.handler];
-    L.DomUtil.addClass(this._activeMode.button, 'pressed');
+    
+    if (this._activeMode.button) {
+      L.DomUtil.addClass(this._activeMode.button, 'pressed');
+    }
+
     this.fire('enable');
   },
   _handlerDeactivated: function() {
-    L.DomUtil.removeClass(this._activeMode.button, 'pressed');
+    if (this._activeMode.button) {
+      L.DomUtil.removeClass(this._activeMode.button, 'pressed');
+    }
+
     this._activeMode = null;
     this.fire('disable');
   },
@@ -159,11 +166,19 @@ var EditControl = L.Control.extend({
       }, this._modes[type].handler);
     }
 
-    
     this._modes[type].button = button;
     this._modes[type].handler
       .on('disabled', this._handlerDeactivated, this)
       .on('enabled', this._handlerActivated, this);
+  },
+  activateMode: function(type) {
+    this._modes[type].handler.enable();
+  },
+  clearShapes: function() {
+    this._featureGroup.clearLayers();
+  },
+  deactivateMode: function(type) {
+    this._modes[type].handler.disable();
   }
 });
 

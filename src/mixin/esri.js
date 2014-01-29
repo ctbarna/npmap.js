@@ -210,17 +210,21 @@ module.exports = {
     addActions.push(back);
 
     if (this.options.edit && this.options.edit.layers.split(',').indexOf(subLayerId) !== -1) {
-      addActions.push(this._createAction('edit', 'Edit &#9656;', [{
-        fn: function() {
-          me.options.edit.handlers.editAttributes(parseInt(subLayerId, 10), parseInt(el.getAttribute('data-objectid'), 10));
-        },
-        text: 'Attributes'
-      },{
-        fn: function() {
-          me.options.edit.handlers.editGeometry(parseInt(subLayerId, 10), parseInt(el.getAttribute('data-objectid'), 10));
-        },
-        text: 'Geometry'
-      }], actionsDiv));
+      var userRole = this.options.edit.userRole;
+
+      if (typeof userRole === 'undefined' || userRole === 'Admin' || userRole === 'Writer') {
+        addActions.push(this._createAction('edit', 'Edit &#9656;', [{
+          fn: function() {
+            me.options.edit.handlers.editAttributes(parseInt(subLayerId, 10), parseInt(el.getAttribute('data-objectid'), 10));
+          },
+          text: 'Attributes'
+        },{
+          fn: function() {
+            me.options.edit.handlers.editGeometry(parseInt(subLayerId, 10), parseInt(el.getAttribute('data-objectid'), 10));
+          },
+          text: 'Geometry'
+        }], actionsDiv));
+      }
     }
 
     for (var i = 0; i < addActions.length; i++) {
