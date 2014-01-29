@@ -61,7 +61,7 @@ module.exports = {
   _back: function() {
     this._map._popup.setContent(this._backHtml).update();
   },
-  _createAction: function(cls, text, menuItems, actionsDiv) {
+  _createAction: function(cls, text, handler, menuItems, actionsDiv) {
     var action = L.DomUtil.create('a', null);
 
     action.innerHTML = text;
@@ -88,6 +88,8 @@ module.exports = {
       L.DomEvent.addListener(action, 'click' , function(e) {
         this._toggleMenu(menu, e);
       }, this);
+    } else if (handler) {
+      L.DomEvent.addListener(action, 'click' , handler, this);
     }
 
     return action;
@@ -213,17 +215,24 @@ module.exports = {
       var userRole = this.options.edit.userRole;
 
       if (typeof userRole === 'undefined' || userRole === 'Admin' || userRole === 'Writer') {
-        addActions.push(this._createAction('edit', 'Edit &#9656;', [{
+        var objectId = parseInt(el.getAttribute('data-objectid'), 10);
+
+        subLayerId = parseInt(subLayerId, 10);
+
+        addActions.push(this._createAction('edit', 'Edit &#9656;', null, [{
           fn: function() {
-            me.options.edit.handlers.editAttributes(parseInt(subLayerId, 10), parseInt(el.getAttribute('data-objectid'), 10));
+            me.options.edit.handlers.editAttributes(subLayerId, objectId);
           },
           text: 'Attributes'
         },{
           fn: function() {
-            me.options.edit.handlers.editGeometry(parseInt(subLayerId, 10), parseInt(el.getAttribute('data-objectid'), 10));
+            me.options.edit.handlers.editGeometry(subLayerId, objectId);
           },
           text: 'Geometry'
         }], actionsDiv));
+        addActions.push(this._createAction('delete', 'Delete', function() {
+          me.options.edit.handlers['delete'](subLayerId, objectId);
+        }));
       }
     }
 
