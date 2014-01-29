@@ -143,6 +143,9 @@ var EditControl = L.Control.extend({
       me = this,
       button = null;
 
+    this._modes[type] = {};
+    this._modes[type].handler = handler;
+
     if (this.options.ui) {
       button = L.DomUtil.create('button', type, container);
       button.title = title;
@@ -156,9 +159,8 @@ var EditControl = L.Control.extend({
       }, this._modes[type].handler);
     }
 
-    this._modes[type] = {};
+    
     this._modes[type].button = button;
-    this._modes[type].handler = handler;
     this._modes[type].handler
       .on('disabled', this._handlerDeactivated, this)
       .on('enabled', this._handlerActivated, this);
