@@ -28,7 +28,7 @@
     "leaflet-draw": "0.2.2",
     "leaflet-markercluster": "https://github.com/Leaflet/Leaflet.markercluster/archive/0.4.tar.gz",
     "maki": "~0.4.0",
-    "npmaki": "~0.4.0",
+    "npmaki": "~0.4.1",
     "reqwest": "0.9.6",
     "togeojson": "0.4.2"
   },
