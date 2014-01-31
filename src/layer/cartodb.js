@@ -69,21 +69,17 @@ var CartoDbLayer = L.TileLayer.extend({
         me._cartocss = cartocss;
         me._sql = (me.options.sql || ('SELECT * FROM ' + me.options.table + ';'));
 
-//http://3.api.cartocdn.com/examples/tiles/layergroup/8a94563077cabc7a50905e2cfe779e07:0/1/3/3/4.grid.json?callback=grid // working
-//http://0.api.cartocdn.com/examples/tiles/layergroup/e7ea4213bdc5ce95050245459720b1b0:0/5/8/12.grid.json?callback=reqwest_1390265746703 // their layer
-//http://1.api.cartocdn.com/examples/tiles/layergroup/45f3fb03a8e8a5cc46c3af8ee5cc3edf:0/4/3/7.grid.json?callback=reqwest_1390265036675 // our layer
-
         reqwest({
           success: function(response) {
-            var root = 'http://{s}.api.cartocdn.com/' + me.options.user + '/tiles/layergroup/' + response.layergroupid + '/{z}/{x}/{y}';
+            var root = 'http://{s}.api.cartocdn.com/' + me.options.user + '/tiles/layergroup/' + response.layergroupid,
+              template = '{z}/{x}/{y}';
 
             if (me._hasInteractivity && me._interactivity.length) {
-              //me._urlGrid = root + '.grid.json';
-              me._urlGrid = 'http://' + me.options.user + '.cartodb.com/tiles/' + me.options.table + '/{z}/{x}/{y}.grid.json?interactivity=' + me._interactivity.join(',') + '&sql=' + me._sql;
+              me._urlGrid = root + '/0/' + template + '.grid.json';
               me._grid = new utfGrid(me);
             }
 
-            me._urlTile = root + '.png';
+            me._urlTile = root + '/' + template + '.png';
             me.setUrl(me._urlTile);
             me.redraw();
             return me;
