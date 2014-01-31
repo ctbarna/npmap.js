@@ -63,7 +63,7 @@ var CartoDbLayer = L.TileLayer.extend({
         if (me.options.cartocss) {
           cartocss = me.options.cartocss;
         } else if (me.options.styles) {
-          cartocss = me._simpleStyleToCartoCss(me.options.styles);
+          cartocss = me._stylesToCartoCss(me.options.styles);
         }
 
         me._cartocss = cartocss;
@@ -125,51 +125,40 @@ var CartoDbLayer = L.TileLayer.extend({
   _handleMousemove: function(latLng, layer, callback) {
     this._getGridData(latLng, layer, callback);
   },
-  _simpleStyleToCartoCss: function(styles) {
-    var obj = {};
+  _stylesToCartoCss: function(styles) {
+    var cartoCss = {},
+      match = {
+        'fill': 'polygon-fill',
+        'fill-opacity': 'polygon-opacity',
+        'marker-color': 'marker-fill',
+        'marker-size': function(value) {
+          var size = 8;
 
-    for (var prop in styles) {
-      var value = styles[prop];
-
-      switch (prop) {
-      case 'fill':
-        obj['polygon-fill'] = value;
-        break;
-      case 'fill-opacity':
-        obj['polygon-opacity'] = value;
-        break;
-      case 'marker-color':
-        obj['marker-fill'] = value;
-        break;
-      case 'marker-size':
-        var size = (function() {
           if (value === 'large') {
-            return 16;
+            size = 16;
           } else if (value === 'medium') {
-            return 12;
-          } else {
-            return 8;
+            size = 12;
           }
-        })();
 
-        obj['marker-height'] = size;
-        obj['marker-width'] = size;
-        break;
-      case 'marker-symbol':
-        break;
-      case 'stroke':
-        obj['line-color'] = value;
-        break;
-      case 'stroke-opacity':
-        obj['line-opacity'] = value;
-        break;
-      case 'stroke-width':
-        obj['line-width'] = value;
-        break;
+          cartoCss['marker-height'] = size;
+          cartoCss['marker-width'] = size;
+        },
+        'stroke': 'line-color',
+        'stroke-opacity': 'line-opacity',
+        'stroke-width': 'line-width'
+      };
+
+    for (var property in styles) {
+      var value = styles[property];
+
+      if (typeof match[property] === 'function') {
+        match[property](value);
+      } else if (typeof match[property] === 'string') {
+        cartoCss[match[property]] = value;
       }
     }
 
-    return '#layer{' + json3.stringify(obj) + '}';
+    return '#layer' + json3.stringify(cartoCss).replace(/"/g, '').replace(/,/g, ';');
   },
   setCartoCss: function(cartoCss) {
 

@@ -26,12 +26,23 @@
         overlays: [{
           attribution: 'NPMap Team',
           name: 'National Park Bounding Boxes',
+          styles: {
+            'fill': '#d39800',
+            'fill-opacity': 0.2,
+            'stroke': '#d39800',
+            'stroke-opacity': 0.8,
+            'stroke-width': 3
+          },
           table: 'park_bounds',
           type: 'cartodb',
           user: 'nps'
         },{
           attribution: 'NPMap Team',
           name: 'National Park Centroids',
+          styles: {
+            'marker-color': '#000',
+            'marker-size': 'small' 
+          },
           table: 'park_points',
           type: 'cartodb',
           user: 'nps'
