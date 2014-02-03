@@ -208,7 +208,7 @@ var Map = L.Map.extend({
               if (result) {
                 if (typeof result === 'string') {
                   var divResult = document.createElement('div');
-                  divResult.innerHTML = result;
+                  divResult.innerHTML = util.unescapeHtml(result);
                   results.push(divResult);
                 } else if ('nodeType' in result) {
                   results.push(result);
@@ -250,7 +250,7 @@ var Map = L.Map.extend({
 
                   if (typeof result === 'string') {
                     var divResult = document.createElement('div');
-                    divResult.innerHTML = result;
+                    divResult.innerHTML = util.unescapeHtml(result);
                     div.appendChild(divResult);
                   } else {
                     div.appendChild(result);
@@ -311,7 +311,7 @@ var Map = L.Map.extend({
               if (typeof layer.options.tooltip === 'function') {
                 tip = layer.options.tooltip(data);
               } else if (typeof layer.options.tooltip === 'string') {
-                tip = util.handlebars(layer.options.tooltip, data);
+                tip = util.unescapeHtml(util.handlebars(layer.options.tooltip, data));
               }
 
               if (tip) {

@@ -57,7 +57,7 @@ module.exports = {
       config.onEachFeature = function(feature, layer) {
         layer.on('click', function(e) {
           var properties = feature.properties,
-            html = util.dataToHtml(config, properties),
+            html = util.unescapeHtml(util.dataToHtml(config, properties)),
             target = e.target,
             popup = L.popup({
               autoPanPaddingTopLeft: util._getAutoPanPaddingTopLeft(target._map.getContainer())

@@ -224,9 +224,14 @@ module.exports = {
 
     return html;
   },
-  /**
-   *
-   */
+  escapeHtml: function(unsafe) {
+    return unsafe
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  },
   getChildElementsByClassName: function(parentNode, className) {
     var children = parentNode.childNodes,
       matches = [];
@@ -526,9 +531,6 @@ module.exports = {
       });
     }
   },
-  /**
-   *
-   */
   putCursorAtEndOfInput: function(input) {
     if (input.setSelectionRange) {
       var length = input.value.length * 2;
@@ -538,28 +540,27 @@ module.exports = {
     }
   },
   reqwest: reqwest,
-  /**
-   *
-   */
   strict: function(_, type) {
     if (typeof _ !== type) {
       throw new Error('Invalid argument: ' + type + ' expected');
     }
   },
-  /**
-   *
-   */
   strictInstance: function(_, klass, name) {
     if (!(_ instanceof klass)) {
       throw new Error('Invalid argument: ' + name + ' expected');
     }
   },
-  /**
-   *
-   */
   strictOneOf: function(_, values) {
     if (values.indexOf(_) === -1) {
       throw new Error('Invalid argument: ' + _ + ' given, valid values are ' + values.join(', '));
     }
+  },
+  unescapeHtml: function(unsafe) {
+    return unsafe
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '\"')
+      .replace(/&#039;/g, '\'');
   }
 };
