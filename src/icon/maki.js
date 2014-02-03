@@ -41,8 +41,8 @@ var MakiIcon = L.Icon.extend({
     var div = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div'),
       options = this.options;
 
-    options.className = null;
-    options.html = null;
+    //options.className = null;
+    //options.html = null;
     this._setIconStyles(div, 'icon');
     div.style.backgroundImage = util.handlebars(MakiIcon.CSS_TEMPLATE, {
       color: options['marker-color'].replace('#', ''),

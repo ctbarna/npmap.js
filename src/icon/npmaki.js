@@ -42,8 +42,8 @@ var NpmakiIcon = L.Icon.extend({
       divIcon = L.DomUtil.create('div', 'npmaki-icon ' + options['marker-size'] + ' ' + options['marker-symbol'] + '-' + options['marker-size'] + (L.Browser.retina ? '-2x': '')),
       divMarker = (oldIcon && oldIcon.tagName === 'DIV') ? oldIcon : document.createElement('div');
 
-    options.className = null;
-    options.html = null;
+    //options.className = null;
+    //options.html = null;
     this._setIconStyles(divMarker, 'icon');
     divMarker.style.backgroundImage = util.handlebars(NpmakiIcon.MAKI_TEMPLATE, {
       color: options['marker-color'].replace('#', ''),

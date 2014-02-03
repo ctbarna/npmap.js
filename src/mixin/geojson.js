@@ -173,9 +173,9 @@ module.exports = {
         }
       }
 
-      return new L.Marker(latLng, {
+      return new L.Marker(latLng, L.extend(config, {
         icon: icon
-      });
+      }));
     };
     config.style = function(feature) {
       var type = (function() {

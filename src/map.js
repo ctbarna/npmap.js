@@ -306,9 +306,7 @@ var Map = L.Map.extend({
             if (data) {
               var tip;
 
-              if (!hasData) {
-                hasData = true;
-              }
+              hasData = true;
 
               if (typeof layer.options.tooltip === 'function') {
                 tip = layer.options.tooltip(data);
