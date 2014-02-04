@@ -57,7 +57,7 @@ module.exports = {
       config.onEachFeature = function(feature, layer) {
         layer.on('click', function(e) {
           var properties = feature.properties,
-            html = util.unescapeHtml(util.dataToHtml(config, properties)),
+            html = util.dataToHtml(config, properties),
             target = e.target,
             popup = L.popup({
               autoPanPaddingTopLeft: util._getAutoPanPaddingTopLeft(target._map.getContainer())
@@ -69,6 +69,10 @@ module.exports = {
           }
 
           if (html) {
+            if (typeof html === 'string') {
+              html = util.unescapeHtml(html);
+            }
+
             if (feature.geometry.type === 'Point') {
               popup.setContent(html);
               target.bindPopup(popup).openPopup();
