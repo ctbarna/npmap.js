@@ -4,6 +4,8 @@
 
 # NPMap.js
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/ctbarna/npmap.js.svg)](https://greenkeeper.io/)
+
 Extends [Leaflet](http://leafletjs.com) to include functionality and a look-and-feel built specifically for the National Park Service.
 
 This is beta software. Feel free to play around, but keep this in mind -- and please help test and [report issues](https://github.com/nationalparkservice/npmap.js/issues).
